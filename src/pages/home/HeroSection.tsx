@@ -1,13 +1,19 @@
 import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react';
+import { ArrowRight, ChevronRight, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface HeroSectionProps {
   heroRef: React.RefObject<HTMLElement>;
   stats: { value: number; suffix: string; label: string }[];
   childrenBeforeStats?: React.ReactNode;
 }
+
+const quickHighlights = [
+  'Websites that attract and convert clients',
+  'Custom software built around your business',
+  'AI automation that saves time and reduces manual work',
+];
 
 export function HeroSection({ heroRef, stats, childrenBeforeStats }: HeroSectionProps) {
   const { scrollYProgress } = useScroll({
@@ -24,19 +30,21 @@ export function HeroSection({ heroRef, stats, childrenBeforeStats }: HeroSection
       className="relative min-h-screen flex items-center pt-28 pb-20 overflow-hidden"
     >
       <div className="absolute inset-0 hero-grid" />
+
       <div
         className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] rounded-full blur-[140px]"
         style={{
           background:
-            'radial-gradient(circle, rgba(20,184,166,0.09) 0%, rgba(59,130,246,0.04) 50%, transparent 70%)',
+            'radial-gradient(circle, rgba(20,184,166,0.12) 0%, rgba(59,130,246,0.07) 45%, transparent 72%)',
         }}
       />
       <div
         className="absolute bottom-[-10%] left-[-5%] w-[700px] h-[700px] rounded-full blur-[120px]"
         style={{
-          background: 'radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 60%)',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 60%)',
         }}
       />
+
       <div className="absolute right-[18%] top-[22%] w-2.5 h-2.5 rounded-full bg-teal-400/50 float" />
       <div className="absolute right-[30%] top-[65%] w-2 h-2 rounded-full bg-blue-400/50 float-delay" />
       <div className="absolute left-[8%] bottom-[28%] w-2 h-2 rounded-full bg-indigo-400/50 float-delay2" />
@@ -46,14 +54,14 @@ export function HeroSection({ heroRef, stats, childrenBeforeStats }: HeroSection
         style={{ y: heroY, opacity: heroOpacity }}
         className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10 w-full"
       >
-        <div className="max-w-[62rem]">
+        <div className="max-w-[68rem]">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass text-teal-400 text-xs font-bold tracking-widest uppercase mb-8"
+            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass text-teal-300 text-xs font-bold tracking-[0.22em] uppercase mb-8"
           >
-            <span className="dot-pulse" />
+            <Sparkles className="w-3.5 h-3.5" />
             NextWave Digital Solutions
           </motion.div>
 
@@ -61,40 +69,62 @@ export function HeroSection({ heroRef, stats, childrenBeforeStats }: HeroSection
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-[clamp(2.6rem,7.5vw,5.5rem)] font-bold leading-[1.03] tracking-tight text-white mb-6"
+            className="font-display text-[clamp(2.8rem,7vw,6rem)] font-bold leading-[0.98] tracking-tight text-white mb-6"
           >
-            Driving Excellence
+            We Build{' '}
+            <span className="shimmer-text">Websites, Apps, AI Automations</span>
             <br />
-            Through <span className="shimmer-text">Digital Innovation</span>
+            & Custom Software for Growing Businesses
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="text-xl text-slate-400 mb-10 max-w-2xl leading-relaxed font-light"
+            className="text-lg sm:text-xl text-slate-300 mb-8 max-w-3xl leading-relaxed font-light"
           >
-            We deliver <span className="text-white font-medium">AI automation</span>,{' '}
-            <span className="text-white font-medium">custom software development</span>, and{' '}
-            <span className="text-white font-medium">digital transformation</span> solutions that
-            empower organisations to grow faster and operate smarter.
+            At <span className="text-white font-semibold">NextWave Digital Solutions</span>, we help
+            businesses move forward with{' '}
+            <span className="text-white font-medium">modern websites</span>,{' '}
+            <span className="text-white font-medium">business software</span>,{' '}
+            <span className="text-white font-medium">management systems</span>, and{' '}
+            <span className="text-white font-medium">AI-powered automation</span> built to improve
+            efficiency, increase visibility, and support growth.
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.3 }}
+            className="grid sm:grid-cols-3 gap-3 mb-10 max-w-4xl"
+          >
+            {quickHighlights.map((item) => (
+              <div
+                key={item}
+                className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md px-4 py-4"
+              >
+                <CheckCircle2 className="w-5 h-5 text-teal-300 shrink-0 mt-0.5" />
+                <p className="text-sm text-slate-200 leading-relaxed">{item}</p>
+              </div>
+            ))}
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 0.34 }}
+            transition={{ duration: 0.65, delay: 0.38 }}
             className="flex flex-col sm:flex-row gap-4 mb-16"
           >
             <Link to="/contact">
-              <button className="group btn-primary inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-white font-semibold text-base">
-                Get a Consultation
+              <button className="group btn-primary inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-white font-semibold text-base shadow-lg shadow-cyan-500/10">
+                Start Your Project
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </Link>
+
             <Link to="/services">
-              <button className="group btn-secondary inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-white font-semibold text-base backdrop-blur-sm">
-                <span>Explore Solutions</span>
+              <button className="group btn-secondary inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-white font-semibold text-base backdrop-blur-sm border border-white/10">
+                <span>View Our Services</span>
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </Link>
@@ -125,4 +155,3 @@ export function HeroSection({ heroRef, stats, childrenBeforeStats }: HeroSection
     </section>
   );
 }
-
