@@ -395,9 +395,8 @@ export function HomePage() {
                 transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                 className="font-display text-[clamp(2.6rem,7.5vw,5.5rem)] font-bold leading-[1.03] tracking-tight text-white mb-6"
               >
-                Driving Excellence<br />
-                Through{' '}
-                <span className="shimmer-text">Digital Innovation</span>
+                Building Powerful Websites, Apps &amp; Business Software<br />
+                <span className="shimmer-text">For Modern Businesses</span>
               </motion.h1>
 
               {/* Tagline */}
