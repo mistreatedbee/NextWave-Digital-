@@ -1,18 +1,20 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { blogPosts } from '../data/blog';
+import { useBlogList } from '../hooks/usePublicContent';
 
 export default function BlogListPage() {
+  const { data: blogPosts } = useBlogList();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<string>('All');
 
   const categories = useMemo(
-    () => ['All', ...Array.from(new Set(blogPosts.map((p) => p.category)))],
-    [],
+    () => ['All', ...Array.from(new Set(blogPosts.map((p) => (p as { category?: string }).category || 'Blog').filter(Boolean)))],
+    [blogPosts],
   );
 
   const filtered = blogPosts.filter((post) => {
-    const matchesCategory = category === 'All' || post.category === category;
+    const p = post as { category?: string };
+    const matchesCategory = category === 'All' || (p.category || 'Blog') === category;
     const matchesQuery =
       !query.trim() ||
       post.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -20,7 +22,7 @@ export default function BlogListPage() {
     return matchesCategory && matchesQuery;
   });
 
-  const recent = blogPosts.slice(0, 3);
+  const recent = filtered.slice(0, 3);
 
   return (
     <div className="min-h-screen pt-24 pb-20">
@@ -71,7 +73,7 @@ export default function BlogListPage() {
                   className="rounded-2xl border border-white/10 bg-slate-950/60 p-5 hover:border-teal-500/40 transition-colors"
                 >
                   <p className="text-xs font-semibold tracking-[0.18em] uppercase text-teal-400 mb-1">
-                    {post.category}
+                    {(post as { category?: string }).category || 'Blog'}
                   </p>
                   <Link to={`/blog/${post.slug}`}>
                     <h2 className="text-lg md:text-xl font-bold text-white mb-1">
@@ -79,7 +81,7 @@ export default function BlogListPage() {
                     </h2>
                   </Link>
                   <p className="text-xs text-slate-500 mb-2">
-                    {post.date} • {post.readTime} • {post.author}
+                    {post.published_at ? new Date(post.published_at).toLocaleDateString() : '-'} • NextWave Team
                   </p>
                   <p className="text-sm text-slate-300 mb-3">{post.excerpt}</p>
                   <Link
@@ -113,7 +115,7 @@ export default function BlogListPage() {
                       {post.title}
                     </Link>
                     <p className="text-[11px] text-slate-500">
-                      {post.date} • {post.readTime}
+                      {post.published_at ? new Date(post.published_at).toLocaleDateString() : '-'}
                     </p>
                   </li>
                 ))}

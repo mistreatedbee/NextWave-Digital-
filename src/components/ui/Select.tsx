@@ -30,7 +30,6 @@ export function Select({
           <option
             value=""
             disabled
-            selected
             className="bg-slate-900 text-slate-400">
 
             Select an option

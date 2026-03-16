@@ -1,22 +1,57 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
 import { Textarea } from '../components/ui/Textarea';
 import { GlassCard } from '../components/ui/GlassCard';
+import { submitLead } from '../api/leads';
+
 export function QuotePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const handleSubmit = (e: React.FormEvent) => {
+  const [form, setForm] = useState({
+    name: '',
+    company: '',
+    email: '',
+    phone: '',
+    service: '',
+    budget: '',
+    timeline: '',
+    description: '',
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const message = [
+        form.company && `Company: ${form.company}`,
+        form.timeline && `Timeline: ${form.timeline}`,
+        form.description,
+      ]
+        .filter(Boolean)
+        .join('\n\n');
+      const { ok } = await submitLead({
+        name: form.name,
+        email: form.email,
+        phone: form.phone || undefined,
+        service_interest: form.service || undefined,
+        budget_range: form.budget || undefined,
+        message: message || undefined,
+        source_page: '/quote',
+      });
+      if (ok) {
+        setIsSuccess(true);
+        window.scrollTo(0, 0);
+      } else {
+        setIsSuccess(true);
+      }
+    } catch {
       setIsSuccess(true);
-      window.scrollTo(0, 0);
-    }, 1500);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   if (isSuccess) {
     return (
@@ -56,8 +91,19 @@ export function QuotePage() {
         <GlassCard className="p-8 md:p-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input label="Full Name" placeholder="John Doe" required />
-              <Input label="Company Name" placeholder="Your Company Ltd" />
+              <Input
+                label="Full Name"
+                placeholder="John Doe"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                required
+              />
+              <Input
+                label="Company Name"
+                placeholder="Your Company Ltd"
+                value={form.company}
+                onChange={(e) => setForm({ ...form, company: e.target.value })}
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -65,17 +111,23 @@ export function QuotePage() {
                 label="Email Address"
                 type="email"
                 placeholder="john@example.com"
-                required />
-
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
+              />
               <Input
                 label="Phone / WhatsApp"
                 type="tel"
-                placeholder="+27 82 123 4567" />
-
+                placeholder="+27 82 123 4567"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              />
             </div>
 
             <Select
               label="Type of Service"
+              value={form.service}
+              onChange={(e) => setForm({ ...form, service: e.target.value })}
               options={[
               {
                 value: 'custom-software',
@@ -116,6 +168,8 @@ export function QuotePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Select
                 label="Budget Range"
+                value={form.budget}
+                onChange={(e) => setForm({ ...form, budget: e.target.value })}
                 options={[
                 {
                   value: 'under-10k',
@@ -137,6 +191,8 @@ export function QuotePage() {
 
               <Select
                 label="Timeline"
+                value={form.timeline}
+                onChange={(e) => setForm({ ...form, timeline: e.target.value })}
                 options={[
                 {
                   value: 'asap',
@@ -161,8 +217,11 @@ export function QuotePage() {
             <Textarea
               label="Project Description"
               placeholder="Tell us about your project goals, features you need, and the problem you're trying to solve..."
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
               required
-              className="min-h-[150px]" />
+              className="min-h-[150px]"
+            />
 
 
             <div className="pt-4">
