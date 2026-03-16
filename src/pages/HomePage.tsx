@@ -453,49 +453,28 @@ export function HomePage() {
             </div>
           </motion.div>
 
-          {/* Floating code card — desktop */}
+          {/* Floating brand logo — desktop */}
           <motion.div
             initial={{ opacity: 0, x: 60, y: 20 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ duration: 1.1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="absolute right-10 top-1/2 -translate-y-[55%] hidden xl:block"
           >
-            <div className="glass-strong rounded-2xl p-6 w-[320px] float"
-              style={{ boxShadow: '0 0 60px rgba(20,184,166,0.12), 0 0 120px rgba(20,184,166,0.04)' }}>
-              <div className="flex items-center gap-2 mb-5 pb-4 border-b border-white/[0.07]">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                </div>
-                <span className="text-[11px] text-slate-600 ml-auto font-mono">nextwave.config.ts</span>
-              </div>
-              <div className="space-y-2 font-mono text-[13px] leading-relaxed">
-                <div><span className="text-indigo-400">const</span> <span className="text-blue-300">config</span> <span className="text-white">= {'{'}</span></div>
-                {[
-                  ['innovation',  '"Relentless"'],
-                  ['quality',     '"Premium"'],
-                  ['security',    '"Enterprise"'],
-                  ['delivery',    '"On-Time"'],
-                  ['support',     '"24 / 7"'],
-                ].map(([k, v], i) => (
-                  <motion.div key={k}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1 + i * 0.1 }}
-                    className="pl-5 flex gap-2"
-                  >
-                    <span className="text-teal-400">{k}:</span>
-                    <span className="text-green-300">{v}</span>
-                    <span className="text-slate-600">,</span>
-                  </motion.div>
-                ))}
-                <div className="text-white">{'}'}</div>
-                <div className="pt-2 mt-1 border-t border-white/[0.05] text-[11px]">
-                  <span className="text-slate-600">// </span>
-                  <span className="text-emerald-400">✓ Ready to innovate</span>
-                </div>
-              </div>
+            <div
+              className="glass-strong rounded-3xl px-10 py-8 w-[380px] float flex flex-col items-center justify-center"
+              style={{
+                boxShadow:
+                  '0 0 60px rgba(20,184,166,0.18), 0 0 140px rgba(20,184,166,0.06)',
+              }}
+            >
+              <img
+                src="/logo.png"
+                alt="NextWave Digital Solutions logo"
+                className="w-[260px] max-w-full h-auto object-contain mb-4"
+              />
+              <p className="text-xs tracking-[0.24em] uppercase text-slate-400 text-center">
+                NextWave Digital Solutions
+              </p>
             </div>
           </motion.div>
 

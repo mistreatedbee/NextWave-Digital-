@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useBlogList } from '../hooks/usePublicContent';
+import { BrandLogo } from '../components/BrandLogo';
 
 export default function BlogListPage() {
   const { data: blogPosts } = useBlogList();
@@ -28,7 +29,10 @@ export default function BlogListPage() {
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10 max-w-3xl">
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+          <div className="mb-4">
+            <BrandLogo showText={false} />
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-3">
             Insights &amp; Blog
           </h1>
           <p className="text-slate-400">

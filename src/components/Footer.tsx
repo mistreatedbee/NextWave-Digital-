@@ -10,6 +10,7 @@ import {
   MapPin,
   ArrowRight } from
 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 export function Footer() {
   return (
     <footer className="bg-slate-950 border-t border-white/10 pt-16 pb-8 relative overflow-hidden">
@@ -20,14 +21,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Company Info */}
           <div>
-            <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
-                N
-              </div>
-              <span className="text-xl font-bold text-white tracking-tight">
-                NextWave <span className="text-gradient">Digital</span>
-              </span>
-            </Link>
+            <BrandLogo className="mb-6" />
             <p className="text-slate-400 mb-6 leading-relaxed">
               Next-generation digital solutions studio. We build custom
               software, platforms, and AI systems that help businesses scale.

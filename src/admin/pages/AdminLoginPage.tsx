@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { BrandLogo } from '../../components/BrandLogo';
 
 export function AdminLoginPage() {
   const { signIn } = useAuth();
@@ -29,8 +30,9 @@ export function AdminLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#020617] text-slate-100">
       <div className="w-full max-w-md px-6">
-        <div className="mb-8 text-center">
-          <p className="text-xs font-semibold tracking-[0.2em] uppercase text-teal-400 mb-2">
+        <div className="mb-8 text-center flex flex-col items-center gap-3">
+          <BrandLogo showText={false} />
+          <p className="text-xs font-semibold tracking-[0.2em] uppercase text-teal-400">
             NextWave Digital Solutions
           </p>
           <h1 className="text-2xl font-bold text-white mb-1">Admin Sign In</h1>

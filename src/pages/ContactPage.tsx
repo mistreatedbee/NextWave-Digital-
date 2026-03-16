@@ -5,6 +5,7 @@ import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
 import { GlassCard } from '../components/ui/GlassCard';
 import { submitLead } from '../api/leads';
+import { BrandLogo } from '../components/BrandLogo';
 
 export function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,8 +34,9 @@ export function ContactPage() {
   return (
     <div className="min-h-screen pt-20 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+        <div className="text-center mb-16 flex flex-col items-center gap-4">
+          <BrandLogo showText={false} />
+          <h1 className="text-4xl md:text-6xl font-bold mb-3">
             Get in <span className="text-gradient">Touch</span>
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto">
@@ -57,7 +59,7 @@ export function ContactPage() {
                   <div>
                     <p className="text-sm text-slate-400 mb-1">Call Us</p>
                     <p className="text-lg text-white font-semibold">
-                      +27 10 123 4567
+                      +27 71 153 1188
                     </p>
                     <p className="text-sm text-slate-500">Mon-Fri, 9am - 5pm</p>
                   </div>
@@ -70,7 +72,7 @@ export function ContactPage() {
                   <div>
                     <p className="text-sm text-slate-400 mb-1">WhatsApp</p>
                     <p className="text-lg text-white font-semibold">
-                      +27 82 123 4567
+                      +27 73 153 1188
                     </p>
                     <a
                       href="#"
