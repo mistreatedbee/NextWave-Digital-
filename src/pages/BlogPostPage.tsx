@@ -3,11 +3,16 @@ import { useParams, Link } from 'react-router-dom';
 import { blogPosts } from '../data/blog';
 import { Markdown } from '../utils/markdown';
 
+const contentModules = import.meta.glob('../content/blog/*.md', {
+  as: 'raw',
+  eager: true,
+});
+
 const CONTENT: Record<string, string> = {
   'getting-started-with-ai-automation':
-    require('../content/blog/getting-started-with-ai-automation.md').default,
+    contentModules['../content/blog/getting-started-with-ai-automation.md'] as string,
   'designing-scalable-web-apps':
-    require('../content/blog/designing-scalable-web-apps.md').default,
+    contentModules['../content/blog/designing-scalable-web-apps.md'] as string,
 };
 
 export default function BlogPostPage() {
