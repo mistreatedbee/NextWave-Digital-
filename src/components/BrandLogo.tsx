@@ -10,7 +10,7 @@ export function BrandLogo({ showText = true, className = '' }: BrandLogoProps) {
   return (
     <Link to="/" className={`flex items-center gap-2 group ${className}`}>
       <img
-        src="/logo.png"
+        src="/logo.jpeg"
         alt="NextWave Digital Solutions logo"
         className="h-8 w-auto object-contain"
       />

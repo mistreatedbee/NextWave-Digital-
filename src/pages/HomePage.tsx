@@ -468,7 +468,7 @@ export function HomePage() {
               }}
             >
               <img
-                src="/logo.png"
+                src="/logo.jpeg"
                 alt="NextWave Digital Solutions logo"
                 className="w-[260px] max-w-full h-auto object-contain mb-4"
               />
