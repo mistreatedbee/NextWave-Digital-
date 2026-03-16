@@ -71,10 +71,10 @@ export function HeroSection({ heroRef, stats, childrenBeforeStats }: HeroSection
             transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="font-display text-[clamp(2.8rem,7vw,6rem)] font-bold leading-[0.98] tracking-tight text-white mb-6"
           >
-            We Build{' '}
-            <span className="shimmer-text">Websites, Apps, AI Automations</span>
+            Building Powerful{' '}
+            <span className="shimmer-text">Websites, Apps & Business Software</span>
             <br />
-            & Custom Software for Growing Businesses
+            For Modern Businesses
           </motion.h1>
 
           <motion.p
