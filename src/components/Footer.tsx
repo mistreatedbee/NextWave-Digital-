@@ -119,18 +119,18 @@ export function Footer() {
               <li className="flex items-start gap-3 text-slate-400">
                 <MapPin className="w-5 h-5 text-cyan-500 shrink-0 mt-1" />
                 <span>
-                  Johannesburg, South Africa
+                  Nelspruit, South Africa
                   <br />
                   (Serving Global Clients)
                 </span>
               </li>
               <li className="flex items-center gap-3 text-slate-400">
                 <Phone className="w-5 h-5 text-cyan-500 shrink-0" />
-                <span>+27 10 123 4567</span>
+                <span>+27 73 153 1188</span>
               </li>
               <li className="flex items-center gap-3 text-slate-400">
                 <Mail className="w-5 h-5 text-cyan-500 shrink-0" />
-                <span>hello@nextwavedigital.co.za</span>
+                <span>nextwavedigitalsolutionsza@gmail.com</span>
               </li>
             </ul>
           </div>
