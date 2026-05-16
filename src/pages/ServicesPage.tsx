@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, MessageCircle } from 'lucide-react';
 import { SEO } from '../components/SEO';
+
+const WA_NUMBER = '27731531188';
+
+function bookService(name: string, price: string) {
+  const msg = `Hi NextWave Digital Solutions! I'm interested in the ${name} package (${price}).\n\nPlease contact me to discuss getting started.`;
+  window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
+}
 
 const POSTERS = [
   { src: '/full website design.jpeg',            label: 'Website Packages',   sub: 'From R2,000' },
@@ -120,6 +127,22 @@ const packages = [
       'Sales funnel automation',
     ],
   },
+  {
+    n: '07',
+    name: 'Mobile App Development',
+    price: 'Custom Quote',
+    note: null,
+    desc: 'Native and cross-platform mobile applications for iOS and Android. From MVPs to full-featured enterprise apps — built for performance, UX, and offline-first capability.',
+    features: [
+      'iOS & Android (React Native / Expo)',
+      'Custom UI/UX design',
+      'API & backend integration',
+      'Push notifications',
+      'Offline-first capability',
+      'App Store & Google Play submission',
+      'Ongoing maintenance & updates',
+    ],
+  },
 ];
 
 function PackagePanel({ pkg, isOpen, onToggle }: {
@@ -186,16 +209,26 @@ function PackagePanel({ pkg, isOpen, onToggle }: {
           >
             <div className="pb-12 pl-0 sm:pl-22 grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <p className="font-sans text-[14px] text-cream/55 leading-relaxed mb-6">
+                <p className="font-sans text-[14px] text-obsidian/55 dark:text-cream/55 leading-relaxed mb-6">
                   {pkg.desc}
                 </p>
-                <Link
-                  to="/quote"
-                  className="group inline-flex items-center gap-3 font-sans text-[11px] tracking-[0.28em] uppercase text-gold hover:text-cream transition-colors duration-400"
-                >
-                  Get a Quote
-                  <span className="block h-px w-5 bg-current transition-all duration-400 group-hover:w-8" />
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    type="button"
+                    onClick={() => bookService(pkg.name, pkg.price)}
+                    className="inline-flex items-center justify-center gap-2 bg-gold text-obsidian font-sans text-[10px] font-bold tracking-[0.22em] uppercase px-6 py-3.5 min-h-[48px] hover:bg-gold/85 active:scale-[0.98] transition-all duration-300"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 shrink-0" />
+                    Book This Service
+                  </button>
+                  <Link
+                    to="/quote"
+                    className="group inline-flex items-center gap-3 font-sans text-[11px] tracking-[0.28em] uppercase text-gold hover:text-obsidian dark:hover:text-cream transition-colors duration-400 self-center"
+                  >
+                    Get a Quote
+                    <span className="block h-px w-5 bg-current transition-all duration-400 group-hover:w-8" />
+                  </Link>
+                </div>
               </div>
               <ul className="space-y-2.5">
                 {pkg.features.map((f) => (

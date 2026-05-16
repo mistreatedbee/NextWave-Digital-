@@ -8,14 +8,6 @@ import { FeaturedPortfolioSection } from './home/FeaturedPortfolioSection';
 import { ProcessSection } from './home/ProcessSection';
 import { PricingPostersSection } from './home/PricingPostersSection';
 
-const processSteps = [
-  { number: '01', title: 'Discover',    desc: 'Deep-dive into your goals and pain points to align on the right solution.' },
-  { number: '02', title: 'Strategise',  desc: 'Architect the optimal solution with a clear delivery roadmap.' },
-  { number: '03', title: 'Design',      desc: 'Precision UI/UX crafted for your users, brand, and industry.' },
-  { number: '04', title: 'Build',       desc: 'Agile development sprints with transparent progress and fast iteration.' },
-  { number: '05', title: 'Launch',      desc: 'Seamless deployment, team onboarding, and ongoing partnership.' },
-];
-
 function CtaStrip() {
   return (
     <section
@@ -97,7 +89,7 @@ export function HomePage() {
       <ServicesOverviewSection />
       <PricingPostersSection />
       <FeaturedPortfolioSection />
-      <ProcessSection steps={processSteps} />
+      <ProcessSection />
       <CtaStrip />
     </div>
   );

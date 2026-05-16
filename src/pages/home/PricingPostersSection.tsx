@@ -2,30 +2,32 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
+const WA_NUMBER = '27731531188';
+
 const posters = [
   {
     src: '/full website design.jpeg',
     label: 'Website Packages',
     sub: 'From R2,000',
-    link: '/services',
+    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in your Website Packages — From R2,000.\n\nPlease send me more details.',
   },
   {
     src: '/landing page website.jpeg',
     label: 'Landing Page',
     sub: 'R750 Special',
-    link: '/services',
+    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in the Landing Page Special — R750.\n\nPlease send me more details.',
   },
   {
     src: '/full e-commerce website design.jpeg',
     label: 'Ecommerce Store',
     sub: 'From R4,000',
-    link: '/services',
+    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in an Ecommerce Store — From R4,000.\n\nPlease send me more details.',
   },
   {
     src: '/custom mobile app.jpeg',
     label: 'Custom Mobile App',
     sub: 'Custom Quote',
-    link: '/quote',
+    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in a Custom Mobile App.\n\nPlease contact me to discuss a quote.',
   },
 ];
 
@@ -37,9 +39,10 @@ function PosterTile({
   className: string;
 }) {
   const [hovered, setHovered] = useState(false);
+  const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(poster.waMsg)}`;
 
   return (
-    <Link to={poster.link}>
+    <a href={waUrl} target="_blank" rel="noopener noreferrer">
       <motion.div
         className={`relative overflow-hidden bg-charcoal-light cursor-pointer ${className}`}
         onHoverStart={() => setHovered(true)}
@@ -61,8 +64,7 @@ function PosterTile({
         <motion.div
           className="absolute inset-0"
           style={{
-            background:
-              'linear-gradient(to top, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.1) 55%, transparent 100%)',
+            background: 'linear-gradient(to top, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.1) 55%, transparent 100%)',
           }}
           animate={{ opacity: hovered ? 0.6 : 1 }}
           transition={{ duration: 0.4 }}
@@ -81,15 +83,15 @@ function PosterTile({
             {poster.sub}
           </span>
           <motion.p
-            className="font-sans text-[10px] tracking-[0.22em] uppercase text-cream/50 mt-2"
+            className="font-sans text-[10px] tracking-[0.22em] uppercase text-cream/70 mt-2"
             animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 6 }}
             transition={{ duration: 0.25 }}
           >
-            View Package →
+            Book on WhatsApp →
           </motion.p>
         </motion.div>
       </motion.div>
-    </Link>
+    </a>
   );
 }
 
@@ -102,8 +104,7 @@ export function PricingPostersSection() {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            'radial-gradient(ellipse at 50% 50%, rgba(183,255,0,0.02) 0%, transparent 65%)',
+          background: 'radial-gradient(ellipse at 50% 50%, rgba(183,255,0,0.02) 0%, transparent 65%)',
         }}
       />
 
@@ -136,12 +137,12 @@ export function PricingPostersSection() {
 
         {/* Asymmetric poster grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-          {/* Large left — website packages */}
+          {/* Large left */}
           <div className="lg:col-span-6">
             <PosterTile poster={posters[0]} className="h-[60vw] lg:h-full min-h-[320px] lg:min-h-[580px]" />
           </div>
 
-          {/* Right column — 3 stacked */}
+          {/* Right column */}
           <div className="lg:col-span-6 grid grid-cols-1 gap-3">
             <div className="grid grid-cols-2 gap-3">
               <PosterTile poster={posters[1]} className="h-[40vw] lg:h-[280px]" />

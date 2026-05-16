@@ -23,11 +23,9 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Websites',
     thumbnail: '/safe cloud africa.png',
     technologies: ['React', 'Node.js', 'Supabase', 'TypeScript'],
-    shortDescription:
-      'Cloud security and data compliance platform for African enterprises.',
-    longDescription:
-      'A full-scale cloud security management system built for African enterprises needing POPIA compliance, data sovereignty, and enterprise-grade access controls. The platform provides real-time threat monitoring, audit trails, and compliance reporting tailored to South African regulatory requirements.',
-    href: '#',
+    shortDescription: 'Cloud security and data compliance platform for African enterprises.',
+    longDescription: 'A full-scale cloud security management system built for African enterprises needing POPIA compliance, data sovereignty, and enterprise-grade access controls.',
+    href: 'https://safecloudafrica.co.za',
   },
   {
     id: 'kagie-app',
@@ -35,11 +33,19 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Mobile Apps',
     thumbnail: '/kagie app.png',
     technologies: ['React Native', 'Firebase', 'Expo', 'Node.js'],
-    shortDescription:
-      'Community-driven mobile platform connecting local South African communities.',
-    longDescription:
-      'A mobile-first community platform that connects township and rural communities, enabling local commerce, events, and service discovery. Features include in-app messaging, local business listings, event management, and a community noticeboard — all optimised for low-bandwidth environments.',
-    href: '#',
+    shortDescription: 'Community-driven mobile platform connecting local South African communities.',
+    longDescription: 'A mobile-first community platform enabling local commerce, events, and service discovery optimised for low-bandwidth environments.',
+    href: 'https://kagie-app.vercel.app',
+  },
+  {
+    id: 'kagie-app-v2',
+    title: 'Kagie App V2',
+    category: 'Mobile Apps',
+    thumbnail: '/kagie app.png',
+    technologies: ['React Native', 'Firebase', 'Expo', 'Node.js'],
+    shortDescription: 'Second generation of the Kagie community platform with enhanced features.',
+    longDescription: 'The upgraded version of the Kagie community app featuring improved UX, richer local commerce tools, and expanded community engagement features.',
+    href: 'https://kagie-app-v2.vercel.app',
   },
   {
     id: 'nvm-frontend',
@@ -47,11 +53,9 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Websites',
     thumbnail: '/nvm .png',
     technologies: ['React', 'TypeScript', 'Tailwind CSS', 'REST APIs'],
-    shortDescription:
-      'Enterprise frontend dashboard for a financial services management platform.',
-    longDescription:
-      'A sophisticated, data-dense dashboard system for a financial services firm, featuring real-time analytics, multi-level user roles, document management, and workflow approvals. Built with performance and accessibility as core priorities.',
-    href: '#',
+    shortDescription: 'Enterprise frontend dashboard for a financial services management platform.',
+    longDescription: 'A sophisticated data-dense dashboard system featuring real-time analytics, multi-level user roles, document management, and workflow approvals.',
+    href: 'https://nvm-frontend.vercel.app',
   },
   {
     id: 'autovital',
@@ -59,11 +63,9 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Websites',
     thumbnail: '/autovital.png',
     technologies: ['Next.js', 'PostgreSQL', 'Stripe', 'Supabase'],
-    shortDescription:
-      'Automotive diagnostics and maintenance tracking SaaS for South African car owners.',
-    longDescription:
-      'A subscription-based automotive platform offering vehicle health tracking, service reminders, mechanic booking, and digital service records. Integrated with South African parts suppliers and insurance providers to provide a complete vehicle ownership experience.',
-    href: '#',
+    shortDescription: 'Automotive diagnostics and maintenance tracking SaaS for South African car owners.',
+    longDescription: 'A subscription-based automotive platform offering vehicle health tracking, service reminders, and mechanic booking across South Africa.',
+    href: 'https://autovital.vercel.app',
   },
   {
     id: 'nextwave-digital',
@@ -71,11 +73,9 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Websites',
     thumbnail: '/logo.jpeg',
     technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Supabase'],
-    shortDescription:
-      'Our own agency website — a showcase of cinematic editorial design and premium UX.',
-    longDescription:
-      'The NextWave Digital Solutions website itself — designed as a premium luxury editorial experience that communicates the quality and sophistication of our work. Features include smooth parallax, editorial typography with Cormorant Garamond, an admin CMS, and lead capture integration.',
-    href: '#',
+    shortDescription: 'Our own agency website — a showcase of cinematic editorial design and premium UX.',
+    longDescription: 'The NextWave Digital Solutions website itself — a premium luxury editorial experience with Lenis smooth scroll, Clash Display typography, and full CMS integration.',
+    href: 'https://next-wave-digital.vercel.app',
   },
   {
     id: '3ds-sawmill',
@@ -83,11 +83,9 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'E-commerce',
     thumbnail: '/3d sawmill.png',
     technologies: ['WordPress', 'WooCommerce', 'PHP', 'MySQL'],
-    shortDescription:
-      'E-commerce website for a timber and sawmill business in Mpumalanga.',
-    longDescription:
-      'A full-featured e-commerce platform for a regional timber supplier, featuring product catalogue with volume pricing, quote request system, delivery zone calculator, and an integrated stock management dashboard for the business owner.',
-    href: '#',
+    shortDescription: 'E-commerce website for a timber and sawmill business in Mpumalanga.',
+    longDescription: 'A full-featured e-commerce platform for a regional timber supplier with volume pricing, quote requests, and an integrated stock management dashboard.',
+    href: 'https://3-d-s-sawmill.vercel.app',
   },
   {
     id: 'communityhub2',
@@ -95,11 +93,9 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Websites',
     thumbnail: '/communityhub.png',
     technologies: ['React', 'Supabase', 'Tailwind CSS', 'Node.js'],
-    shortDescription:
-      'Second-generation community management platform with events and resource sharing.',
-    longDescription:
-      'An upgraded community management system serving residential estates and business parks. Features include visitor management, maintenance ticketing, resident communications, event booking, and a document library — all in a clean, accessible interface.',
-    href: '#',
+    shortDescription: 'Second-generation community management platform with events and resource sharing.',
+    longDescription: 'An upgraded community management system for residential estates and business parks featuring visitor management, maintenance ticketing, and document library.',
+    href: 'https://communityhub2.vercel.app',
   },
   {
     id: 'mzansi-prolife',
@@ -107,11 +103,36 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Websites',
     thumbnail: '/mzansi profile.png',
     technologies: ['React', 'Supabase', 'CMS', 'Email Integration'],
-    shortDescription:
-      'Non-profit organisation website for a South African pro-life advocacy group.',
-    longDescription:
-      'A purpose-built advocacy website featuring a content management system, petition and supporter registration, donation flows, event management, and a multimedia resource library. Designed to engage and mobilise supporters across South Africa.',
-    href: '#',
+    shortDescription: 'Non-profit organisation website for a South African pro-life advocacy group.',
+    longDescription: 'A purpose-built advocacy website featuring petition and supporter registration, donation flows, event management, and a multimedia resource library.',
+    href: 'https://mzansiprolife.vercel.app',
+  },
+  {
+    id: 'mzansi-prolife-2',
+    title: 'Mzansi Prolife 2',
+    category: 'Websites',
+    thumbnail: '/mzansi profile.png',
+    technologies: ['React', 'Supabase', 'CMS'],
+    shortDescription: 'Second version of the Mzansi Prolife advocacy platform with enhanced features.',
+    href: 'https://mzansiprolife2.vercel.app',
+  },
+  {
+    id: 'mzansi-prolife-3',
+    title: 'Mzansi Prolife 3',
+    category: 'Websites',
+    thumbnail: '/mzansi profile.png',
+    technologies: ['React', 'Supabase', 'CMS'],
+    shortDescription: 'Latest iteration of the Mzansi Prolife platform with improved UX and performance.',
+    href: 'https://mzansiprolife3.vercel.app',
+  },
+  {
+    id: 'mzansi-prolife-12',
+    title: 'Mzansi Prolife 1.2',
+    category: 'Websites',
+    thumbnail: '/mzansi profile.png',
+    technologies: ['React', 'CMS'],
+    shortDescription: 'Updated 1.2 release of the Mzansi Prolife digital advocacy platform.',
+    href: 'https://mzansiprolife12.vercel.app',
   },
   {
     id: 'christian-leadership-movement',
@@ -119,11 +140,9 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Websites',
     thumbnail: '/christianleadershipmovement.png',
     technologies: ['React', 'CMS', 'Email Integration', 'Stripe'],
-    shortDescription:
-      'Ministry and leadership development website with event management and donation flows.',
-    longDescription:
-      'A comprehensive digital presence for a pan-African ministry organisation. Features sermon media library, event registration, leadership programme enrolments, online giving with recurring donations, and a member portal — all managed through a custom admin dashboard.',
-    href: '#',
+    shortDescription: 'Ministry and leadership development website with event management and donation flows.',
+    longDescription: 'A comprehensive digital presence for a pan-African ministry with sermon library, event registration, leadership programme enrolments, and online giving.',
+    href: 'https://www.christianleadershipmovement.co.za',
   },
   {
     id: 'mobilehealth-v3',
@@ -131,11 +150,9 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Mobile Apps',
     thumbnail: '/mobile health app.png',
     technologies: ['React Native', 'Node.js', 'PostgreSQL', 'HL7', 'Expo'],
-    shortDescription:
-      'Third-generation mobile health platform with telehealth and patient record management.',
-    longDescription:
-      'A comprehensive mobile health solution supporting telehealth consultations, patient records, medication tracking, and integration with South African health information systems. The V3 rebuild introduced real-time video consultations, AI symptom checking, and multi-facility record sharing with full HIPAA and POPIA compliance.',
-    href: '#',
+    shortDescription: 'Third-generation mobile health platform with telehealth and patient record management.',
+    longDescription: 'A comprehensive mobile health solution with real-time video consultations, AI symptom checking, multi-facility record sharing, and full HIPAA/POPIA compliance.',
+    href: 'https://mobilehealth-v3.vercel.app',
   },
   {
     id: 'ashley-mash-portfolio',
@@ -143,10 +160,8 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Websites',
     thumbnail: '/ashley portfolio.png',
     technologies: ['React', 'Framer Motion', 'GSAP', 'Tailwind CSS'],
-    shortDescription:
-      'Creative portfolio website for a visual artist and digital creator.',
-    longDescription:
-      'A visually immersive personal portfolio site for a South African digital artist. Features cinematic scroll experiences, smooth page transitions, a masonry gallery with lightbox, and an integrated contact and commission booking system.',
-    href: '#',
+    shortDescription: 'Creative portfolio website for a visual artist and digital creator.',
+    longDescription: 'A visually immersive personal portfolio with cinematic scroll experiences, smooth page transitions, a masonry gallery, and an integrated commission booking system.',
+    href: 'https://ashley-mash-portfolio-zeta.vercel.app',
   },
 ];

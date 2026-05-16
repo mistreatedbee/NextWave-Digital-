@@ -144,18 +144,33 @@ export function FeaturedPortfolioSection() {
         {/* Asymmetric grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
           {/* Large tile — left */}
-          <Link to="/portfolio" className="lg:col-span-7 block">
+          <a
+            href={featured[0].href && featured[0].href !== '#' ? featured[0].href : undefined}
+            target={featured[0].href && featured[0].href !== '#' ? '_blank' : undefined}
+            rel="noopener noreferrer"
+            className="lg:col-span-7 block"
+          >
             <ProjectTile item={featured[0]} index={0} className="h-[55vw] lg:h-full min-h-[300px] lg:min-h-[560px]" />
-          </Link>
+          </a>
 
           {/* Two stacked tiles — right */}
           <div className="lg:col-span-5 flex flex-col gap-3">
-            <Link to="/portfolio" className="block flex-1">
+            <a
+              href={featured[1].href && featured[1].href !== '#' ? featured[1].href : '/portfolio'}
+              target={featured[1].href && featured[1].href !== '#' ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              className="block flex-1"
+            >
               <ProjectTile item={featured[1]} index={1} className="h-[40vw] lg:h-full min-h-[220px]" />
-            </Link>
-            <Link to="/portfolio" className="block flex-1">
+            </a>
+            <a
+              href={featured[2].href && featured[2].href !== '#' ? featured[2].href : '/portfolio'}
+              target={featured[2].href && featured[2].href !== '#' ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              className="block flex-1"
+            >
               <ProjectTile item={featured[2]} index={2} className="h-[40vw] lg:h-full min-h-[220px]" />
-            </Link>
+            </a>
           </div>
         </div>
       </div>

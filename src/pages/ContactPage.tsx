@@ -1,34 +1,33 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { submitLead } from '../api/leads';
+import { motion } from 'framer-motion';
+import { MessageCircle } from 'lucide-react';
 import { SEO } from '../components/SEO';
 
+const WA_NUMBER = '27731531188';
+
+function buildWhatsAppUrl(form: {
+  name: string; email: string; service: string; message: string;
+}): string {
+  const lines: string[] = ['Hi NextWave Digital Solutions!', ''];
+  if (form.name)    lines.push(`Name: ${form.name}`);
+  if (form.email)   lines.push(`Email: ${form.email}`);
+  if (form.service) lines.push(`Service Interest: ${form.service}`);
+  if (form.message) lines.push(`Message: ${form.message}`);
+  return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join('\n'))}`;
+}
+
 const inputClass =
-  'w-full bg-transparent font-sans text-[14px] text-cream placeholder:text-cream/25 py-3 border-b border-cream/20 focus:border-gold outline-none transition-colors duration-400 resize-none';
+  'w-full bg-transparent font-sans text-[14px] text-obsidian dark:text-cream placeholder:text-obsidian/25 dark:placeholder:text-cream/25 py-3 border-b border-obsidian/20 dark:border-cream/20 focus:border-gold outline-none transition-colors duration-400 resize-none';
 
 export function ContactPage() {
-  const [name,     setName]     = useState('');
-  const [email,    setEmail]    = useState('');
-  const [service,  setService]  = useState('');
-  const [message,  setMessage]  = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [success,  setSuccess]  = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', service: '', message: '' });
+  const set = (k: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    try {
-      await submitLead({
-        name,
-        email,
-        service_interest: service,
-        message,
-        source_page: '/contact',
-      });
-      setSuccess(true);
-    } finally {
-      setSubmitting(false);
-    }
+    window.open(buildWhatsAppUrl(form), '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -49,7 +48,7 @@ export function ContactPage() {
         >
           <div className="section-label mb-4">Let&apos;s Talk</div>
           <h1
-            className="font-display font-semibold leading-tight"
+            className="font-display font-bold leading-tight"
             style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
           >
             Start a Conversation
@@ -64,7 +63,7 @@ export function ContactPage() {
           transition={{ duration: 1.0, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
         />
 
-        {/* Contact details — large text links */}
+        {/* Contact links */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -73,11 +72,11 @@ export function ContactPage() {
         >
           <a
             href="tel:+27731531188"
-            className="flex items-center py-6 border-b border-cream/8 group"
+            className="flex items-center py-6 border-b border-obsidian/8 dark:border-cream/8 group"
           >
             <span className="section-label w-28 shrink-0">Phone</span>
             <span
-              className="font-serif font-light text-cream group-hover:text-gold transition-colors duration-400"
+              className="font-display font-semibold group-hover:text-gold transition-colors duration-400"
               style={{ fontSize: 'clamp(1.6rem, 3vw, 2.8rem)' }}
             >
               073 153 1188
@@ -85,14 +84,14 @@ export function ContactPage() {
           </a>
 
           <a
-            href="https://wa.me/27731531188"
+            href={`https://wa.me/${WA_NUMBER}`}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center py-6 border-b border-cream/8 group"
+            className="flex items-center py-6 border-b border-obsidian/8 dark:border-cream/8 group"
           >
             <span className="section-label w-28 shrink-0">WhatsApp</span>
             <span
-              className="font-serif font-light text-cream/70 group-hover:text-gold transition-colors duration-400"
+              className="font-display font-semibold text-obsidian/70 dark:text-cream/70 group-hover:text-gold transition-colors duration-400"
               style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2.2rem)' }}
             >
               WhatsApp Us →
@@ -101,18 +100,18 @@ export function ContactPage() {
 
           <a
             href="mailto:info@nextwavedigitalsolutions.co.za"
-            className="flex items-center py-6 border-b border-cream/8 group"
+            className="flex items-center py-6 border-b border-obsidian/8 dark:border-cream/8 group"
           >
             <span className="section-label w-28 shrink-0">Email</span>
-            <span className="font-sans text-base lg:text-lg text-cream/60 group-hover:text-cream transition-colors duration-400 break-all">
+            <span className="font-sans text-base lg:text-lg text-obsidian/60 dark:text-cream/60 group-hover:text-obsidian dark:group-hover:text-cream transition-colors duration-400 break-all">
               info@nextwavedigitalsolutions.co.za
             </span>
           </a>
 
-          <div className="flex items-center py-6 border-b border-cream/8">
+          <div className="flex items-center py-6 border-b border-obsidian/8 dark:border-cream/8">
             <span className="section-label w-28 shrink-0">Location</span>
-            <span className="font-sans text-sm text-cream/35">
-              Nelspruit, Mpumalanga, South Africa
+            <span className="font-sans text-sm text-obsidian/35 dark:text-cream/35">
+              270 Marshall Street, Johannesburg, South Africa
             </span>
           </div>
         </motion.div>
@@ -125,108 +124,58 @@ export function ContactPage() {
         >
           <div className="section-label mb-10">Send a Message</div>
 
-          <AnimatePresence mode="wait">
-            {success ? (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="py-16 text-center"
+          <form onSubmit={handleSubmit} className="space-y-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div>
+                <div className="section-label mb-3">Your Name *</div>
+                <input type="text" value={form.name} onChange={set('name')} placeholder="Jane Smith" required className={inputClass} />
+              </div>
+              <div>
+                <div className="section-label mb-3">Email Address *</div>
+                <input type="email" value={form.email} onChange={set('email')} placeholder="jane@company.co.za" required className={inputClass} />
+              </div>
+            </div>
+
+            <div>
+              <div className="section-label mb-3">Service Interest</div>
+              <select value={form.service} onChange={set('service')} className={inputClass + ' appearance-none'}>
+                <option value="" className="bg-charcoal text-cream/50">Select a service…</option>
+                <option value="Starter Website" className="bg-charcoal text-cream">Starter Website</option>
+                <option value="Professional Website" className="bg-charcoal text-cream">Professional Website</option>
+                <option value="Premium Website" className="bg-charcoal text-cream">Premium Website</option>
+                <option value="Landing Page" className="bg-charcoal text-cream">Landing Page</option>
+                <option value="Ecommerce Store" className="bg-charcoal text-cream">Ecommerce Store</option>
+                <option value="AI Automation Suite" className="bg-charcoal text-cream">AI Automation Suite</option>
+                <option value="Mobile App" className="bg-charcoal text-cream">Mobile App</option>
+                <option value="Custom / Other" className="bg-charcoal text-cream">Custom / Other</option>
+              </select>
+            </div>
+
+            <div>
+              <div className="section-label mb-3">Your Message *</div>
+              <textarea
+                value={form.message}
+                onChange={set('message')}
+                placeholder="Tell us about your project, goals, and timeline…"
+                required
+                rows={5}
+                className={inputClass}
+              />
+            </div>
+
+            <div className="pt-4">
+              <button
+                type="submit"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gold text-obsidian font-sans text-[11px] font-bold tracking-[0.25em] uppercase px-10 py-5 min-h-[56px] hover:bg-gold/90 active:scale-[0.98] transition-all duration-300"
               >
-                <div className="w-12 h-12 border border-gold/40 flex items-center justify-center mx-auto mb-8">
-                  <span className="text-gold text-xl">✓</span>
-                </div>
-                <h2
-                  className="font-display font-semibold mb-4"
-                  style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}
-                >
-                  Thank You
-                </h2>
-                <p className="font-sans text-[14px] text-cream/45 mb-10">
-                  We&apos;ll be in touch within 24 hours.
-                </p>
-                <button
-                  onClick={() => { setSuccess(false); setName(''); setEmail(''); setService(''); setMessage(''); }}
-                  className="font-sans text-[10px] tracking-[0.28em] uppercase text-cream/40 hover:text-cream transition-colors duration-400"
-                >
-                  Send Another
-                </button>
-              </motion.div>
-            ) : (
-              <motion.form
-                key="form"
-                onSubmit={handleSubmit}
-                className="space-y-10"
-                initial={{ opacity: 1 }}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div>
-                    <div className="section-label mb-3">Your Name</div>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Jane Smith"
-                      required
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <div className="section-label mb-3">Email Address</div>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="jane@company.co.za"
-                      required
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="section-label mb-3">Service Interest</div>
-                  <select
-                    value={service}
-                    onChange={(e) => setService(e.target.value)}
-                    className={`${inputClass} appearance-none cursor-pointer`}
-                  >
-                    <option value="" className="bg-charcoal text-cream/50">Select a service…</option>
-                    <option value="Starter Website" className="bg-charcoal text-cream">Starter Website</option>
-                    <option value="Professional Website" className="bg-charcoal text-cream">Professional Website</option>
-                    <option value="Premium Website" className="bg-charcoal text-cream">Premium Website</option>
-                    <option value="Landing Page" className="bg-charcoal text-cream">Landing Page</option>
-                    <option value="Ecommerce Store" className="bg-charcoal text-cream">Ecommerce Store</option>
-                    <option value="AI Automation Suite" className="bg-charcoal text-cream">AI Automation Suite</option>
-                    <option value="Custom / Other" className="bg-charcoal text-cream">Custom / Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <div className="section-label mb-3">Your Message</div>
-                  <textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Tell us about your project, goals, and timeline…"
-                    required
-                    rows={5}
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="pt-4">
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="font-sans text-[11px] tracking-[0.28em] uppercase px-10 py-4 border border-gold/40 hover:border-gold text-cream/70 hover:text-cream hover:bg-gold/5 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {submitting ? 'Sending…' : 'Send Message →'}
-                  </button>
-                </div>
-              </motion.form>
-            )}
-          </AnimatePresence>
+                <MessageCircle className="w-4 h-4 shrink-0" />
+                Send Message on WhatsApp
+              </button>
+              <p className="font-sans text-[11px] text-obsidian/35 dark:text-cream/35 mt-3">
+                Opens WhatsApp with your message pre-filled.
+              </p>
+            </div>
+          </form>
         </motion.div>
       </div>
     </div>

@@ -1,22 +1,62 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import {
+  MessageCircle, Map, Code2, Eye, Rocket, TrendingUp,
+} from 'lucide-react';
 
-interface ProcessStep {
-  number: string;
-  title: string;
-  desc: string;
-}
+const steps = [
+  {
+    n: '01',
+    title: 'Consultation',
+    desc: 'We listen deeply to understand your goals, challenges, audience, and vision before anything else.',
+    icon: MessageCircle,
+  },
+  {
+    n: '02',
+    title: 'Strategy & Planning',
+    desc: 'We architect the optimal solution — clear roadmap, technology stack, timeline, and success metrics.',
+    icon: Map,
+  },
+  {
+    n: '03',
+    title: 'Design & Development',
+    desc: 'Precision UI/UX crafted for your brand, then built with clean, scalable, production-grade code.',
+    icon: Code2,
+  },
+  {
+    n: '04',
+    title: 'Review & Revisions',
+    desc: 'We refine together — your feedback shapes every iteration until every detail is exactly right.',
+    icon: Eye,
+  },
+  {
+    n: '05',
+    title: 'Launch',
+    desc: 'Seamless deployment with full team onboarding, testing, and a smooth go-live supported by us.',
+    icon: Rocket,
+  },
+  {
+    n: '06',
+    title: 'Support & Growth',
+    desc: 'Ongoing partnership to scale, maintain, and evolve your digital asset long after launch.',
+    icon: TrendingUp,
+  },
+];
 
-interface ProcessSectionProps {
-  steps: ProcessStep[];
-}
-
-export function ProcessSection({ steps }: ProcessSectionProps) {
+export function ProcessSection() {
   return (
     <section
       className="relative bg-[#F0F0EE] dark:bg-charcoal"
       style={{ paddingTop: 'var(--section-pad)', paddingBottom: 'var(--section-pad)' }}
     >
+      {/* Subtle lime ambient glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at 50% 0%, rgba(183,255,0,0.03) 0%, transparent 60%)',
+        }}
+      />
+
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
         {/* Header */}
         <motion.div
@@ -24,58 +64,79 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-20"
+          className="mb-16 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
         >
-          <div className="section-label mb-3">How We Work</div>
-          <h2
-            className="font-display font-semibold leading-tight"
-            style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
-          >
-            The Process
-          </h2>
+          <div>
+            <div className="section-label mb-3">How We Work</div>
+            <h2
+              className="font-display font-semibold leading-tight"
+              style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
+            >
+              The Process
+            </h2>
+          </div>
+          <p className="font-sans text-[13px] text-obsidian/45 dark:text-cream/45 max-w-xs leading-relaxed">
+            A transparent, agile framework — from first conversation to long-term success.
+          </p>
         </motion.div>
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Connecting ruled line */}
-          <motion.div
-            className="hidden md:block absolute h-px bg-gold/12 origin-left"
-            style={{ top: '28px', left: '8%', right: '8%' }}
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-6">
-            {steps.map((step, i) => (
+        {/* Step cards — 3-col grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            return (
               <motion.div
-                key={step.number}
+                key={step.n}
                 initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col items-start md:items-center text-left md:text-center group"
+                transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{
+                  y: -6,
+                  boxShadow: '0 20px 60px rgba(183,255,0,0.08), 0 4px 20px rgba(0,0,0,0.15)',
+                }}
+                className="relative rounded-2xl border border-gold/15 hover:border-gold/45 transition-colors duration-400 p-6 lg:p-8 cursor-default"
+                style={{
+                  background: 'rgba(255,255,255,0.035)',
+                  backdropFilter: 'blur(14px)',
+                }}
               >
-                {/* Number box */}
-                <div
-                  className="relative w-14 h-14 flex items-center justify-center mb-6 z-10 border border-gold/25 group-hover:border-gold/50 transition-colors duration-500"
-                  style={{ background: 'rgba(183,255,0,0.03)' }}
-                >
-                  <span className="font-serif text-xl text-cream/50 group-hover:text-gold/70 transition-colors duration-500">
-                    {step.number}
+                {/* Top row: number + icon */}
+                <div className="flex items-start justify-between mb-4">
+                  <span
+                    className="font-display font-bold text-gold/15 leading-none select-none"
+                    style={{ fontSize: '4rem' }}
+                  >
+                    {step.n}
                   </span>
+                  <div className="w-11 h-11 rounded-xl border border-gold/30 flex items-center justify-center shrink-0 bg-gold/5">
+                    <Icon className="w-5 h-5 text-gold" />
+                  </div>
                 </div>
 
-                <h3 className="font-sans text-[11px] font-medium uppercase tracking-[0.25em] text-cream mb-3">
+                {/* Label */}
+                <div className="section-label mb-2">Step {step.n}</div>
+
+                {/* Title */}
+                <h3 className="font-display font-semibold text-xl mb-3 text-obsidian dark:text-cream">
                   {step.title}
                 </h3>
-                <p className="font-sans text-[12px] text-cream/40 leading-relaxed md:max-w-[140px]">
+
+                {/* Description */}
+                <p className="font-sans text-[13px] text-obsidian/55 dark:text-cream/55 leading-relaxed">
                   {step.desc}
                 </p>
+
+                {/* Corner accent */}
+                <div
+                  className="absolute bottom-0 right-0 w-16 h-16 rounded-br-2xl pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(225deg, rgba(183,255,0,0.06) 0%, transparent 60%)',
+                  }}
+                />
               </motion.div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>

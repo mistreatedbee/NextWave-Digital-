@@ -89,7 +89,7 @@ export default function PortfolioPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.8, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-                className="break-inside-avoid mb-4 relative overflow-hidden group cursor-pointer bg-charcoal-light"
+                className="break-inside-avoid mb-4 relative overflow-hidden group cursor-pointer bg-charcoal-light min-h-[220px]"
                 style={{ aspectRatio: i % 3 === 0 ? '4/3' : i % 3 === 1 ? '3/4' : '16/9' }}
                 onClick={() => setLightbox(item)}
               >
@@ -119,23 +119,36 @@ export default function PortfolioPage() {
                 />
 
                 {/* Info */}
-                <div className="absolute bottom-0 left-0 p-6">
+                <div className="absolute bottom-0 left-0 right-0 p-6">
                   <div className="section-label text-cream/40 mb-1">{item.category}</div>
-                  <h3 className="font-sans text-base font-medium text-cream leading-tight">
+                  <h3 className="font-sans text-base font-semibold text-cream leading-tight">
                     {item.title}
                   </h3>
                   <p className="font-sans text-[12px] text-cream/35 mt-1 line-clamp-2 max-w-[240px]">
                     {item.shortDescription}
                   </p>
-                  <motion.p
-                    className="font-sans text-[10px] tracking-[0.22em] uppercase text-gold mt-3"
-                    initial={{ opacity: 0, y: 6 }}
-                    whileInView={{ opacity: 0 }}
-                    whileHover={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    View Project →
-                  </motion.p>
+                  <div className="flex items-center gap-3 mt-3 flex-wrap">
+                    <motion.button
+                      className="font-sans text-[10px] tracking-[0.22em] uppercase text-gold"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      transition={{ duration: 0.25 }}
+                      onClick={(e) => { e.stopPropagation(); setLightbox(item); }}
+                    >
+                      Case Study →
+                    </motion.button>
+                    {item.href && item.href !== '#' && (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1.5 font-sans text-[10px] font-semibold tracking-[0.2em] uppercase px-3 py-2 min-h-[36px] bg-gold text-obsidian hover:bg-gold/85 transition-colors duration-300"
+                      >
+                        View Live ↗
+                      </a>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}

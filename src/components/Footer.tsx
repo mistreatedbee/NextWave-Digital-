@@ -21,7 +21,12 @@ const serviceLinks = [
   'AI Automation Suite',
 ];
 
-const socialIcons = [Twitter, Linkedin, Instagram, Facebook];
+const socialLinks = [
+  { icon: Twitter,   href: 'https://twitter.com/nextwavedigital',                    label: 'Twitter' },
+  { icon: Linkedin,  href: 'https://linkedin.com/company/nextwavedigitalsolutions',  label: 'LinkedIn' },
+  { icon: Instagram, href: 'https://instagram.com/nextwavedigital',                  label: 'Instagram' },
+  { icon: Facebook,  href: 'https://facebook.com/nextwavedigital',                   label: 'Facebook' },
+];
 
 export function Footer() {
   const [email, setEmail] = useState('');
@@ -135,20 +140,30 @@ export function Footer() {
               >
                 info@nextwavedigitalsolutions.co.za
               </a>
-              <p className="font-sans text-[12px] text-obsidian/30 dark:text-cream/30">
-                Nelspruit, Mpumalanga
-                <br />South Africa
+              <a
+                href="https://www.nextwavedigitalsolutions.co.za"
+                target="_blank"
+                rel="noreferrer"
+                className="block font-sans text-[12px] text-obsidian/45 dark:text-cream/45 hover:text-gold transition-colors duration-400"
+              >
+                www.nextwavedigitalsolutions.co.za
+              </a>
+              <p className="font-sans text-[12px] text-obsidian/30 dark:text-cream/30 mt-1">
+                270 Marshall Street
+                <br />Johannesburg, South Africa
               </p>
             </div>
 
             {/* Social icons */}
             <div className="flex gap-4 mt-8">
-              {socialIcons.map((Icon, i) => (
+              {socialLinks.map(({ icon: Icon, href, label }) => (
                 <a
-                  key={i}
-                  href="#"
-                  className="text-obsidian/25 dark:text-cream/25 hover:text-obsidian dark:hover:text-cream transition-colors duration-400"
-                  aria-label="Social link"
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-obsidian/25 dark:text-cream/25 hover:text-gold transition-colors duration-400"
+                  aria-label={label}
                 >
                   <Icon className="w-4 h-4" />
                 </a>
