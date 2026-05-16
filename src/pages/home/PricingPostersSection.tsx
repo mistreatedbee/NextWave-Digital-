@@ -119,7 +119,7 @@ export function PricingPostersSection() {
           <div>
             <div className="section-label mb-3">Packages at a Glance</div>
             <h2
-              className="font-serif font-light text-cream leading-tight"
+              className="font-display font-semibold leading-tight"
               style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
             >
               Our Pricing

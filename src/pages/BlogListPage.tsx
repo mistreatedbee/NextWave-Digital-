@@ -28,7 +28,7 @@ export default function BlogListPage() {
   });
 
   return (
-    <div className="bg-obsidian text-cream min-h-screen">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO
         title="Journal — NextWave Digital Solutions"
         description="Insights on web development, AI automation, digital transformation, and business technology from the NextWave team."
@@ -43,7 +43,7 @@ export default function BlogListPage() {
         >
           <div className="section-label mb-4">Insights &amp; Ideas</div>
           <h1
-            className="font-serif font-light text-cream leading-tight mb-8"
+            className="font-display font-semibold leading-tight mb-8"
             style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
           >
             Journal

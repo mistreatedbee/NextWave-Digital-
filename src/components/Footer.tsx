@@ -27,7 +27,7 @@ export function Footer() {
   const [email, setEmail] = useState('');
 
   return (
-    <footer className="bg-charcoal relative overflow-hidden">
+    <footer className="bg-[#F0F0EE] dark:bg-charcoal relative overflow-hidden">
       {/* Gold ruled line at top */}
       <div className="h-px bg-gold/25 w-full" />
 
@@ -43,20 +43,20 @@ export function Footer() {
             className="lg:col-span-1"
           >
             <BrandLogo className="mb-6" />
-            <p className="font-sans text-[13px] text-cream/45 leading-relaxed mb-8 max-w-xs">
+            <p className="font-sans text-[13px] text-obsidian/45 dark:text-cream/45 leading-relaxed mb-8 max-w-xs">
               Crafting digital experiences for ambitious South African businesses ready to lead.
             </p>
 
             {/* Newsletter */}
             <div>
               <div className="section-label mb-3">Newsletter</div>
-              <div className="flex border-b border-cream/20 focus-within:border-gold transition-colors duration-400">
+              <div className="flex border-b border-obsidian/20 dark:border-cream/20 focus-within:border-gold transition-colors duration-400">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email"
-                  className="flex-1 bg-transparent font-sans text-[13px] text-cream placeholder:text-cream/25 py-2 outline-none"
+                  className="flex-1 bg-transparent font-sans text-[13px] text-obsidian dark:text-cream placeholder:text-obsidian/30 dark:placeholder:text-cream/25 py-2 outline-none"
                 />
                 <button
                   type="button"
@@ -82,7 +82,7 @@ export function Footer() {
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="font-sans text-[13px] text-cream/45 hover:text-cream transition-colors duration-400"
+                    className="font-sans text-[13px] text-obsidian/45 dark:text-cream/45 hover:text-obsidian dark:hover:text-cream transition-colors duration-400"
                   >
                     {link.name}
                   </Link>
@@ -104,7 +104,7 @@ export function Footer() {
                 <li key={service}>
                   <Link
                     to="/services"
-                    className="font-sans text-[13px] text-cream/45 hover:text-cream transition-colors duration-400"
+                    className="font-sans text-[13px] text-obsidian/45 dark:text-cream/45 hover:text-obsidian dark:hover:text-cream transition-colors duration-400"
                   >
                     {service}
                   </Link>
@@ -124,18 +124,18 @@ export function Footer() {
             <div className="space-y-3">
               <a
                 href="tel:+27731531188"
-                className="block font-serif font-light text-cream/80 hover:text-gold transition-colors duration-400"
+                className="block font-serif font-semibold text-obsidian/80 dark:text-cream/80 hover:text-gold transition-colors duration-400"
                 style={{ fontSize: '1.4rem' }}
               >
                 073 153 1188
               </a>
               <a
                 href="mailto:info@nextwavedigitalsolutions.co.za"
-                className="block font-sans text-[13px] text-cream/45 hover:text-cream transition-colors duration-400 break-all"
+                className="block font-sans text-[13px] text-obsidian/45 dark:text-cream/45 hover:text-obsidian dark:hover:text-cream transition-colors duration-400 break-all"
               >
                 info@nextwavedigitalsolutions.co.za
               </a>
-              <p className="font-sans text-[12px] text-cream/30">
+              <p className="font-sans text-[12px] text-obsidian/30 dark:text-cream/30">
                 Nelspruit, Mpumalanga
                 <br />South Africa
               </p>
@@ -147,7 +147,7 @@ export function Footer() {
                 <a
                   key={i}
                   href="#"
-                  className="text-cream/25 hover:text-cream transition-colors duration-400"
+                  className="text-obsidian/25 dark:text-cream/25 hover:text-obsidian dark:hover:text-cream transition-colors duration-400"
                   aria-label="Social link"
                 >
                   <Icon className="w-4 h-4" />
@@ -158,20 +158,20 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-cream/6 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="font-sans text-[11px] text-cream/25 tracking-wide">
+        <div className="border-t border-obsidian/6 dark:border-cream/6 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="font-sans text-[11px] text-obsidian/25 dark:text-cream/25 tracking-wide">
             &copy; {new Date().getFullYear()} NextWave Digital Solutions. All rights reserved.
           </p>
           <div className="flex gap-6">
             <Link
               to="/privacy"
-              className="font-sans text-[11px] text-cream/25 hover:text-cream/60 transition-colors duration-400"
+              className="font-sans text-[11px] text-obsidian/25 dark:text-cream/25 hover:text-obsidian/60 dark:hover:text-cream/60 transition-colors duration-400"
             >
               Privacy Policy
             </Link>
             <Link
               to="/terms"
-              className="font-sans text-[11px] text-cream/25 hover:text-cream/60 transition-colors duration-400"
+              className="font-sans text-[11px] text-obsidian/25 dark:text-cream/25 hover:text-obsidian/60 dark:hover:text-cream/60 transition-colors duration-400"
             >
               Terms of Service
             </Link>

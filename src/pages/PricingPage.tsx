@@ -100,7 +100,7 @@ const packages = [
 
 export default function PricingPage() {
   return (
-    <div className="bg-obsidian text-cream min-h-screen">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO
         title="Pricing — NextWave Digital Solutions"
         description="Clear, honest pricing for every NextWave Digital Solutions service package."
@@ -115,7 +115,7 @@ export default function PricingPage() {
         >
           <div className="section-label mb-4">Clear &amp; Honest</div>
           <h1
-            className="font-serif font-light text-cream leading-tight mb-6"
+            className="font-display font-semibold leading-tight mb-6"
             style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
           >
             Pricing
@@ -151,7 +151,7 @@ export default function PricingPage() {
 
               {/* Name */}
               <h2
-                className="font-serif font-light text-cream leading-tight mb-1"
+                className="font-display font-semibold leading-tight mb-1"
                 style={{ fontSize: 'clamp(1.4rem, 2vw, 2rem)' }}
               >
                 {pkg.name}

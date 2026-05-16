@@ -14,7 +14,7 @@ interface ProcessSectionProps {
 export function ProcessSection({ steps }: ProcessSectionProps) {
   return (
     <section
-      className="relative bg-charcoal"
+      className="relative bg-[#F0F0EE] dark:bg-charcoal"
       style={{ paddingTop: 'var(--section-pad)', paddingBottom: 'var(--section-pad)' }}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
@@ -28,7 +28,7 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
         >
           <div className="section-label mb-3">How We Work</div>
           <h2
-            className="font-serif font-light text-cream leading-tight"
+            className="font-display font-semibold leading-tight"
             style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
           >
             The Process

@@ -11,6 +11,7 @@ import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
 import { CookieBanner } from './components/CookieBanner';
 import { SmoothScroll } from './components/SmoothScroll';
+import { ThemeProvider } from './context/ThemeContext';
 import { HomePage } from './pages/HomePage';
 import { ServicesPage } from './pages/ServicesPage';
 import { SolutionsPage } from './pages/SolutionsPage';
@@ -57,10 +58,11 @@ function ScrollToTop() {
 export function App() {
   return (
     <Router>
+      <ThemeProvider>
       <AuthProvider>
         <ScrollToTop />
         <SmoothScroll>
-        <div className="min-h-screen bg-obsidian text-cream font-sans selection:bg-gold/20 selection:text-cream">
+        <div className="min-h-screen bg-ivory text-obsidian dark:bg-obsidian dark:text-cream font-sans selection:bg-gold/20 selection:text-cream">
           <Navigation />
           <main className="flex-grow">
             <AnimatePresence mode="wait">
@@ -117,6 +119,7 @@ export function App() {
         </div>
         </SmoothScroll>
       </AuthProvider>
+      </ThemeProvider>
     </Router>
   );
 }

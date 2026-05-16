@@ -50,7 +50,7 @@ export function QuotePage() {
   };
 
   return (
-    <div className="bg-obsidian text-cream min-h-screen">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO
         title="Get a Quote — NextWave Digital Solutions"
         description="Tell us about your project and get a detailed quote from the NextWave team."
@@ -74,7 +74,7 @@ export function QuotePage() {
               </div>
               <div className="section-label mb-4 mx-auto">Request Received</div>
               <h1
-                className="font-serif font-light text-cream mb-6 leading-tight"
+                className="font-display font-semibold mb-6 leading-tight"
                 style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
               >
                 We&apos;ll Be in Touch
@@ -101,13 +101,13 @@ export function QuotePage() {
               >
                 <div className="section-label mb-4">Project Brief</div>
                 <h1
-                  className="font-serif font-light text-cream leading-tight mb-2"
+                  className="font-display font-semibold leading-tight mb-2"
                   style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
                 >
                   Tell Us About
                 </h1>
                 <h1
-                  className="font-serif font-light italic text-gold leading-tight"
+                  className="font-display font-bold italic text-gold leading-tight"
                   style={{ fontSize: 'clamp(2.5rem, 6vw, 7rem)' }}
                 >
                   Your Project.

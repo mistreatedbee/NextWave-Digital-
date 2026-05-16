@@ -23,7 +23,7 @@ export default function BlogPostPage() {
 
   if (!post || !slug) {
     return (
-      <div className="bg-obsidian text-cream min-h-screen pt-40 pb-20">
+      <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen pt-40 pb-20">
         <div className="max-w-3xl mx-auto px-6">
           <div className="section-label mb-4">404</div>
           <h1 className="font-serif font-light text-cream text-5xl mb-6">Post Not Found</h1>
@@ -44,7 +44,7 @@ export default function BlogPostPage() {
     .slice(0, 3);
 
   return (
-    <div className="bg-obsidian text-cream min-h-screen">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO title={`${post.title} — NextWave Journal`} description={post.excerpt} />
 
       {/* Hero */}
@@ -56,7 +56,7 @@ export default function BlogPostPage() {
         >
           <div className="section-label mb-4">{post.category}</div>
           <h1
-            className="font-serif font-light text-cream leading-tight mb-8 max-w-4xl"
+            className="font-display font-semibold leading-tight mb-8 max-w-4xl"
             style={{ fontSize: 'clamp(2.2rem, 5vw, 5.5rem)' }}
           >
             {post.title}

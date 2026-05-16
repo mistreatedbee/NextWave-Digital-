@@ -126,7 +126,7 @@ export function FeaturedPortfolioSection() {
           <div>
             <div className="section-label mb-3">Selected Work</div>
             <h2
-              className="font-serif font-light text-cream leading-tight"
+              className="font-display font-semibold leading-tight"
               style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
             >
               Featured Projects

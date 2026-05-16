@@ -32,7 +32,7 @@ export function ContactPage() {
   };
 
   return (
-    <div className="bg-obsidian text-cream min-h-screen">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO
         title="Contact — NextWave Digital Solutions"
         description="Get in touch with NextWave Digital Solutions. Start a project, ask a question, or just say hello."
@@ -49,7 +49,7 @@ export function ContactPage() {
         >
           <div className="section-label mb-4">Let&apos;s Talk</div>
           <h1
-            className="font-serif font-light text-cream leading-tight"
+            className="font-display font-semibold leading-tight"
             style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
           >
             Start a Conversation
@@ -138,7 +138,7 @@ export function ContactPage() {
                   <span className="text-gold text-xl">✓</span>
                 </div>
                 <h2
-                  className="font-serif font-light text-cream mb-4"
+                  className="font-display font-semibold mb-4"
                   style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}
                 >
                   Thank You

@@ -47,7 +47,7 @@ function CtaStrip() {
         >
           <div className="section-label mb-6 mx-auto">Start a Conversation</div>
           <h2
-            className="font-serif font-light text-cream leading-tight mb-10"
+            className="font-display font-semibold leading-tight mb-10"
             style={{ fontSize: 'clamp(2.5rem, 6vw, 6rem)' }}
           >
             Ready to build something
@@ -88,7 +88,7 @@ function CtaStrip() {
 
 export function HomePage() {
   return (
-    <div className="bg-obsidian text-cream overflow-x-hidden">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream overflow-x-hidden">
       <SEO
         title="NextWave Digital Solutions — Premium Websites, Apps & AI Automation"
         description="NextWave creates premium websites, business software, ecommerce platforms, and AI automations for modern South African businesses."

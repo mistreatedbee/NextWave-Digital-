@@ -77,10 +77,10 @@ export function HeroSection() {
               className="overflow-hidden"
             >
               <h1
-                className={`font-serif font-light leading-[0.92] tracking-tight ${
+                className={`font-display font-bold leading-[0.92] tracking-tight ${
                   i === 1
                     ? 'text-gold italic'
-                    : 'text-cream'
+                    : 'text-obsidian dark:text-cream'
                 }`}
                 style={{ fontSize: 'clamp(4.5rem, 10vw, 11rem)' }}
               >
@@ -106,7 +106,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col lg:flex-row gap-10 lg:gap-0 lg:items-start lg:justify-between mb-12"
         >
-          <p className="text-base lg:text-lg text-cream/55 max-w-sm leading-relaxed font-light font-sans">
+          <p className="text-base lg:text-lg text-obsidian/55 dark:text-cream/55 max-w-sm leading-relaxed font-light font-sans">
             NextWave creates premium websites, apps,&nbsp;AI automations, and
             business software for modern South African businesses.
           </p>
@@ -115,7 +115,7 @@ export function HeroSection() {
             {stats.map((s) => (
               <div key={s.label} className="text-left">
                 <div
-                  className="font-serif font-light text-gold leading-none mb-1"
+                  className="font-display font-semibold text-gold leading-none mb-1"
                   style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
                 >
                   {s.value}

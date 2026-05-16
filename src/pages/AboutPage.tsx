@@ -30,7 +30,7 @@ const values = [
 
 export function AboutPage() {
   return (
-    <div className="bg-obsidian text-cream min-h-screen">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO
         title="About — NextWave Digital Solutions"
         description="NextWave Digital Solutions is a premium digital studio based in Nelspruit, South Africa, crafting websites, software, and AI automation for ambitious businesses."
@@ -62,7 +62,7 @@ export function AboutPage() {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-            className="font-serif font-light text-cream leading-tight"
+            className="font-display font-semibold leading-tight"
             style={{ fontSize: 'clamp(4rem, 9vw, 10rem)' }}
           >
             NextWave
@@ -73,7 +73,7 @@ export function AboutPage() {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-            className="font-serif font-light italic text-gold leading-tight"
+            className="font-display font-bold italic text-gold leading-tight"
             style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
           >
             Digital Solutions.
@@ -104,7 +104,7 @@ export function AboutPage() {
             className="lg:col-span-7"
           >
             <blockquote
-              className="font-serif font-light italic text-cream/75 leading-snug"
+              className="font-display font-semibold italic leading-snug opacity-75"
               style={{ fontSize: 'clamp(1.6rem, 3vw, 2.8rem)' }}
             >
               &ldquo;We believe that great digital work is indistinguishable from great craft.&rdquo;
@@ -133,7 +133,7 @@ export function AboutPage() {
       </section>
 
       {/* Stats strip */}
-      <section className="bg-charcoal" style={{ paddingTop: 'clamp(4rem,8vw,6rem)', paddingBottom: 'clamp(4rem,8vw,6rem)' }}>
+      <section className="bg-[#F0F0EE] dark:bg-charcoal" style={{ paddingTop: 'clamp(4rem,8vw,6rem)', paddingBottom: 'clamp(4rem,8vw,6rem)' }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
             {stats.map((s, i) => (
@@ -145,7 +145,7 @@ export function AboutPage() {
                 transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div
-                  className="font-serif font-light text-gold leading-none mb-2"
+                  className="font-display font-semibold text-gold leading-none mb-2"
                   style={{ fontSize: 'clamp(3rem, 6vw, 6rem)' }}
                 >
                   {s.value}
@@ -171,7 +171,7 @@ export function AboutPage() {
         >
           <div className="section-label mb-3">Core Values</div>
           <h2
-            className="font-serif font-light text-cream leading-tight"
+            className="font-display font-semibold leading-tight"
             style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
           >
             What Drives Us
@@ -221,7 +221,7 @@ export function AboutPage() {
           className="mt-20 text-center"
         >
           <h2
-            className="font-serif font-light text-cream mb-10 leading-tight"
+            className="font-display font-semibold mb-10 leading-tight"
             style={{ fontSize: 'clamp(2rem, 4vw, 4rem)' }}
           >
             Ready to build something remarkable?

@@ -20,7 +20,7 @@ export default function FaqPage() {
   const toggle = (id: string) => setOpenId(openId === id ? null : id);
 
   return (
-    <div className="bg-obsidian text-cream min-h-screen">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO
         title="FAQ — NextWave Digital Solutions"
         description="Answers to frequently asked questions about NextWave's services, pricing, process, and projects."
@@ -35,7 +35,7 @@ export default function FaqPage() {
         >
           <div className="section-label mb-4">Need Answers?</div>
           <h1
-            className="font-serif font-light text-cream leading-tight"
+            className="font-display font-semibold leading-tight"
             style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
           >
             Frequently Asked

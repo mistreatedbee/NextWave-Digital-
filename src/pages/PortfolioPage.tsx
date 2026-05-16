@@ -21,7 +21,7 @@ export default function PortfolioPage() {
     : portfolioItems.filter((p) => p.category === selected);
 
   return (
-    <div className="bg-obsidian text-cream min-h-screen">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO
         title="Portfolio — NextWave Digital Solutions"
         description="Selected projects by NextWave Digital Solutions — websites, mobile apps, ecommerce stores, and AI systems for South African businesses."
@@ -36,7 +36,7 @@ export default function PortfolioPage() {
         >
           <div className="section-label mb-4">Our Work</div>
           <h1
-            className="font-serif font-light text-cream leading-tight"
+            className="font-display font-semibold leading-tight"
             style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
           >
             Selected Projects

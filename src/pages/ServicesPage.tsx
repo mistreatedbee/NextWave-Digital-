@@ -147,7 +147,7 @@ function PackagePanel({ pkg, isOpen, onToggle }: {
         {/* Name + badge */}
         <div className="flex-1 flex flex-wrap items-baseline gap-3 min-w-0">
           <h3
-            className="font-serif font-light text-cream leading-tight"
+            className="font-display font-semibold leading-tight"
             style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2.5rem)' }}
           >
             {pkg.name}
@@ -219,7 +219,7 @@ export function ServicesPage() {
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <div className="bg-obsidian text-cream min-h-screen">
+    <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO
         title="Services & Pricing — NextWave Digital Solutions"
         description="Transparent pricing for premium websites, ecommerce stores, and AI automation solutions for South African businesses."
@@ -234,7 +234,7 @@ export function ServicesPage() {
         >
           <div className="section-label mb-4">Transparent Pricing</div>
           <h1
-            className="font-serif font-light text-cream leading-tight mb-6"
+            className="font-display font-semibold leading-tight mb-6"
             style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
           >
             Our Packages
