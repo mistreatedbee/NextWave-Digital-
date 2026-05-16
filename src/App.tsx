@@ -8,6 +8,8 @@ import {
 import { AnimatePresence } from 'framer-motion';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
+import { FloatingActions } from './components/FloatingActions';
+import { CookieBanner } from './components/CookieBanner';
 import { HomePage } from './pages/HomePage';
 import { ServicesPage } from './pages/ServicesPage';
 import { SolutionsPage } from './pages/SolutionsPage';
@@ -19,6 +21,13 @@ import BlogListPage from './pages/BlogListPage';
 import BlogPostPage from './pages/BlogPostPage';
 import PortfolioPage from './pages/PortfolioPage';
 import FaqPage from './pages/FaqPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import PricingPage from './pages/PricingPage';
+import AiAutomationPage from './pages/AiAutomationPage';
+import WebsitesAppsPage from './pages/WebsitesAppsPage';
+import TaskSystemsPage from './pages/TaskSystemsPage';
+import NotFoundPage from './pages/NotFoundPage';
 import { AuthProvider } from './admin/auth/AuthContext';
 import { AdminLoginPage } from './admin/pages/AdminLoginPage';
 import { AdminLayout } from './admin/layouts/AdminLayout';
@@ -35,7 +44,7 @@ import { AdminProjectsPage } from './admin/pages/operations/AdminProjectsPage';
 import { AdminTasksPage } from './admin/pages/operations/AdminTasksPage';
 import { AdminSettingsPage } from './admin/pages/AdminSettingsPage';
 import { RequireAuth } from './admin/routes/RequireAuth';
-// Scroll to top on route change
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -43,16 +52,18 @@ function ScrollToTop() {
   }, [pathname]);
   return null;
 }
+
 export function App() {
   return (
     <Router>
       <AuthProvider>
         <ScrollToTop />
-        <div className="min-h-screen bg-background text-slate-300 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+        <div className="min-h-screen bg-obsidian text-cream font-sans selection:bg-gold/20 selection:text-cream">
           <Navigation />
           <main className="flex-grow">
             <AnimatePresence mode="wait">
               <Routes>
+                {/* Public pages */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/services" element={<ServicesPage />} />
                 <Route path="/solutions" element={<SolutionsPage />} />
@@ -64,7 +75,15 @@ export function App() {
                 <Route path="/blog/:slug" element={<BlogPostPage />} />
                 <Route path="/portfolio" element={<PortfolioPage />} />
                 <Route path="/faq" element={<FaqPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/ai-automation" element={<AiAutomationPage />} />
+                <Route path="/websites-apps" element={<WebsitesAppsPage />} />
+                <Route path="/task-systems" element={<TaskSystemsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="*" element={<NotFoundPage />} />
 
+                {/* Admin */}
                 <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route
                   path="/admin"
@@ -91,6 +110,8 @@ export function App() {
             </AnimatePresence>
           </main>
           <Footer />
+          <FloatingActions />
+          <CookieBanner />
         </div>
       </AuthProvider>
     </Router>

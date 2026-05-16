@@ -1,113 +1,248 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Target, Lightbulb } from 'lucide-react';
-import { Button } from '../components/ui/Button';
-import { GlassCard } from '../components/ui/GlassCard';
+import { SEO } from '../components/SEO';
+
+const stats = [
+  { value: '11+',  label: 'Projects Delivered' },
+  { value: '5yr',  label: 'Years of Excellence' },
+  { value: '100%', label: 'Client Satisfaction' },
+  { value: '24/7', label: 'Dedicated Support' },
+];
+
+const values = [
+  {
+    n: '01',
+    name: 'Innovation',
+    desc: 'We stay ahead of the curve — exploring new tools, techniques, and technologies to deliver solutions that give our clients a competitive edge.',
+  },
+  {
+    n: '02',
+    name: 'Quality',
+    desc: "We refuse to ship anything we wouldn't be proud to show the world. Every pixel, every line of code is crafted with precision and intent.",
+  },
+  {
+    n: '03',
+    name: 'Partnership',
+    desc: 'We build long-term relationships, not one-off projects. Your success is our success — we stay invested long after launch.',
+  },
+];
+
 export function AboutPage() {
   return (
-    <div className="min-h-screen pt-20 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Hero */}
-        <div className="text-center mb-20">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            About <span className="text-gradient">NextWave Digital</span>
-          </h1>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-            We are a next-generation digital solutions studio focused on
-            building scalable systems, custom platforms, and intelligent
-            automation.
-          </p>
+    <div className="bg-obsidian text-cream min-h-screen">
+      <SEO
+        title="About — NextWave Digital Solutions"
+        description="NextWave Digital Solutions is a premium digital studio based in Nelspruit, South Africa, crafting websites, software, and AI automation for ambitious businesses."
+      />
+
+      {/* Hero */}
+      <section className="pt-40 pb-0 max-w-7xl mx-auto px-6 lg:px-10 relative">
+        {/* Est. tag */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="absolute top-40 right-6 lg:right-10 section-label text-cream/20"
+        >
+          Est. 2019 &mdash; Nelspruit, SA
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-4"
+        >
+          <div className="section-label mb-4">Who We Are</div>
+        </motion.div>
+
+        <div className="overflow-hidden">
+          <motion.h1
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            className="font-serif font-light text-cream leading-tight"
+            style={{ fontSize: 'clamp(4rem, 9vw, 10rem)' }}
+          >
+            NextWave
+          </motion.h1>
+        </div>
+        <div className="overflow-hidden">
+          <motion.h1
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.1, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="font-serif font-light italic text-gold leading-tight"
+            style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
+          >
+            Digital Solutions.
+          </motion.h1>
         </div>
 
-        {/* Story Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
-          <div>
-            <h2 className="text-3xl font-bold text-white mb-6">Who We Are</h2>
-            <div className="space-y-4 text-slate-400 leading-relaxed">
-              <p>
-                NextWave Digital is not just another web design agency. We are a
-                technology partner for businesses that want to grow, automate,
-                and lead in their industries.
-              </p>
-              <p>
-                Founded with a vision to bring enterprise-grade technology to
-                African businesses, we specialize in solving complex problems
-                through code. We don't believe in cookie-cutter templates or
-                one-size-fits-all solutions.
-              </p>
-              <p>
-                Our team consists of expert developers, designers, and system
-                architects who are passionate about building digital assets that
-                deliver real ROI.
-              </p>
-            </div>
-            <div className="mt-8">
-              <Link to="/contact">
-                <Button>Work With Us</Button>
-              </Link>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-2xl blur-xl opacity-20"></div>
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
-                alt="Team working together"
-                className="w-full h-auto opacity-80 hover:opacity-100 transition-opacity duration-500" />
+        {/* Ruled line */}
+        <motion.div
+          className="h-px bg-gold/15 mt-12 origin-left"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        />
+      </section>
 
-            </div>
-          </div>
-        </div>
+      {/* Story section */}
+      <section
+        className="max-w-7xl mx-auto px-6 lg:px-10"
+        style={{ paddingTop: 'var(--section-pad)', paddingBottom: 'var(--section-pad)' }}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+          {/* Large quote */}
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-7"
+          >
+            <blockquote
+              className="font-serif font-light italic text-cream/75 leading-snug"
+              style={{ fontSize: 'clamp(1.6rem, 3vw, 2.8rem)' }}
+            >
+              &ldquo;We believe that great digital work is indistinguishable from great craft.&rdquo;
+            </blockquote>
+          </motion.div>
 
-        {/* Vision & Mission */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
-          <GlassCard className="p-8 border-cyan-500/30">
-            <div className="p-3 bg-cyan-500/10 rounded-lg w-fit mb-6">
-              <Target className="w-8 h-8 text-cyan-400" />
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Our Mission</h3>
-            <p className="text-slate-400">
-              To empower businesses with custom digital tools that replace
-              manual processes, improve productivity, and enable scalable
-              growth.
+          {/* Story text */}
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-5 space-y-5"
+          >
+            <p className="font-sans text-[15px] text-cream/55 leading-relaxed">
+              Founded in Nelspruit, Mpumalanga, NextWave Digital Solutions was built on a simple conviction: that businesses in South Africa deserve world-class digital experiences.
             </p>
-          </GlassCard>
-
-          <GlassCard className="p-8 border-violet-500/30">
-            <div className="p-3 bg-violet-500/10 rounded-lg w-fit mb-6">
-              <Lightbulb className="w-8 h-8 text-violet-400" />
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Our Vision</h3>
-            <p className="text-slate-400">
-              To be the leading digital solutions provider in Africa, known for
-              building world-class software that solves real-world problems.
+            <p className="font-sans text-[15px] text-cream/55 leading-relaxed">
+              For five years, we've partnered with clients across South Africa and beyond — from startups finding their feet to established enterprises navigating digital transformation. Every project is an opportunity to create something that truly matters.
             </p>
-          </GlassCard>
+            <p className="font-sans text-[15px] text-cream/55 leading-relaxed">
+              We are not a factory. We don't churn out templates. We build bespoke digital assets engineered to perform, endure, and grow with your business.
+            </p>
+          </motion.div>
         </div>
+      </section>
 
-        {/* Values */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-12">
-            Our Core Values
+      {/* Stats strip */}
+      <section className="bg-charcoal" style={{ paddingTop: 'clamp(4rem,8vw,6rem)', paddingBottom: 'clamp(4rem,8vw,6rem)' }}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
+            {stats.map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div
+                  className="font-serif font-light text-gold leading-none mb-2"
+                  style={{ fontSize: 'clamp(3rem, 6vw, 6rem)' }}
+                >
+                  {s.value}
+                </div>
+                <div className="section-label">{s.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section
+        className="max-w-7xl mx-auto px-6 lg:px-10"
+        style={{ paddingTop: 'var(--section-pad)', paddingBottom: 'var(--section-pad)' }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-16 max-w-4xl"
+        >
+          <div className="section-label mb-3">Core Values</div>
+          <h2
+            className="font-serif font-light text-cream leading-tight"
+            style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
+          >
+            What Drives Us
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-            'Innovation First',
-            'Quality Over Quantity',
-            'Transparent Process',
-            'Long-term Partnership'].
-            map((value, i) =>
-            <div
-              key={i}
-              className="p-6 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center">
+        </motion.div>
 
-                <CheckCircle2 className="w-8 h-8 text-cyan-500 mb-4" />
-                <h4 className="text-lg font-bold text-white">{value}</h4>
+        <div className="max-w-4xl">
+          {values.map((v, i) => (
+            <motion.div
+              key={v.n}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.8, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="ruled-line" />
+              <div className="flex items-start gap-8 lg:gap-16 py-8 lg:py-10">
+                <span
+                  className="font-serif font-light text-cream/8 leading-none shrink-0 w-12 hidden sm:block"
+                  style={{ fontSize: '4rem' }}
+                >
+                  {v.n}
+                </span>
+                <div className="flex-1 flex flex-col sm:flex-row sm:items-baseline gap-4 lg:gap-12">
+                  <h3
+                    className="font-serif font-light text-cream shrink-0"
+                    style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2.2rem)' }}
+                  >
+                    {v.name}
+                  </h3>
+                  <p className="font-sans text-[14px] text-cream/45 leading-relaxed">
+                    {v.desc}
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
+            </motion.div>
+          ))}
+          <div className="ruled-line" />
         </div>
-      </div>
-    </div>);
 
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-20 text-center"
+        >
+          <h2
+            className="font-serif font-light text-cream mb-10 leading-tight"
+            style={{ fontSize: 'clamp(2rem, 4vw, 4rem)' }}
+          >
+            Ready to build something remarkable?
+          </h2>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
+            <Link
+              to="/contact"
+              className="group flex items-center gap-3 font-sans text-[11px] tracking-[0.28em] uppercase text-gold hover:text-cream transition-colors duration-400"
+            >
+              Start a Project
+              <span className="block h-px w-6 bg-current transition-all duration-400 group-hover:w-10" />
+            </Link>
+            <Link
+              to="/portfolio"
+              className="font-sans text-[11px] tracking-[0.28em] uppercase text-cream/40 hover:text-cream transition-colors duration-400"
+            >
+              See Our Work
+            </Link>
+          </div>
+        </motion.div>
+      </section>
+    </div>
+  );
 }

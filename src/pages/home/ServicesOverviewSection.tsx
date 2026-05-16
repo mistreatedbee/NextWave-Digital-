@@ -1,133 +1,131 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Sparkles, ArrowRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
-interface ServiceCardData {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  color: 'teal' | 'blue' | 'indigo' | 'violet' | 'emerald' | 'cyan';
-}
+const services = [
+  {
+    n: '01',
+    name: 'Starter Website',
+    desc: 'A polished 5-page website to establish your online presence.',
+    price: 'From R2,000',
+  },
+  {
+    n: '02',
+    name: 'Professional Website',
+    desc: 'Up to 10 pages with enhanced SEO, logo design, and Google optimisation.',
+    price: 'From R3,500',
+  },
+  {
+    n: '03',
+    name: 'Premium Website',
+    desc: 'Unlimited pages, ecommerce integration, and 12-month hosting included.',
+    price: 'From R5,500',
+  },
+  {
+    n: '04',
+    name: 'Landing Page',
+    desc: 'High-converting single page with chatbot, booking, and contact form.',
+    price: 'R750 Special',
+  },
+  {
+    n: '05',
+    name: 'Ecommerce Store',
+    desc: 'Unlimited products, payment gateway, and full admin dashboard.',
+    price: 'From R4,000',
+  },
+  {
+    n: '06',
+    name: 'AI Automation Suite',
+    desc: 'Chatbots, CRM, email automation, sales funnels, and workflow systems.',
+    price: 'From R7,499',
+  },
+];
 
-interface ServicesOverviewSectionProps {
-  services: ServiceCardData[];
-}
-
-export function ServicesOverviewSection({ services }: ServicesOverviewSectionProps) {
+export function ServicesOverviewSection() {
   return (
-    <section className="py-28 relative">
+    <section
+      className="relative"
+      style={{ paddingTop: 'var(--section-pad)', paddingBottom: 'var(--section-pad)' }}
+    >
       <div
-        className="absolute right-0 top-1/2 w-[500px] h-[500px] rounded-full blur-[100px] -translate-y-1/2"
-        style={{ background: 'rgba(59,130,246,0.05)' }}
+        className="absolute left-0 top-1/3 w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(200,164,90,0.03) 0%, transparent 65%)',
+          filter: 'blur(80px)',
+        }}
       />
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
-        <div className="mb-16">
-          <div className="section-tag">
-            <Sparkles className="w-3 h-3" /> Our Capabilities
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-white leading-tight">
-              Solutions That
-              <br />
-              <span className="text-gradient-primary">Drive Real Results</span>
-            </h2>
-            <Link to="/services">
-              <button className="group flex items-center gap-2 text-sm text-slate-400 hover:text-teal-400 transition-colors font-medium">
-                All services
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </Link>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {services.map((s, index) => (
-            <ServiceCard key={s.title} {...s} delay={index * 0.07} />
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-16"
+        >
+          <div>
+            <div className="section-label mb-3">What We Do</div>
+            <h2
+              className="font-serif font-light text-cream leading-tight"
+              style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
+            >
+              Our Services
+            </h2>
+          </div>
+          <Link
+            to="/services"
+            className="group flex items-center gap-3 font-sans text-[10px] tracking-[0.28em] uppercase text-gold/70 hover:text-gold transition-colors duration-500 shrink-0"
+          >
+            View All Packages
+            <span className="block h-px w-6 bg-current transition-all duration-500 group-hover:w-10" />
+          </Link>
+        </motion.div>
+
+        <div>
+          {services.map((service, i) => (
+            <motion.div
+              key={service.n}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.8, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="ruled-line" />
+              <motion.div
+                className="flex items-start gap-6 lg:gap-16 py-8 lg:py-10 cursor-default -mx-6 lg:-mx-10 px-6 lg:px-10"
+                whileHover={{ backgroundColor: 'rgba(200,164,90,0.025)' }}
+                transition={{ duration: 0.3 }}
+              >
+                <span
+                  className="font-serif font-light text-cream/8 leading-none shrink-0 w-16 select-none hidden sm:block"
+                  style={{ fontSize: 'clamp(3rem, 6vw, 6rem)' }}
+                >
+                  {service.n}
+                </span>
+
+                <motion.h3
+                  className="font-serif font-light text-cream flex-1 leading-tight"
+                  style={{ fontSize: 'clamp(1.5rem, 3vw, 2.8rem)' }}
+                  whileHover={{ x: 6 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {service.name}
+                </motion.h3>
+
+                <div className="shrink-0 text-right w-40 lg:w-56 hidden md:block">
+                  <p className="font-sans text-[13px] text-cream/45 leading-relaxed mb-2">
+                    {service.desc}
+                  </p>
+                  <span className="font-sans text-[11px] tracking-[0.18em] uppercase text-gold">
+                    {service.price}
+                  </span>
+                </div>
+              </motion.div>
+            </motion.div>
           ))}
+          <div className="ruled-line" />
         </div>
       </div>
     </section>
   );
 }
-
-function ServiceCard({
-  icon,
-  title,
-  desc,
-  color,
-  delay,
-}: ServiceCardData & { delay: number }) {
-  const [hovered, setHovered] = React.useState(false);
-
-  const colorStyles = {
-    teal: { badge: 'text-teal-400 bg-teal-400/10 border-teal-400/25' },
-    blue: { badge: 'text-blue-400 bg-blue-400/10 border-blue-400/25' },
-    indigo: { badge: 'text-indigo-400 bg-indigo-400/10 border-indigo-400/25' },
-    emerald: { badge: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/25' },
-    violet: { badge: 'text-violet-400 bg-violet-400/10 border-violet-400/25' },
-    cyan: { badge: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/25' },
-  } as const;
-
-  const c = colorStyles[color] || colorStyles.teal;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.75, delay }}
-    >
-      <motion.div
-        onHoverStart={() => setHovered(true)}
-        onHoverEnd={() => setHovered(false)}
-        animate={
-          hovered
-            ? { y: -6, boxShadow: '0 24px 64px rgba(0,0,0,0.35)' }
-            : { y: 0, boxShadow: '0 0 0 rgba(0,0,0,0)' }
-        }
-        transition={{ duration: 0.3 }}
-        className="rounded-2xl p-6 cursor-default h-full"
-        style={{
-          background:
-            'linear-gradient(135deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.018) 100%)',
-          border: '1px solid rgba(255,255,255,0.07)',
-          backdropFilter: 'blur(16px)',
-        }}
-      >
-        <motion.div
-          animate={hovered ? { scale: 1.1 } : { scale: 1 }}
-          transition={{ duration: 0.25 }}
-          className={`inline-flex p-3 rounded-xl border mb-4 ${c.badge}`}
-        >
-          {icon}
-        </motion.div>
-        <h3 className="font-display text-base font-bold text-white mb-2">{title}</h3>
-        <AnimatePresence>
-          {hovered ? (
-            <motion.p
-              key="desc"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              className="text-sm text-slate-300 leading-relaxed overflow-hidden"
-            >
-              {desc}
-            </motion.p>
-          ) : (
-            <motion.p
-              key="short"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-sm text-slate-500 leading-relaxed"
-            >
-              {desc.slice(0, 55)}…
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </motion.div>
-  );
-}
-

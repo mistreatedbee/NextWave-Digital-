@@ -1,205 +1,218 @@
-import React, { useState } from 'react';
-import { Tabs } from '../components/ui/Tabs';
-import { specialOffers } from '../data/offers';
-import { GlassCard } from '../components/ui/GlassCard';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 
-type Tier = 'starter' | 'business' | 'enterprise';
-
-interface PricingPlan {
-  id: Tier;
-  name: string;
-  price: string;
-  description: string;
-  features: string[];
-  highlighted?: boolean;
-}
-
-const CATEGORIES = ['websites', 'apps', 'ai', 'tasks'] as const;
-type Category = (typeof CATEGORIES)[number];
-
-const CATEGORY_LABEL: Record<Category, string> = {
-  websites: 'Websites',
-  apps: 'Apps',
-  ai: 'AI',
-  tasks: 'Task Systems',
-};
-
-const PLANS: Record<Category, PricingPlan[]> = {
-  websites: [
-    {
-      id: 'starter',
-      name: 'Starter Site',
-      price: 'From R9,500',
-      description: 'Brochure-style website ideal for new businesses and campaigns.',
-      features: ['Up to 5 pages', 'Mobile responsive', 'Contact forms', 'Basic analytics'],
-    },
-    {
-      id: 'business',
-      name: 'Business Website',
-      price: 'From R18,500',
-      description: 'A more advanced marketing site with extra sections and integrations.',
-      features: ['Up to 10 pages', 'Blog & resources', 'Lead capture forms', 'On-page SEO setup'],
-      highlighted: true,
-    },
-    {
-      id: 'enterprise',
-      name: 'Enterprise Web Presence',
-      price: 'From R35,000',
-      description: 'For organisations needing multiple sections, portals, or custom layouts.',
-      features: ['Unlimited pages', 'Multi-language support', 'Custom components', 'Performance optimisation'],
-    },
-  ],
-  apps: [
-    {
-      id: 'starter',
-      name: 'MVP App',
-      price: 'From R45,000',
-      description: 'Validate your idea with a focused, high-quality MVP.',
-      features: ['Core feature set', 'Modern UI', 'Basic auth', 'Analytics events'],
-    },
-    {
-      id: 'business',
-      name: 'Growth App',
-      price: 'From R80,000',
-      description: 'A scalable app with additional flows and integrations.',
-      features: ['Role-based access', '3rd-party integrations', 'Error monitoring', 'Staging environment'],
-      highlighted: true,
-    },
-    {
-      id: 'enterprise',
-      name: 'Enterprise Platform',
-      price: 'Custom',
-      description: 'Complex, multi-module platforms with strict SLAs.',
-      features: ['Custom architecture', 'Security review', 'SLAs & support', 'Dedicated team'],
-    },
-  ],
-  ai: [
-    {
-      id: 'starter',
-      name: 'AI Pilot',
-      price: 'From R25,000',
-      description: 'One focused AI workflow or chatbot to prove value quickly.',
-      features: ['Discovery workshop', 'One automation or bot', 'Iteration round', 'Handover session'],
-    },
-    {
-      id: 'business',
-      name: 'Automation Suite',
-      price: 'From R55,000',
-      description: 'Multiple automations or agents across your operations.',
-      features: ['Up to 3 workflows', 'Monitoring dashboard', 'Prompt & model tuning', 'Training for your team'],
-      highlighted: true,
-    },
-    {
-      id: 'enterprise',
-      name: 'AI Transformation',
-      price: 'Custom',
-      description: 'Strategic AI roadmap and implementation at scale.',
-      features: ['Roadmap & architecture', 'Multiple pilots', 'Governance & security', 'Ongoing optimisation'],
-    },
-  ],
-  tasks: [
-    {
-      id: 'starter',
-      name: 'Team Tracker',
-      price: 'From R30,000',
-      description: 'Simple task and worker tracking for smaller teams.',
-      features: ['Task boards', 'Basic reporting', 'Email notifications', 'Permissions'],
-    },
-    {
-      id: 'business',
-      name: 'Ops Control',
-      price: 'From R60,000',
-      description: 'Robust task & workforce system for operations teams.',
-      features: ['Advanced workflows', 'Shift scheduling', 'Custom reports', 'API access'],
-      highlighted: true,
-    },
-    {
-      id: 'enterprise',
-      name: 'Operations Suite',
-      price: 'Custom',
-      description: 'End-to-end operations platform tailored to your processes.',
-      features: ['Multi-location support', 'SLAs & escalations', 'Integrations', 'Dedicated success manager'],
-    },
-  ],
-};
+const packages = [
+  {
+    n: '01',
+    name: 'Starter Website',
+    price: 'R2,000',
+    highlight: false,
+    features: [
+      'Free .co.za domain',
+      '1 month free hosting',
+      'Basic SEO setup',
+      'Mobile responsive',
+      'Up to 5 pages',
+      'Contact form',
+      'Social media integration',
+    ],
+  },
+  {
+    n: '02',
+    name: 'Professional Website',
+    price: 'R3,500',
+    highlight: false,
+    features: [
+      'Free .co.za domain',
+      '3 months free hosting',
+      'Enhanced SEO',
+      'Custom logo design',
+      'Google Business optimisation',
+      'Mobile responsive',
+      'Up to 10 pages',
+    ],
+  },
+  {
+    n: '03',
+    name: 'Premium Website',
+    price: 'R5,500',
+    highlight: true,
+    features: [
+      'Free .co.za domain',
+      '12 months free hosting',
+      'Ecommerce integration',
+      'Monthly maintenance',
+      'Premium bespoke design',
+      'Unlimited pages',
+      'Advanced SEO',
+      'Priority support',
+    ],
+  },
+  {
+    n: '04',
+    name: 'Landing Page',
+    price: 'R750',
+    highlight: false,
+    note: 'Special — Normally R1,500',
+    features: [
+      'Modern luxury landing page',
+      'Mobile friendly',
+      'Gallery section',
+      'AI chatbot integration',
+      'Appointment booking',
+      'Contact form',
+      'SEO optimised',
+    ],
+  },
+  {
+    n: '05',
+    name: 'Ecommerce Store',
+    price: 'R4,000',
+    highlight: false,
+    features: [
+      'Unlimited products',
+      'Payment gateway setup',
+      'Training included',
+      'Hosting & domain',
+      'Mobile friendly',
+      'Secure checkout',
+      'Admin dashboard',
+    ],
+  },
+  {
+    n: '06',
+    name: 'AI Automation Suite',
+    price: 'R7,499',
+    highlight: false,
+    features: [
+      'AI chatbots',
+      'CRM automation',
+      'Email & social automation',
+      'Lead capture systems',
+      'Sales funnel automation',
+      'Appointment automation',
+      'Workflow & reporting automation',
+    ],
+  },
+];
 
 export default function PricingPage() {
-  const [activeCategory, setActiveCategory] = useState<Category>('websites');
-
-  const tabs = CATEGORIES.map((id) => ({ id, label: CATEGORY_LABEL[id] }));
-  const plans = PLANS[activeCategory];
-
   return (
-    <div className="min-h-screen pt-24 pb-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-3">
-            Pricing & Packages
-          </h1>
-          <p className="text-slate-400 max-w-2xl mx-auto">
-            Transparent starting points for typical projects. We&apos;ll refine a proposal around
-            your exact requirements.
-          </p>
-          <div className="mt-6">
-            <Tabs tabs={tabs} activeId={activeCategory} onChange={(id) => setActiveCategory(id as Category)} />
-          </div>
-        </div>
+    <div className="bg-obsidian text-cream min-h-screen">
+      <SEO
+        title="Pricing — NextWave Digital Solutions"
+        description="Clear, honest pricing for every NextWave Digital Solutions service package."
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {plans.map((plan) => (
-            <GlassCard
-              key={plan.id}
-              hoverEffect
-              className={plan.highlighted ? 'border-teal-500/40 bg-slate-900/60' : ''}
+      {/* Hero */}
+      <section className="pt-40 pb-16 max-w-7xl mx-auto px-6 lg:px-10">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="section-label mb-4">Clear &amp; Honest</div>
+          <h1
+            className="font-serif font-light text-cream leading-tight mb-6"
+            style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
+          >
+            Pricing
+          </h1>
+          <p className="font-sans text-[14px] text-cream/45 max-w-lg leading-relaxed">
+            No hidden fees. No surprises. Six packages engineered to deliver real value for every budget.
+          </p>
+        </motion.div>
+      </section>
+
+      {/* Pricing grid */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 pb-32">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {packages.map((pkg, i) => (
+            <motion.div
+              key={pkg.n}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.8, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+              className={`relative p-8 border transition-colors duration-400 ${
+                pkg.highlight
+                  ? 'border-gold/40 bg-charcoal'
+                  : 'border-cream/8 bg-charcoal hover:border-cream/16'
+              }`}
             >
-              <div className="flex flex-col h-full">
-                <div className="mb-3">
-                  <h2 className="text-lg font-bold text-white">{plan.name}</h2>
-                  <p className="text-sm text-slate-400">{plan.description}</p>
-                </div>
-                <div className="mb-4">
-                  <p className="text-xl font-semibold text-teal-400">{plan.price}</p>
-                  {plan.highlighted && (
-                    <p className="inline-flex mt-1 rounded-full bg-teal-500/10 px-2 py-0.5 text-[11px] font-semibold text-teal-300">
-                      Most Popular
-                    </p>
-                  )}
-                </div>
-                <ul className="space-y-2 text-sm text-slate-300 mb-6 flex-1">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-teal-400" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link to="/quote" className="mt-auto">
-                  <button className="w-full rounded-xl bg-teal-500 hover:bg-teal-400 text-white font-semibold py-2.5 text-sm transition-colors">
-                    Request a Detailed Quote
-                  </button>
-                </Link>
+              {pkg.highlight && (
+                <div className="absolute top-0 left-0 right-0 h-px bg-gold/60" />
+              )}
+
+              {/* Number */}
+              <span className="section-label text-cream/20 block mb-6">{pkg.n}</span>
+
+              {/* Name */}
+              <h2
+                className="font-serif font-light text-cream leading-tight mb-1"
+                style={{ fontSize: 'clamp(1.4rem, 2vw, 2rem)' }}
+              >
+                {pkg.name}
+              </h2>
+
+              {/* Note */}
+              {pkg.note && (
+                <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-gold/60 mb-3">
+                  {pkg.note}
+                </p>
+              )}
+
+              {/* Price */}
+              <div
+                className={`font-serif font-light mt-4 mb-8 leading-none ${
+                  pkg.highlight ? 'text-gold' : 'text-cream'
+                }`}
+                style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}
+              >
+                {pkg.price}
               </div>
-            </GlassCard>
+
+              {/* Ruled line */}
+              <div className="h-px bg-cream/8 mb-6" />
+
+              {/* Features */}
+              <ul className="space-y-2.5 mb-8">
+                {pkg.features.map((f) => (
+                  <li key={f} className="flex items-start gap-3">
+                    <span className="w-1 h-1 rounded-full bg-gold mt-2 shrink-0" />
+                    <span className="font-sans text-[12px] text-cream/45 leading-relaxed">{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA */}
+              <Link
+                to="/quote"
+                className="group inline-flex items-center gap-3 font-sans text-[10px] tracking-[0.25em] uppercase text-gold/70 hover:text-gold transition-colors duration-400"
+              >
+                Get a Quote
+                <span className="block h-px w-4 bg-current transition-all duration-400 group-hover:w-8" />
+              </Link>
+            </motion.div>
           ))}
         </div>
 
-        <div className="border-t border-white/5 pt-10">
-          <h2 className="text-xl font-bold text-white mb-4">Current Specials</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {specialOffers.map((offer) => (
-              <GlassCard key={offer.id} hoverEffect>
-                <p className="text-xs font-semibold tracking-[0.18em] uppercase text-teal-400 mb-1">
-                  {offer.badge}
-                </p>
-                <h3 className="text-base font-bold text-white mb-2">{offer.title}</h3>
-                <p className="text-sm text-slate-300">{offer.description}</p>
-              </GlassCard>
-            ))}
-          </div>
+        {/* Bottom CTA */}
+        <div className="mt-20 text-center">
+          <p className="font-sans text-[13px] text-cream/35 mb-4">
+            Need a custom solution or have questions about pricing?
+          </p>
+          <Link
+            to="/contact"
+            className="group inline-flex items-center gap-3 font-sans text-[11px] tracking-[0.28em] uppercase text-gold hover:text-cream transition-colors duration-400"
+          >
+            Let&apos;s Talk
+            <span className="block h-px w-6 bg-current transition-all duration-400 group-hover:w-10" />
+          </Link>
         </div>
       </div>
     </div>
   );
 }
-

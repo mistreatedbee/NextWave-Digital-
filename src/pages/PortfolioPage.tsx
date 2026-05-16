@@ -1,88 +1,171 @@
 import React, { useState } from 'react';
-import { portfolioItems, PortfolioCategory, PortfolioItem } from '../data/portfolio';
-import { GlassCard } from '../components/ui/GlassCard';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { portfolioItems, PortfolioCategory } from '../data/portfolio';
 import { LightboxModal } from '../components/LightboxModal';
+import { SEO } from '../components/SEO';
 
 const CATEGORIES: (PortfolioCategory | 'All')[] = [
   'All',
   'Websites',
   'Mobile Apps',
-  'AI Systems',
-  'Task Management',
   'E-commerce',
 ];
 
 export default function PortfolioPage() {
-  const [selectedCategory, setSelectedCategory] = useState<(typeof CATEGORIES)[number]>('All');
-  const [activeItem, setActiveItem] = useState<PortfolioItem | null>(null);
+  const [selected, setSelected] = useState<(PortfolioCategory | 'All')>('All');
+  const [lightbox, setLightbox] = useState<typeof portfolioItems[0] | null>(null);
 
-  const filtered =
-    selectedCategory === 'All'
-      ? portfolioItems
-      : portfolioItems.filter((item) => item.category === selectedCategory);
+  const filtered = selected === 'All'
+    ? portfolioItems
+    : portfolioItems.filter((p) => p.category === selected);
 
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-3">
-            Portfolio & Case Studies
+    <div className="bg-obsidian text-cream min-h-screen">
+      <SEO
+        title="Portfolio — NextWave Digital Solutions"
+        description="Selected projects by NextWave Digital Solutions — websites, mobile apps, ecommerce stores, and AI systems for South African businesses."
+      />
+
+      {/* Hero */}
+      <section className="pt-40 pb-16 max-w-7xl mx-auto px-6 lg:px-10">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="section-label mb-4">Our Work</div>
+          <h1
+            className="font-serif font-light text-cream leading-tight"
+            style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
+          >
+            Selected Projects
           </h1>
-          <p className="text-slate-400 max-w-2xl">
-            A selection of platforms, systems, and digital products we&apos;ve delivered for
-            clients across industries.
-          </p>
-        </div>
+        </motion.div>
+      </section>
 
-        <div className="flex flex-wrap gap-3 mb-10">
-          {CATEGORIES.map((cat) => {
-            const isActive = selectedCategory === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm border transition-colors ${
-                  isActive
-                    ? 'bg-teal-500 text-white border-teal-400'
-                    : 'bg-slate-900/40 text-slate-300 border-white/10 hover:border-teal-400/60 hover:text-teal-300'
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((item) => (
-            <GlassCard
-              key={item.id}
-              hoverEffect
-              onClick={() => setActiveItem(item)}
-              className="flex flex-col h-full"
+      {/* Filter tabs */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <motion.div
+          className="flex gap-8 border-b border-cream/8 mb-16"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+        >
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelected(cat)}
+              className={`relative font-sans text-[10px] tracking-[0.22em] uppercase pb-4 transition-colors duration-400 ${
+                selected === cat ? 'text-cream' : 'text-cream/35 hover:text-cream/70'
+              }`}
             >
-              <div className="mb-3 text-xs font-semibold tracking-[0.18em] uppercase text-teal-400">
-                {item.category}
-              </div>
-              <h2 className="font-display text-lg font-bold text-white mb-2">{item.title}</h2>
-              <p className="text-sm text-slate-400 mb-3 flex-1">{item.shortDescription}</p>
-              <p className="text-[11px] text-slate-500 uppercase tracking-[0.16em]">
-                {item.technologies.join(' • ')}
-              </p>
-            </GlassCard>
+              {cat}
+              {selected === cat && (
+                <motion.span
+                  layoutId="portfolio-tab"
+                  className="absolute bottom-0 left-0 right-0 h-px bg-gold"
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                />
+              )}
+            </button>
           ))}
+        </motion.div>
+
+        {/* Masonry grid */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selected}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="columns-1 md:columns-2 gap-4"
+          >
+            {filtered.map((item, i) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.8, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                className="break-inside-avoid mb-4 relative overflow-hidden group cursor-pointer bg-charcoal-light"
+                style={{ aspectRatio: i % 3 === 0 ? '4/3' : i % 3 === 1 ? '3/4' : '16/9' }}
+                onClick={() => setLightbox(item)}
+              >
+                {/* Image */}
+                <motion.img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+
+                {/* Diagonal pattern fallback */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: `repeating-linear-gradient(45deg, rgba(200,164,90,0.04) 0px, rgba(200,164,90,0.04) 1px, transparent 1px, transparent 14px)`,
+                  }}
+                />
+
+                {/* Overlay */}
+                <motion.div
+                  className="absolute inset-0"
+                  style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.1) 60%, transparent 100%)' }}
+                  whileHover={{ opacity: 1.3 }}
+                />
+
+                {/* Info */}
+                <div className="absolute bottom-0 left-0 p-6">
+                  <div className="section-label text-cream/40 mb-1">{item.category}</div>
+                  <h3 className="font-sans text-base font-medium text-cream leading-tight">
+                    {item.title}
+                  </h3>
+                  <p className="font-sans text-[12px] text-cream/35 mt-1 line-clamp-2 max-w-[240px]">
+                    {item.shortDescription}
+                  </p>
+                  <motion.p
+                    className="font-sans text-[10px] tracking-[0.22em] uppercase text-gold mt-3"
+                    initial={{ opacity: 0, y: 6 }}
+                    whileInView={{ opacity: 0 }}
+                    whileHover={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    View Project →
+                  </motion.p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* CTA */}
+        <div className="text-center py-24">
+          <p className="font-sans text-[13px] text-cream/35 mb-4">Have a project in mind?</p>
+          <Link
+            to="/contact"
+            className="group inline-flex items-center gap-3 font-sans text-[11px] tracking-[0.28em] uppercase text-gold hover:text-cream transition-colors duration-400"
+          >
+            Let&apos;s Build Together
+            <span className="block h-px w-6 bg-current transition-all duration-400 group-hover:w-10" />
+          </Link>
         </div>
       </div>
 
-      <LightboxModal
-        isOpen={!!activeItem}
-        onClose={() => setActiveItem(null)}
-        title={activeItem?.title ?? ''}
-        category={activeItem?.category}
-        description={activeItem?.longDescription ?? activeItem?.shortDescription}
-        technologies={activeItem?.technologies}
-      />
+      {/* Lightbox */}
+      {lightbox && (
+        <LightboxModal
+          isOpen={!!lightbox}
+          onClose={() => setLightbox(null)}
+          title={lightbox.title}
+          category={lightbox.category}
+          description={lightbox.longDescription || lightbox.shortDescription}
+          technologies={lightbox.technologies}
+        />
+      )}
     </div>
   );
 }
-

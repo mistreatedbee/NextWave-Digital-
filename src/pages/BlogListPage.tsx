@@ -1,134 +1,149 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useBlogList } from '../hooks/usePublicContent';
-import { BrandLogo } from '../components/BrandLogo';
+import { SEO } from '../components/SEO';
 
 export default function BlogListPage() {
   const { data: blogPosts } = useBlogList();
-  const [query, setQuery] = useState('');
+  const [query,    setQuery]    = useState('');
   const [category, setCategory] = useState<string>('All');
 
   const categories = useMemo(
-    () => ['All', ...Array.from(new Set(blogPosts.map((p) => (p as { category?: string }).category || 'Blog').filter(Boolean)))],
+    () => ['All', ...Array.from(new Set(
+      blogPosts.map((p) => (p as { category?: string }).category || 'Blog').filter(Boolean)
+    ))],
     [blogPosts],
   );
 
   const filtered = blogPosts.filter((post) => {
-    const p = post as { category?: string };
+    const p = post as { category?: string; title?: string; excerpt?: string };
     const matchesCategory = category === 'All' || (p.category || 'Blog') === category;
+    const q = query.trim().toLowerCase();
     const matchesQuery =
-      !query.trim() ||
-      post.title.toLowerCase().includes(query.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(query.toLowerCase());
+      !q ||
+      (p.title || '').toLowerCase().includes(q) ||
+      (p.excerpt || '').toLowerCase().includes(q);
     return matchesCategory && matchesQuery;
   });
 
-  const recent = filtered.slice(0, 3);
-
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-10 max-w-3xl">
-          <div className="mb-4">
-            <BrandLogo showText={false} />
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-3">
-            Insights &amp; Blog
+    <div className="bg-obsidian text-cream min-h-screen">
+      <SEO
+        title="Journal — NextWave Digital Solutions"
+        description="Insights on web development, AI automation, digital transformation, and business technology from the NextWave team."
+      />
+
+      {/* Hero */}
+      <section className="pt-40 pb-16 max-w-7xl mx-auto px-6 lg:px-10">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="section-label mb-4">Insights &amp; Ideas</div>
+          <h1
+            className="font-serif font-light text-cream leading-tight mb-8"
+            style={{ fontSize: 'clamp(3rem, 7vw, 8rem)' }}
+          >
+            Journal
           </h1>
-          <p className="text-slate-400">
-            Practical articles on AI, product engineering, and digital transformation from the NextWave team.
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,1.2fr)] gap-10">
-          <div>
-            <div className="flex flex-wrap gap-3 mb-6 items-center">
-              <input
-                type="text"
-                placeholder="Search articles..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full md:w-64 rounded-xl bg-slate-900/70 border border-white/10 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-              <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => {
-                  const active = category === cat;
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => setCategory(cat)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                        active
-                          ? 'bg-teal-500 text-white border-teal-400'
-                          : 'bg-slate-900/50 text-slate-300 border-white/10 hover:border-teal-400/60 hover:text-teal-300'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+          {/* Search */}
+          <div className="flex border-b border-cream/20 focus-within:border-gold transition-colors duration-400 max-w-sm">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search articles…"
+              className="flex-1 bg-transparent font-sans text-[13px] text-cream placeholder:text-cream/25 py-3 outline-none"
+            />
+          </div>
+        </motion.div>
+      </section>
 
-            <div className="space-y-5">
-              {filtered.map((post) => (
-                <article
-                  key={post.slug}
-                  className="rounded-2xl border border-white/10 bg-slate-950/60 p-5 hover:border-teal-500/40 transition-colors"
+      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        {/* Category tabs */}
+        <motion.div
+          className="flex gap-8 border-b border-cream/8 mb-16"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+        >
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className={`relative font-sans text-[10px] tracking-[0.22em] uppercase pb-4 transition-colors duration-400 ${
+                category === cat ? 'text-cream' : 'text-cream/35 hover:text-cream/70'
+              }`}
+            >
+              {cat}
+              {category === cat && (
+                <motion.span
+                  layoutId="blog-tab"
+                  className="absolute bottom-0 left-0 right-0 h-px bg-gold"
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                />
+              )}
+            </button>
+          ))}
+        </motion.div>
+
+        {/* Article list */}
+        {filtered.length === 0 ? (
+          <p className="font-sans text-[13px] text-cream/35 py-20 text-center">No articles found.</p>
+        ) : (
+          <div className="space-y-0">
+            {filtered.map((post: any, i: number) => (
+              <motion.div
+                key={post.slug}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.8, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="ruled-line" />
+                <Link
+                  to={`/blog/${post.slug}`}
+                  className="group flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-16 py-10 -mx-6 lg:-mx-10 px-6 lg:px-10 hover:bg-gold/[0.015] transition-colors duration-300"
                 >
-                  <p className="text-xs font-semibold tracking-[0.18em] uppercase text-teal-400 mb-1">
-                    {(post as { category?: string }).category || 'Blog'}
-                  </p>
-                  <Link to={`/blog/${post.slug}`}>
-                    <h2 className="text-lg md:text-xl font-bold text-white mb-1">
+                  {/* Meta left */}
+                  <div className="lg:w-48 shrink-0">
+                    <span className="section-label text-cream/35 block mb-1">
+                      {post.category || 'Blog'}
+                    </span>
+                    <span className="font-sans text-[11px] text-cream/25">
+                      {post.date || ''} &middot; {post.readTime || ''}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1">
+                    <h2
+                      className="font-serif font-light text-cream group-hover:text-gold transition-colors duration-400 leading-tight mb-3"
+                      style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2.2rem)' }}
+                    >
                       {post.title}
                     </h2>
-                  </Link>
-                  <p className="text-xs text-slate-500 mb-2">
-                    {post.published_at ? new Date(post.published_at).toLocaleDateString() : '-'} • NextWave Team
-                  </p>
-                  <p className="text-sm text-slate-300 mb-3">{post.excerpt}</p>
-                  <Link
-                    to={`/blog/${post.slug}`}
-                    className="text-xs font-semibold text-teal-400 hover:text-teal-300"
-                  >
-                    Read article →
-                  </Link>
-                </article>
-              ))}
-              {filtered.length === 0 && (
-                <p className="text-sm text-slate-500">
-                  No articles match your search just yet.
-                </p>
-              )}
-            </div>
-          </div>
-
-          <aside className="space-y-6">
-            <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">
-                Recent Posts
-              </h3>
-              <ul className="space-y-3 text-sm">
-                {recent.map((post) => (
-                  <li key={post.slug}>
-                    <Link
-                      to={`/blog/${post.slug}`}
-                      className="text-slate-300 hover:text-teal-300"
-                    >
-                      {post.title}
-                    </Link>
-                    <p className="text-[11px] text-slate-500">
-                      {post.published_at ? new Date(post.published_at).toLocaleDateString() : '-'}
+                    <p className="font-sans text-[13px] text-cream/45 leading-relaxed max-w-xl">
+                      {post.excerpt}
                     </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </aside>
-        </div>
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="font-sans text-[10px] tracking-[0.22em] uppercase text-cream/25 group-hover:text-gold transition-colors duration-400 shrink-0 self-start lg:self-center">
+                    Read →
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+            <div className="ruled-line" />
+          </div>
+        )}
+
+        <div className="py-24" />
       </div>
     </div>
   );
 }
-

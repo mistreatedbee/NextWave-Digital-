@@ -1,53 +1,164 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { TrendingUp, ArrowRight } from 'lucide-react';
 import { portfolioItems } from '../../data/portfolio';
-import { GlassCard } from '../../components/ui/GlassCard';
 
-export function FeaturedPortfolioSection() {
-  const featured = portfolioItems.slice(0, 3);
+const featured = portfolioItems.slice(0, 3);
+
+function ProjectTile({
+  item,
+  index,
+  className,
+}: {
+  item: typeof portfolioItems[0];
+  index: number;
+  className: string;
+}) {
+  const [hovered, setHovered] = useState(false);
 
   return (
-    <section className="py-28 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-teal-950/10 to-transparent" />
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="px-6 lg:px-10 mb-12">
-          <div className="section-tag">
-            <TrendingUp className="w-3 h-3" /> Our Work
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-white leading-tight">
-              Projects We&apos;re
-              <br />
-              <span className="text-gradient-primary">Proud Of</span>
+    <motion.div
+      className={`relative overflow-hidden bg-charcoal-light cursor-pointer ${className}`}
+      initial={{ opacity: 0, scale: 0.97 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 1.0, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+    >
+      {/* Thumbnail image */}
+      <motion.img
+        src={item.thumbnail}
+        alt={item.title}
+        className="absolute inset-0 w-full h-full object-cover"
+        animate={{ scale: hovered ? 1.06 : 1 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        onError={(e) => {
+          (e.target as HTMLImageElement).style.display = 'none';
+        }}
+      />
+
+      {/* Subtle diagonal pattern (visible when no image) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `repeating-linear-gradient(
+            45deg,
+            rgba(200,164,90,0.04) 0px,
+            rgba(200,164,90,0.04) 1px,
+            transparent 1px,
+            transparent 14px
+          )`,
+        }}
+      />
+
+      {/* Gradient overlay */}
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.2) 60%, transparent 100%)',
+        }}
+        animate={{ opacity: hovered ? 0.7 : 1 }}
+        transition={{ duration: 0.4 }}
+      />
+
+      {/* Category tag — top right */}
+      <div className="absolute top-5 right-5">
+        <span className="section-label">{item.category}</span>
+      </div>
+
+      {/* Big background number */}
+      <span
+        className="absolute bottom-0 right-4 font-serif font-light text-cream/5 leading-none select-none pointer-events-none"
+        style={{ fontSize: 'clamp(6rem, 14vw, 14rem)' }}
+      >
+        {String(index + 1).padStart(2, '0')}
+      </span>
+
+      {/* Info — bottom left */}
+      <motion.div
+        className="absolute bottom-0 left-0 p-6 lg:p-8"
+        animate={{ y: hovered ? -6 : 0 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <p className="font-sans text-[11px] tracking-[0.2em] uppercase text-cream/50 mb-2">
+          {item.shortDescription.slice(0, 40)}…
+        </p>
+        <h3 className="font-serif font-light text-cream text-xl lg:text-2xl leading-tight">
+          {item.title}
+        </h3>
+        <motion.p
+          className="font-sans text-[11px] tracking-[0.22em] uppercase text-gold mt-3"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 8 }}
+          transition={{ duration: 0.3 }}
+        >
+          View Project →
+        </motion.p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export function FeaturedPortfolioSection() {
+  return (
+    <section
+      className="relative"
+      style={{ paddingTop: 'var(--section-pad)', paddingBottom: 'var(--section-pad)' }}
+    >
+      <div
+        className="absolute right-0 top-1/4 w-[550px] h-[550px] rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(58,144,144,0.03) 0%, transparent 60%)',
+          filter: 'blur(90px)',
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10"
+        >
+          <div>
+            <div className="section-label mb-3">Selected Work</div>
+            <h2
+              className="font-serif font-light text-cream leading-tight"
+              style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
+            >
+              Featured Projects
             </h2>
-            <Link to="/portfolio">
-              <button className="group flex items-center gap-2 text-sm text-slate-400 hover:text-teal-400 transition-colors font-medium">
-                Full portfolio
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+          </div>
+          <Link
+            to="/portfolio"
+            className="group flex items-center gap-3 font-sans text-[10px] tracking-[0.28em] uppercase text-gold/70 hover:text-gold transition-colors duration-500 shrink-0"
+          >
+            View All Work
+            <span className="block h-px w-6 bg-current transition-all duration-500 group-hover:w-10" />
+          </Link>
+        </motion.div>
+
+        {/* Asymmetric grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+          {/* Large tile — left */}
+          <Link to="/portfolio" className="lg:col-span-7 block">
+            <ProjectTile item={featured[0]} index={0} className="h-[55vw] lg:h-full min-h-[300px] lg:min-h-[560px]" />
+          </Link>
+
+          {/* Two stacked tiles — right */}
+          <div className="lg:col-span-5 flex flex-col gap-3">
+            <Link to="/portfolio" className="block flex-1">
+              <ProjectTile item={featured[1]} index={1} className="h-[40vw] lg:h-full min-h-[220px]" />
+            </Link>
+            <Link to="/portfolio" className="block flex-1">
+              <ProjectTile item={featured[2]} index={2} className="h-[40vw] lg:h-full min-h-[220px]" />
             </Link>
           </div>
-        </div>
-
-        <div className="px-6 lg:px-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featured.map((item) => (
-            <GlassCard key={item.id} hoverEffect>
-              <div className="mb-4 text-xs font-semibold tracking-[0.18em] uppercase text-teal-400">
-                {item.category}
-              </div>
-              <h3 className="font-display text-lg font-bold text-white mb-2">
-                {item.title}
-              </h3>
-              <p className="text-sm text-slate-400 mb-3">{item.shortDescription}</p>
-              <p className="text-[11px] text-slate-500 uppercase tracking-[0.16em]">
-                {item.technologies.join(' • ')}
-              </p>
-            </GlassCard>
-          ))}
         </div>
       </div>
     </section>
   );
 }
-

@@ -20,7 +20,7 @@ export function FloatingActions() {
   return (
     <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-3">
       <a
-        href="https://wa.me/27821234567"
+        href="https://wa.me/27731531188"
         target="_blank"
         rel="noreferrer"
         className="rounded-full bg-emerald-500 text-white shadow-lg w-11 h-11 flex items-center justify-center hover:bg-emerald-400 transition-colors"
