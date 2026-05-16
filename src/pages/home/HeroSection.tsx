@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const lineVariants = {
@@ -11,10 +11,31 @@ const lineVariants = {
   }),
 };
 
+// Animated counting number
+function Counter({ to, suffix = '' }: { to: number; suffix: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const step = Math.ceil(to / 50);
+    const id = setInterval(() => {
+      start += step;
+      if (start >= to) { setCount(to); clearInterval(id); }
+      else setCount(start);
+    }, 22);
+    return () => clearInterval(id);
+  }, [inView, to]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+}
+
 const stats = [
-  { value: '11+', label: 'Projects Delivered' },
-  { value: '5yr', label: 'Years of Excellence' },
-  { value: '100%', label: 'Client Satisfaction' },
+  { to: 15,  suffix: '+',  label: 'Projects Delivered' },
+  { to: 5,   suffix: 'yr', label: 'Years of Excellence' },
+  { to: 100, suffix: '%',  label: 'Client Satisfaction' },
 ];
 
 export function HeroSection() {
@@ -45,7 +66,7 @@ export function HeroSection() {
         }}
       />
 
-      {/* Subtle vertical ruled line — right side */}
+      {/* Subtle vertical ruled line */}
       <div
         className="absolute inset-y-0 right-0 w-px pointer-events-none hidden lg:block"
         style={{
@@ -62,7 +83,7 @@ export function HeroSection() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="section-label mb-16"
         >
-          Digital Studio &mdash; Nelspruit, South Africa
+          Digital Studio &mdash; Johannesburg, South Africa
         </motion.div>
 
         {/* Massive editorial headline */}
@@ -99,7 +120,7 @@ export function HeroSection() {
           transition={{ duration: 0.9, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
         />
 
-        {/* Tagline + stats row */}
+        {/* Tagline + animated stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -118,7 +139,7 @@ export function HeroSection() {
                   className="font-display font-semibold text-gold leading-none mb-1"
                   style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
                 >
-                  {s.value}
+                  <Counter to={s.to} suffix={s.suffix} />
                 </div>
                 <div className="section-label">{s.label}</div>
               </div>
@@ -135,7 +156,7 @@ export function HeroSection() {
         >
           <Link
             to="/portfolio"
-            className="group flex items-center gap-3 font-sans text-xs tracking-[0.28em] uppercase text-gold hover:text-cream transition-colors duration-500"
+            className="group flex items-center gap-3 font-sans text-xs tracking-[0.28em] uppercase text-gold hover:text-obsidian dark:hover:text-cream transition-colors duration-500"
           >
             View Our Work
             <span
@@ -145,7 +166,7 @@ export function HeroSection() {
           </Link>
           <Link
             to="/contact"
-            className="font-sans text-xs tracking-[0.28em] uppercase text-cream/50 hover:text-cream transition-colors duration-500"
+            className="font-sans text-xs tracking-[0.28em] uppercase text-obsidian/50 dark:text-cream/50 hover:text-obsidian dark:hover:text-cream transition-colors duration-500"
           >
             Start a Project
           </Link>
@@ -153,14 +174,14 @@ export function HeroSection() {
 
       </div>
 
-      {/* Scroll indicator — bottom left */}
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.4 }}
         className="absolute bottom-8 left-10 hidden md:flex items-center gap-4 pointer-events-none"
       >
-        <div className="w-px h-12 bg-cream/15" />
+        <div className="w-px h-12 bg-obsidian/15 dark:bg-cream/15" />
         <span
           className="section-label"
           style={{ transform: 'rotate(90deg)', transformOrigin: 'left center', marginLeft: '0.5rem' }}

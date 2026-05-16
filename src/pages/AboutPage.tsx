@@ -33,7 +33,7 @@ export function AboutPage() {
     <div className="bg-ivory text-obsidian dark:bg-obsidian dark:text-cream min-h-screen">
       <SEO
         title="About — NextWave Digital Solutions"
-        description="NextWave Digital Solutions is a premium digital studio based in Nelspruit, South Africa, crafting websites, software, and AI automation for ambitious businesses."
+        description="NextWave Digital Solutions is a premium digital studio based in Johannesburg, South Africa, crafting websites, software, and AI automation for ambitious businesses."
       />
 
       {/* Hero */}
@@ -45,7 +45,7 @@ export function AboutPage() {
           transition={{ duration: 1, delay: 0.3 }}
           className="absolute top-40 right-6 lg:right-10 section-label text-cream/20"
         >
-          Est. 2019 &mdash; Nelspruit, SA
+          Est. 2019 &mdash; Johannesburg, SA
         </motion.div>
 
         <motion.div
@@ -120,7 +120,7 @@ export function AboutPage() {
             className="lg:col-span-5 space-y-5"
           >
             <p className="font-sans text-[15px] text-cream/55 leading-relaxed">
-              Founded in Nelspruit, Mpumalanga, NextWave Digital Solutions was built on a simple conviction: that businesses in South Africa deserve world-class digital experiences.
+              Founded in Johannesburg, South Africa, NextWave Digital Solutions was built on a simple conviction: that businesses in South Africa deserve world-class digital experiences.
             </p>
             <p className="font-sans text-[15px] text-cream/55 leading-relaxed">
               For five years, we've partnered with clients across South Africa and beyond — from startups finding their feet to established enterprises navigating digital transformation. Every project is an opportunity to create something that truly matters.

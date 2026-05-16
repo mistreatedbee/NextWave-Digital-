@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const WA_BASE = 'https://wa.me/27731531188?text=';
 
 const services = [
   {
@@ -8,40 +14,71 @@ const services = [
     name: 'Starter Website',
     desc: 'A polished 5-page website to establish your online presence.',
     price: 'From R2,000',
+    waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Starter%20Website%20Package.',
   },
   {
     n: '02',
     name: 'Professional Website',
     desc: 'Up to 10 pages with enhanced SEO, logo design, and Google optimisation.',
     price: 'From R3,500',
+    waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Professional%20Website%20Package.',
   },
   {
     n: '03',
     name: 'Premium Website',
     desc: 'Unlimited pages, ecommerce integration, and 12-month hosting included.',
     price: 'From R5,500',
+    waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Premium%20Website%20Package.',
   },
   {
     n: '04',
     name: 'Landing Page',
     desc: 'High-converting single page with chatbot, booking, and contact form.',
     price: 'R750 Special',
+    waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Landing%20Page%20Special%20for%20R750.',
   },
   {
     n: '05',
     name: 'Ecommerce Store',
     desc: 'Unlimited products, payment gateway, and full admin dashboard.',
     price: 'From R4,000',
+    waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Ecommerce%20Website%20Package.',
   },
   {
     n: '06',
     name: 'AI Automation Suite',
     desc: 'Chatbots, CRM, email automation, sales funnels, and workflow systems.',
     price: 'From R7,499',
+    waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20AI%20Automation%20Package.',
   },
 ];
 
 export function ServicesOverviewSection() {
+  const linesRef = useRef<HTMLDivElement[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      linesRef.current.forEach((el) => {
+        if (!el) return;
+        gsap.fromTo(
+          el,
+          { scaleX: 0, transformOrigin: 'left center' },
+          {
+            scaleX: 1,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 88%',
+              once: true,
+            },
+          },
+        );
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
       className="relative"
@@ -56,6 +93,7 @@ export function ServicesOverviewSection() {
       />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -81,6 +119,7 @@ export function ServicesOverviewSection() {
           </Link>
         </motion.div>
 
+        {/* Service rows */}
         <div>
           {services.map((service, i) => (
             <motion.div
@@ -88,23 +127,33 @@ export function ServicesOverviewSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.8, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.8, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="ruled-line" />
+              {/* GSAP-animated ruled line */}
+              <div
+                ref={(el) => { if (el) linesRef.current[i] = el; }}
+                className="ruled-line"
+                style={{ display: 'block' }}
+              />
+
               <motion.div
-                className="flex items-start gap-6 lg:gap-16 py-8 lg:py-10 cursor-default -mx-6 lg:-mx-10 px-6 lg:px-10"
+                className="group flex items-start gap-6 lg:gap-16 py-8 lg:py-10 cursor-default -mx-6 lg:-mx-10 px-6 lg:px-10"
                 whileHover={{ backgroundColor: 'rgba(183,255,0,0.02)' }}
                 transition={{ duration: 0.3 }}
               >
-                <span
-                  className="font-serif font-light text-cream/8 leading-none shrink-0 w-16 select-none hidden sm:block"
+                {/* Background number */}
+                <motion.span
+                  className="font-display font-bold leading-none shrink-0 w-16 select-none hidden sm:block text-obsidian/5 dark:text-cream/5"
                   style={{ fontSize: 'clamp(3rem, 6vw, 6rem)' }}
+                  whileHover={{ opacity: 0.12 }}
+                  transition={{ duration: 0.3 }}
                 >
                   {service.n}
-                </span>
+                </motion.span>
 
+                {/* Service name */}
                 <motion.h3
-                  className="font-serif font-light text-cream flex-1 leading-tight"
+                  className="font-display font-semibold flex-1 leading-tight"
                   style={{ fontSize: 'clamp(1.5rem, 3vw, 2.8rem)' }}
                   whileHover={{ x: 6 }}
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -112,18 +161,51 @@ export function ServicesOverviewSection() {
                   {service.name}
                 </motion.h3>
 
-                <div className="shrink-0 text-right w-40 lg:w-56 hidden md:block">
-                  <p className="font-sans text-[13px] text-cream/45 leading-relaxed mb-2">
+                {/* Right block: desc + price + book button */}
+                <div className="shrink-0 text-right w-44 lg:w-60 hidden md:flex flex-col items-end gap-2">
+                  <p className="font-sans text-[13px] text-obsidian/45 dark:text-cream/45 leading-relaxed">
                     {service.desc}
                   </p>
                   <span className="font-sans text-[11px] tracking-[0.18em] uppercase text-gold">
                     {service.price}
                   </span>
+                  <motion.a
+                    href={`${WA_BASE}${service.waMsg}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-sans text-[9px] font-semibold tracking-[0.2em] uppercase px-3 py-1.5 border border-gold/35 text-gold hover:bg-gold hover:text-obsidian hover:border-gold transition-all duration-400"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    whileHover={{ scale: 1.02 }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Book Now →
+                  </motion.a>
+                </div>
+
+                {/* Mobile: always show book button */}
+                <div className="md:hidden shrink-0 flex flex-col items-end gap-1">
+                  <span className="font-sans text-[10px] tracking-[0.15em] uppercase text-gold">
+                    {service.price}
+                  </span>
+                  <a
+                    href={`${WA_BASE}${service.waMsg}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-sans text-[9px] font-semibold tracking-[0.18em] uppercase px-2.5 py-1.5 min-h-[36px] flex items-center border border-gold/35 text-gold bg-gold/5"
+                  >
+                    Book →
+                  </a>
                 </div>
               </motion.div>
             </motion.div>
           ))}
-          <div className="ruled-line" />
+
+          {/* Final ruled line — also GSAP animated */}
+          <div
+            ref={(el) => { if (el) linesRef.current[services.length] = el; }}
+            className="ruled-line"
+          />
         </div>
       </div>
     </section>

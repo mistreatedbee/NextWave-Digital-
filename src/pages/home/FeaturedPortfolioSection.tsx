@@ -115,31 +115,49 @@ export function FeaturedPortfolioSection() {
       />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10"
-        >
+        {/* Header — word-split animation */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
           <div>
-            <div className="section-label mb-3">Selected Work</div>
-            <h2
-              className="font-display font-semibold leading-tight"
-              style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
+            <motion.div
+              className="section-label mb-3"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             >
-              Featured Projects
-            </h2>
+              Selected Work
+            </motion.div>
+            <div className="flex gap-3 flex-wrap overflow-hidden">
+              {['Featured', 'Projects'].map((word, i) => (
+                <motion.span
+                  key={word}
+                  className="font-display font-semibold leading-tight block"
+                  style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.85, delay: i * 0.13, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </div>
           </div>
-          <Link
-            to="/portfolio"
-            className="group flex items-center gap-3 font-sans text-[10px] tracking-[0.28em] uppercase text-gold/70 hover:text-gold transition-colors duration-500 shrink-0"
+          <motion.div
+            initial={{ opacity: 0, x: 16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            View All Work
-            <span className="block h-px w-6 bg-current transition-all duration-500 group-hover:w-10" />
-          </Link>
-        </motion.div>
+            <Link
+              to="/portfolio"
+              className="group flex items-center gap-3 font-sans text-[10px] tracking-[0.28em] uppercase text-gold/70 hover:text-gold transition-colors duration-500 shrink-0"
+            >
+              View All Work
+              <span className="block h-px w-6 bg-current transition-all duration-500 group-hover:w-10" />
+            </Link>
+          </motion.div>
+        </div>
 
         {/* Asymmetric grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">

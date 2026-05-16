@@ -79,19 +79,25 @@ export function Footer() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="section-label mb-6">Navigation</div>
             <ul className="space-y-3">
-              {navLinks.map((link) => (
-                <li key={link.path}>
+              {navLinks.map((link, j) => (
+                <motion.li
+                  key={link.path}
+                  initial={{ opacity: 0, x: -8 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.12 + j * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                >
                   <Link
                     to={link.path}
-                    className="font-sans text-[13px] text-obsidian/45 dark:text-cream/45 hover:text-obsidian dark:hover:text-cream transition-colors duration-400"
+                    className="group relative font-sans text-[13px] text-obsidian/45 dark:text-cream/45 hover:text-gold transition-colors duration-400"
                   >
                     {link.name}
                   </Link>
-                </li>
+                </motion.li>
               ))}
             </ul>
           </motion.div>
@@ -101,7 +107,7 @@ export function Footer() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="section-label mb-6">Services</div>
             <ul className="space-y-3">
@@ -123,7 +129,7 @@ export function Footer() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, delay: 0.36, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="section-label mb-6">Get in Touch</div>
             <div className="space-y-3">
