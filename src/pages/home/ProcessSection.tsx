@@ -60,7 +60,7 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
                 {/* Number box */}
                 <div
                   className="relative w-14 h-14 flex items-center justify-center mb-6 z-10 border border-gold/25 group-hover:border-gold/50 transition-colors duration-500"
-                  style={{ background: 'rgba(200,164,90,0.04)' }}
+                  style={{ background: 'rgba(183,255,0,0.03)' }}
                 >
                   <span className="font-serif text-xl text-cream/50 group-hover:text-gold/70 transition-colors duration-500">
                     {step.number}

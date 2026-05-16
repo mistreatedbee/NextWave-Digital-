@@ -133,7 +133,7 @@ function PackagePanel({ pkg, isOpen, onToggle }: {
       <motion.button
         className="w-full flex items-center gap-6 lg:gap-16 py-8 lg:py-10 text-left cursor-pointer -mx-6 lg:-mx-10 px-6 lg:px-10"
         onClick={onToggle}
-        whileHover={{ backgroundColor: 'rgba(200,164,90,0.02)' }}
+        whileHover={{ backgroundColor: 'rgba(183,255,0,0.015)' }}
         transition={{ duration: 0.25 }}
       >
         {/* Number */}

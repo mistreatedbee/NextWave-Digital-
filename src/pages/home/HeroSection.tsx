@@ -24,7 +24,7 @@ export function HeroSection() {
       <div
         className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] rounded-full pointer-events-none animate-slow-drift"
         style={{
-          background: 'radial-gradient(circle, rgba(200,164,90,0.055) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(183,255,0,0.04) 0%, transparent 65%)',
           filter: 'blur(100px)',
         }}
       />
@@ -39,7 +39,7 @@ export function HeroSection() {
       <div
         className="absolute top-[40%] left-[35%] w-[400px] h-[400px] rounded-full pointer-events-none animate-slow-drift"
         style={{
-          background: 'radial-gradient(circle, rgba(200,164,90,0.025) 0%, transparent 60%)',
+          background: 'radial-gradient(circle, rgba(183,255,0,0.02) 0%, transparent 60%)',
           filter: 'blur(80px)',
           animationDelay: '3s',
         }}
@@ -49,7 +49,7 @@ export function HeroSection() {
       <div
         className="absolute inset-y-0 right-0 w-px pointer-events-none hidden lg:block"
         style={{
-          background: 'linear-gradient(to bottom, transparent 0%, rgba(200,164,90,0.08) 30%, rgba(200,164,90,0.08) 70%, transparent 100%)',
+          background: 'linear-gradient(to bottom, transparent 0%, rgba(183,255,0,0.06) 30%, rgba(183,255,0,0.06) 70%, transparent 100%)',
         }}
       />
 

@@ -8,51 +8,52 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Luxury editorial palette
-        obsidian:        '#0a0a0a',
-        charcoal:        '#141414',
-        'charcoal-light':'#1e1e1e',
-        smoke:           '#2a2a2a',
-        ash:             '#6b6b6b',
-        silver:          '#a0a0a0',
-        cream:           '#f4efe6',
-        ivory:           '#faf8f0',
-        gold:            '#c8a45a',
-        lime:            '#b8d34a',
-        teal:            '#3a9090',
+        // Modern futuristic palette
+        obsidian:        '#0A0A0A',
+        charcoal:        '#161616',
+        'charcoal-light':'#1E1E1E',
+        smoke:           '#2A2A2A',
+        ash:             '#6B6B6B',
+        silver:          '#9A9A9A',
+        cream:           '#F5F5F3',
+        ivory:           '#F5F0E8',
+        // Primary accent — brand lime green
+        gold:            '#B7FF00',
+        lime:            '#B7FF00',
+        teal:            '#3A9090',
         // Semantic aliases — keep for admin panel compatibility
-        background: '#0a0a0a',
-        surface:    '#141414',
+        background: '#0A0A0A',
+        surface:    '#161616',
         primary: {
-          DEFAULT:    '#c8a45a',
-          foreground: '#0a0a0a',
+          DEFAULT:    '#B7FF00',
+          foreground: '#0A0A0A',
         },
         secondary: {
-          DEFAULT:    '#b8d34a',
-          foreground: '#0a0a0a',
+          DEFAULT:    '#B7FF00',
+          foreground: '#0A0A0A',
         },
         accent: {
-          DEFAULT: '#3a9090',
+          DEFAULT: '#3A9090',
         },
       },
       fontFamily: {
-        serif:   ['"Cormorant Garamond"', 'Georgia', 'serif'],
-        sans:    ['Inter', 'system-ui', 'sans-serif'],
-        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        display: ['"Clash Display"', 'system-ui', 'sans-serif'],
+        serif:   ['Satoshi', 'system-ui', 'sans-serif'],
+        sans:    ['Satoshi', 'system-ui', 'sans-serif'],
       },
       fontSize: {
-        'display-2xl': ['clamp(5rem,11vw,12rem)',  { lineHeight: '0.9',  letterSpacing: '-0.03em' }],
-        'display-xl':  ['clamp(3.5rem,7vw,8rem)',   { lineHeight: '0.95', letterSpacing: '-0.025em' }],
-        'display-lg':  ['clamp(2.5rem,5vw,5.5rem)', { lineHeight: '1.0',  letterSpacing: '-0.02em' }],
-        'display-md':  ['clamp(1.75rem,3.5vw,3.5rem)', { lineHeight: '1.05' }],
+        'display-2xl': ['clamp(5rem,11vw,12rem)',       { lineHeight: '0.88', letterSpacing: '-0.04em' }],
+        'display-xl':  ['clamp(3.5rem,7vw,8rem)',        { lineHeight: '0.92', letterSpacing: '-0.03em' }],
+        'display-lg':  ['clamp(2.5rem,5vw,5.5rem)',      { lineHeight: '0.96', letterSpacing: '-0.025em' }],
+        'display-md':  ['clamp(1.75rem,3.5vw,3.5rem)',   { lineHeight: '1.0',  letterSpacing: '-0.02em' }],
       },
       animation: {
-        'slow-drift':  'slowDrift 18s ease-in-out infinite',
-        'fade-up':     'fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) forwards',
+        'slow-drift': 'slowDrift 18s ease-in-out infinite',
+        'fade-up':    'fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) forwards',
         // Preserved for admin panel
-        'float':       'float 6s ease-in-out infinite',
-        'pulse-slow':  'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'glow':        'glow 2s ease-in-out infinite alternate',
+        'float':      'float 6s ease-in-out infinite',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'glow':       'glow 2s ease-in-out infinite alternate',
       },
       keyframes: {
         slowDrift: {

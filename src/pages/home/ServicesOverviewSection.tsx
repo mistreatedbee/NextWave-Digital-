@@ -50,7 +50,7 @@ export function ServicesOverviewSection() {
       <div
         className="absolute left-0 top-1/3 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(200,164,90,0.03) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(183,255,0,0.025) 0%, transparent 65%)',
           filter: 'blur(80px)',
         }}
       />
@@ -93,7 +93,7 @@ export function ServicesOverviewSection() {
               <div className="ruled-line" />
               <motion.div
                 className="flex items-start gap-6 lg:gap-16 py-8 lg:py-10 cursor-default -mx-6 lg:-mx-10 px-6 lg:px-10"
-                whileHover={{ backgroundColor: 'rgba(200,164,90,0.025)' }}
+                whileHover={{ backgroundColor: 'rgba(183,255,0,0.02)' }}
                 transition={{ duration: 0.3 }}
               >
                 <span

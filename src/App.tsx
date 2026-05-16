@@ -10,6 +10,7 @@ import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
 import { CookieBanner } from './components/CookieBanner';
+import { SmoothScroll } from './components/SmoothScroll';
 import { HomePage } from './pages/HomePage';
 import { ServicesPage } from './pages/ServicesPage';
 import { SolutionsPage } from './pages/SolutionsPage';
@@ -58,6 +59,7 @@ export function App() {
     <Router>
       <AuthProvider>
         <ScrollToTop />
+        <SmoothScroll>
         <div className="min-h-screen bg-obsidian text-cream font-sans selection:bg-gold/20 selection:text-cream">
           <Navigation />
           <main className="flex-grow">
@@ -113,6 +115,7 @@ export function App() {
           <FloatingActions />
           <CookieBanner />
         </div>
+        </SmoothScroll>
       </AuthProvider>
     </Router>
   );

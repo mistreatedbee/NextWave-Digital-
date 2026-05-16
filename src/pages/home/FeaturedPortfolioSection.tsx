@@ -44,8 +44,8 @@ function ProjectTile({
         style={{
           backgroundImage: `repeating-linear-gradient(
             45deg,
-            rgba(200,164,90,0.04) 0px,
-            rgba(200,164,90,0.04) 1px,
+            rgba(183,255,0,0.03) 0px,
+            rgba(183,255,0,0.03) 1px,
             transparent 1px,
             transparent 14px
           )`,

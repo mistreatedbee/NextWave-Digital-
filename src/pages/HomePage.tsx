@@ -25,7 +25,7 @@ function CtaStrip() {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at 50% 0%, rgba(200,164,90,0.04) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse at 50% 0%, rgba(183,255,0,0.03) 0%, transparent 60%)',
         }}
       />
       <div className="max-w-5xl mx-auto px-6 lg:px-10 text-center relative z-10">

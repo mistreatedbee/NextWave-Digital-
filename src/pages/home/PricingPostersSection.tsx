@@ -103,7 +103,7 @@ export function PricingPostersSection() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse at 50% 50%, rgba(200,164,90,0.025) 0%, transparent 65%)',
+            'radial-gradient(ellipse at 50% 50%, rgba(183,255,0,0.02) 0%, transparent 65%)',
         }}
       />
 

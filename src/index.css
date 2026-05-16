@@ -1,14 +1,15 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --ruled-line: 1px solid rgba(200, 164, 90, 0.15);
-  --ruled-line-strong: 1px solid rgba(200, 164, 90, 0.35);
-  --section-pad: clamp(6rem, 12vw, 10rem);
+  --ruled-line:        1px solid rgba(183, 255, 0, 0.12);
+  --ruled-line-strong: 1px solid rgba(183, 255, 0, 0.28);
+  --section-pad:       clamp(6rem, 12vw, 10rem);
 }
 
 @layer base {
@@ -17,24 +18,24 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply text-cream font-serif tracking-tight;
+    @apply text-cream font-display tracking-tight;
   }
 
   ::selection {
-    background: rgba(200, 164, 90, 0.25);
-    color: #f4efe6;
+    background: rgba(183, 255, 0, 0.2);
+    color: #F5F5F3;
   }
 }
 
 @layer utilities {
   .section-label {
     display: inline-block;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Satoshi', system-ui, sans-serif;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: rgba(200, 164, 90, 0.7);
+    color: rgba(183, 255, 0, 0.65);
   }
 
   .ruled-line {
@@ -69,18 +70,18 @@
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(200, 164, 90, 0.25);
+  background: rgba(183, 255, 0, 0.2);
   border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(200, 164, 90, 0.45);
+  background: rgba(183, 255, 0, 0.4);
 }
