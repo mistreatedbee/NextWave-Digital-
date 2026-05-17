@@ -9,11 +9,15 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    // Disable smooth scroll on touch devices — native scroll is better there
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+
     const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
+      duration:       1.1,
+      easing:         (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel:    !isTouch,
       touchMultiplier: 2,
+      wheelMultiplier: 1,
     });
 
     lenisRef.current = lenis;

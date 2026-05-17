@@ -39,6 +39,7 @@ function ProjectTile({
         src={item.thumbnail}
         alt={item.title}
         className="absolute inset-0 w-full h-full object-cover"
+        loading="lazy"
         animate={{ scale: hovered ? 1.08 : 1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         onError={(e) => {

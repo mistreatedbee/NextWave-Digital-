@@ -18,19 +18,19 @@ export default {
         silver:          '#9A9A9A',
         cream:           '#F5F5F3',
         ivory:           '#F5F0E8',
-        // Primary accent — brand lime green
-        gold:            '#B7FF00',
-        lime:            '#B7FF00',
+        // Primary accent — theme-aware via CSS variable
+        gold:            'var(--color-gold)',
+        lime:            'var(--color-gold)',
         teal:            '#3A9090',
         // Semantic aliases — keep for admin panel compatibility
         background: '#0A0A0A',
         surface:    '#161616',
         primary: {
-          DEFAULT:    '#B7FF00',
+          DEFAULT:    'var(--color-gold)',
           foreground: '#0A0A0A',
         },
         secondary: {
-          DEFAULT:    '#B7FF00',
+          DEFAULT:    'var(--color-gold)',
           foreground: '#0A0A0A',
         },
         accent: {

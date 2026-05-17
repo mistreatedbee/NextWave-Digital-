@@ -98,6 +98,7 @@ export default function PortfolioPage() {
                   src={item.thumbnail}
                   alt={item.title}
                   className="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}

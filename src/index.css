@@ -9,10 +9,11 @@
 /* ── Theme-aware CSS variables ────────────────────────────── */
 :root {
   /* Light mode defaults */
+  --color-gold:        #3D6B00;                             /* Dark olive — readable on light */
   --ruled-line:        1px solid rgba(10, 10, 10, 0.10);
   --ruled-line-strong: 1px solid rgba(10, 10, 10, 0.20);
   --section-pad:       clamp(6rem, 12vw, 10rem);
-  --label-color:       rgba(40, 40, 40, 0.70);
+  --label-color:       rgba(40, 80, 0, 0.80);               /* Dark green label */
   --scrollbar-thumb:   rgba(10, 10, 10, 0.18);
   --scrollbar-thumb-h: rgba(10, 10, 10, 0.35);
   --scrollbar-track:   #FAFAF8;
@@ -20,6 +21,7 @@
 
 .dark {
   /* Dark mode overrides */
+  --color-gold:        #B7FF00;                             /* Bright lime on dark */
   --ruled-line:        1px solid rgba(183, 255, 0, 0.12);
   --ruled-line-strong: 1px solid rgba(183, 255, 0, 0.28);
   --label-color:       rgba(183, 255, 0, 0.85);

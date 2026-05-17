@@ -29,6 +29,12 @@ const posters = [
     sub: 'Custom Quote',
     waMsg: 'Hi NextWave Digital Solutions! I\'m interested in a Custom Mobile App.\n\nPlease contact me to discuss a quote.',
   },
+  {
+    src: '/ai automation.jpeg',
+    label: 'AI Automation',
+    sub: 'From R7,499',
+    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in the AI Automation Package — From R7,499.\n\nPlease send me more details.',
+  },
 ];
 
 function PosterTile({
@@ -56,6 +62,7 @@ function PosterTile({
           src={poster.src}
           alt={poster.label}
           className="absolute inset-0 w-full h-full object-cover object-top"
+          loading="lazy"
           animate={{ scale: hovered ? 1.04 : 1 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         />
@@ -135,20 +142,23 @@ export function PricingPostersSection() {
           </Link>
         </motion.div>
 
-        {/* Asymmetric poster grid */}
+        {/* 5-poster asymmetric grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-          {/* Large left */}
+          {/* Large left — Website Packages */}
           <div className="lg:col-span-6">
-            <PosterTile poster={posters[0]} className="h-[60vw] lg:h-full min-h-[320px] lg:min-h-[580px]" />
+            <PosterTile poster={posters[0]} className="h-[60vw] lg:h-full min-h-[320px] lg:min-h-[600px]" />
           </div>
 
-          {/* Right column */}
+          {/* Right column — 4 posters in 2×2 */}
           <div className="lg:col-span-6 grid grid-cols-1 gap-3">
             <div className="grid grid-cols-2 gap-3">
-              <PosterTile poster={posters[1]} className="h-[40vw] lg:h-[280px]" />
-              <PosterTile poster={posters[2]} className="h-[40vw] lg:h-[280px]" />
+              <PosterTile poster={posters[1]} className="h-[40vw] lg:h-[290px]" />
+              <PosterTile poster={posters[2]} className="h-[40vw] lg:h-[290px]" />
             </div>
-            <PosterTile poster={posters[3]} className="h-[40vw] lg:h-[280px]" />
+            <div className="grid grid-cols-2 gap-3">
+              <PosterTile poster={posters[3]} className="h-[40vw] lg:h-[290px]" />
+              <PosterTile poster={posters[4]} className="h-[40vw] lg:h-[290px]" />
+            </div>
           </div>
         </div>
       </div>

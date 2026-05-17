@@ -30,6 +30,13 @@ import AiAutomationPage from './pages/AiAutomationPage';
 import WebsitesAppsPage from './pages/WebsitesAppsPage';
 import TaskSystemsPage from './pages/TaskSystemsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import StarterWebsitePage from './pages/services/StarterWebsitePage';
+import ProfessionalWebsitePage from './pages/services/ProfessionalWebsitePage';
+import PremiumWebsitePage from './pages/services/PremiumWebsitePage';
+import LandingPagePage from './pages/services/LandingPagePage';
+import EcommercePage from './pages/services/EcommercePage';
+import AiAutomationServicePage from './pages/services/AiAutomationServicePage';
+import MobileAppPage from './pages/services/MobileAppPage';
 import { AuthProvider } from './admin/auth/AuthContext';
 import { AdminLoginPage } from './admin/pages/AdminLoginPage';
 import { AdminLayout } from './admin/layouts/AdminLayout';
@@ -85,6 +92,14 @@ export function App() {
                 <Route path="/task-systems" element={<TaskSystemsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/terms" element={<TermsPage />} />
+                {/* Individual service pages */}
+                <Route path="/services/starter-website"      element={<StarterWebsitePage />} />
+                <Route path="/services/professional-website" element={<ProfessionalWebsitePage />} />
+                <Route path="/services/premium-website"      element={<PremiumWebsitePage />} />
+                <Route path="/services/landing-page"         element={<LandingPagePage />} />
+                <Route path="/services/ecommerce"            element={<EcommercePage />} />
+                <Route path="/services/ai-automation"        element={<AiAutomationServicePage />} />
+                <Route path="/services/mobile-app"           element={<MobileAppPage />} />
                 <Route path="*" element={<NotFoundPage />} />
 
                 {/* Admin */}

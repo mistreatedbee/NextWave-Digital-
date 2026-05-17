@@ -44,6 +44,7 @@ const services = [
     name: 'Starter Website',
     desc: 'A polished 5-page website to establish your online presence.',
     price: 'From R2,000',
+    href: '/services/starter-website',
     waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Starter%20Website%20Package.',
   },
   {
@@ -51,6 +52,7 @@ const services = [
     name: 'Professional Website',
     desc: 'Up to 10 pages with enhanced SEO, logo design, and Google optimisation.',
     price: 'From R3,500',
+    href: '/services/professional-website',
     waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Professional%20Website%20Package.',
   },
   {
@@ -58,6 +60,7 @@ const services = [
     name: 'Premium Website',
     desc: 'Unlimited pages, ecommerce integration, and 12-month hosting included.',
     price: 'From R5,500',
+    href: '/services/premium-website',
     waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Premium%20Website%20Package.',
   },
   {
@@ -65,6 +68,7 @@ const services = [
     name: 'Landing Page',
     desc: 'High-converting single page with chatbot, booking, and contact form.',
     price: 'R750 Special',
+    href: '/services/landing-page',
     waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Landing%20Page%20Special%20for%20R750.',
   },
   {
@@ -72,6 +76,7 @@ const services = [
     name: 'Ecommerce Store',
     desc: 'Unlimited products, payment gateway, and full admin dashboard.',
     price: 'From R4,000',
+    href: '/services/ecommerce',
     waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Ecommerce%20Website%20Package.',
   },
   {
@@ -79,6 +84,7 @@ const services = [
     name: 'AI Automation Suite',
     desc: 'Chatbots, CRM, email automation, sales funnels, and workflow systems.',
     price: 'From R7,499',
+    href: '/services/ai-automation',
     waMsg: 'Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20AI%20Automation%20Package.',
   },
 ];
@@ -168,7 +174,7 @@ export function ServicesOverviewSection() {
 
               <TiltRow>
               <motion.div
-                className="group flex items-start gap-6 lg:gap-16 py-8 lg:py-10 cursor-default -mx-6 lg:-mx-10 px-6 lg:px-10"
+                className="group flex items-start gap-6 lg:gap-16 py-8 lg:py-10 cursor-pointer -mx-6 lg:-mx-10 px-6 lg:px-10"
                 whileHover={{ backgroundColor: 'rgba(183,255,0,0.02)' }}
                 transition={{ duration: 0.3 }}
               >
@@ -182,15 +188,17 @@ export function ServicesOverviewSection() {
                   {service.n}
                 </motion.span>
 
-                {/* Service name */}
-                <motion.h3
-                  className="font-display font-semibold flex-1 leading-tight"
-                  style={{ fontSize: 'clamp(1.5rem, 3vw, 2.8rem)' }}
-                  whileHover={{ x: 6 }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {service.name}
-                </motion.h3>
+                {/* Service name — clickable link to detail page */}
+                <Link to={service.href} className="flex-1" onClick={(e) => e.stopPropagation()}>
+                  <motion.h3
+                    className="font-display font-semibold leading-tight hover:text-gold transition-colors duration-300"
+                    style={{ fontSize: 'clamp(1.5rem, 3vw, 2.8rem)' }}
+                    whileHover={{ x: 6 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    {service.name}
+                  </motion.h3>
+                </Link>
 
                 {/* Right block: desc + price + book button */}
                 <div className="shrink-0 text-right w-44 lg:w-60 hidden md:flex flex-col items-end gap-2">
