@@ -1,10 +1,40 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useCallback } from 'react';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+
+// Subtle tilt on hover — adds premium 3D depth feel
+function TiltRow({ children, className }: { children: React.ReactNode; className?: string }) {
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rotateX = useTransform(my, [-60, 60], [1.5, -1.5]);
+  const rotateY = useTransform(mx, [-200, 200], [-1.5, 1.5]);
+
+  const handleMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mx.set(e.clientX - rect.left - rect.width / 2);
+    my.set(e.clientY - rect.top - rect.height / 2);
+  }, [mx, my]);
+
+  const handleLeave = useCallback(() => {
+    mx.set(0);
+    my.set(0);
+  }, [mx, my]);
+
+  return (
+    <motion.div
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={{ rotateX, rotateY, transformPerspective: 800 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 const WA_BASE = 'https://wa.me/27731531188?text=';
 
@@ -136,6 +166,7 @@ export function ServicesOverviewSection() {
                 style={{ display: 'block' }}
               />
 
+              <TiltRow>
               <motion.div
                 className="group flex items-start gap-6 lg:gap-16 py-8 lg:py-10 cursor-default -mx-6 lg:-mx-10 px-6 lg:px-10"
                 whileHover={{ backgroundColor: 'rgba(183,255,0,0.02)' }}
@@ -198,6 +229,7 @@ export function ServicesOverviewSection() {
                   </a>
                 </div>
               </motion.div>
+              </TiltRow>
             </motion.div>
           ))}
 

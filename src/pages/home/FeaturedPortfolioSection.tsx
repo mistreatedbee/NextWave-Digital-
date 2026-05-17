@@ -3,7 +3,14 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { portfolioItems } from '../../data/portfolio';
 
-const featured = portfolioItems.slice(0, 3);
+const FEATURED_IDS = [
+  'christian-leadership-movement',
+  'safe-cloud-africa',
+  'ashley-mash-portfolio',
+];
+const featured = FEATURED_IDS
+  .map(id => portfolioItems.find(p => p.id === id))
+  .filter((p): p is typeof portfolioItems[0] => Boolean(p));
 
 function ProjectTile({
   item,
@@ -19,19 +26,20 @@ function ProjectTile({
   return (
     <motion.div
       className={`relative overflow-hidden bg-charcoal-light cursor-pointer ${className}`}
-      initial={{ opacity: 0, scale: 0.97 }}
-      whileInView={{ opacity: 1, scale: 1 }}
+      initial={{ clipPath: 'inset(0 100% 0 0)', opacity: 0 }}
+      whileInView={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 1.0, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 1.1, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
+      whileHover={index === 0 ? { borderTop: '2px solid rgba(183,255,0,0.5)' } : {}}
     >
       {/* Thumbnail image */}
       <motion.img
         src={item.thumbnail}
         alt={item.title}
         className="absolute inset-0 w-full h-full object-cover"
-        animate={{ scale: hovered ? 1.06 : 1 }}
+        animate={{ scale: hovered ? 1.08 : 1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         onError={(e) => {
           (e.target as HTMLImageElement).style.display = 'none';
