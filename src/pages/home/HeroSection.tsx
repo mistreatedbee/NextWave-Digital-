@@ -246,7 +246,7 @@ function SlideBg({ id }: { id: number }) {
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 5 + i, delay: t.delay, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <img src={t.img} alt="" className="w-full object-cover" style={{ maxHeight: '160px' }}
+          <img src={t.img} alt="" className="w-full object-cover" loading="lazy" style={{ maxHeight: '160px' }}
             onError={(e) => { (e.target as HTMLImageElement).style.display='none'; }} />
         </motion.div>
       ))}
