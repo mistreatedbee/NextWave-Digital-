@@ -9,7 +9,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue>({
   theme: 'dark',
-  toggle: () => {},
+  toggle: () => undefined,
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -31,7 +31,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       localStorage.setItem('nw-theme', theme);
-    } catch {}
+    } catch {
+      // localStorage can be unavailable in restricted browser modes.
+    }
   }, [theme]);
 
   const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));

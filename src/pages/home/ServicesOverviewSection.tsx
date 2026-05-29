@@ -3,8 +3,7 @@ import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import { shouldUseEnhancedMotion } from '../../utils/motionSafety';
 
 // Subtle tilt on hover — adds premium 3D depth feel
 function TiltRow({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -91,8 +90,13 @@ const services = [
 
 export function ServicesOverviewSection() {
   const linesRef = useRef<HTMLDivElement[]>([]);
+  const enhancedMotion = shouldUseEnhancedMotion();
 
   useEffect(() => {
+    if (!shouldUseEnhancedMotion()) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
     const ctx = gsap.context(() => {
       linesRef.current.forEach((el) => {
         if (!el) return;
@@ -112,6 +116,8 @@ export function ServicesOverviewSection() {
         );
       });
     });
+    ScrollTrigger.refresh();
+
     return () => ctx.revert();
   }, []);
 
@@ -124,7 +130,7 @@ export function ServicesOverviewSection() {
         className="absolute left-0 top-1/3 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{
           background: 'radial-gradient(circle, rgba(183,255,0,0.025) 0%, transparent 65%)',
-          filter: 'blur(80px)',
+          filter: enhancedMotion ? 'blur(80px)' : undefined,
         }}
       />
 

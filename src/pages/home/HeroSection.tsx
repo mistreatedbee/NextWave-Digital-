@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
+import { shouldUseBlurTransitions, shouldUseEnhancedMotion } from '../../utils/motionSafety';
 
 const WA_BASE = 'https://wa.me/27731531188?text=';
 
@@ -107,6 +108,8 @@ const SLIDES: SlideData[] = [
 
 // ─── Per-slide background decorations ────────────────────────────────────────
 function SlideBg({ id }: { id: number }) {
+  const enhancedMotion = shouldUseEnhancedMotion();
+
   if (id === 1) return (
     <svg className="absolute inset-0 w-full h-full opacity-[0.07] pointer-events-none" aria-hidden>
       <defs>
@@ -117,17 +120,21 @@ function SlideBg({ id }: { id: number }) {
         </linearGradient>
       </defs>
       {[0,1,2,3].map(i => (
-        <path key={i}
-          d={`M0,${180+i*60} C200,${140+i*60} 400,${220+i*60} 600,${180+i*60} S1000,${140+i*60} 1400,${180+i*60}`}
-          stroke="url(#wg)" strokeWidth="1.5" fill="none"
-          style={{ animation: `wavePath${i} ${8+i*2}s ease-in-out infinite`, animationDelay: `${i*1.5}s` }}
-        />
+        <g
+          key={i}
+          style={{
+            animation: enhancedMotion ? `waveFloat ${8+i*2}s ease-in-out infinite` : undefined,
+            animationDelay: `${i*1.5}s`,
+          }}
+        >
+          <path
+            d={`M0,${180+i*60} C200,${140+i*60} 400,${220+i*60} 600,${180+i*60} S1000,${140+i*60} 1400,${180+i*60}`}
+            stroke="url(#wg)" strokeWidth="1.5" fill="none"
+          />
+        </g>
       ))}
       <style>{`
-        @keyframes wavePath0{0%,100%{d:path("M0,180 C200,140 400,220 600,180 S1000,140 1400,180")} 50%{d:path("M0,200 C200,160 400,240 600,200 S1000,160 1400,200")}}
-        @keyframes wavePath1{0%,100%{d:path("M0,240 C200,200 400,280 600,240 S1000,200 1400,240")} 50%{d:path("M0,220 C200,180 400,260 600,220 S1000,180 1400,220")}}
-        @keyframes wavePath2{0%,100%{d:path("M0,300 C200,260 400,340 600,300 S1000,260 1400,300")} 50%{d:path("M0,320 C200,280 400,360 600,320 S1000,280 1400,320")}}
-        @keyframes wavePath3{0%,100%{d:path("M0,360 C200,320 400,400 600,360 S1000,320 1400,360")} 50%{d:path("M0,340 C200,300 400,380 600,340 S1000,300 1400,340")}}
+        @keyframes waveFloat { 0%,100% { transform: translateY(0); opacity: 0.8; } 50% { transform: translateY(16px); opacity: 1; } }
       `}</style>
     </svg>
   );
@@ -299,12 +306,20 @@ export function HeroSection() {
   };
 
   const slide = SLIDES[idx];
+  const enhancedMotion = shouldUseEnhancedMotion();
+  const useBlurTransitions = shouldUseBlurTransitions();
 
-  const textV = {
-    enter:  { opacity: 0, y: 36, filter: 'blur(6px)' },
-    center: { opacity: 1, y: 0,  filter: 'blur(0px)', transition: { duration: 0.85, ease: [0.16,1,0.3,1] as const } },
-    exit:   { opacity: 0, y: -20, filter: 'blur(4px)', transition: { duration: 0.4, ease: [0.4,0,1,1] as const } },
-  };
+  const textV = useBlurTransitions
+    ? {
+        enter:  { opacity: 0, y: 36, filter: 'blur(6px)' },
+        center: { opacity: 1, y: 0,  filter: 'blur(0px)', transition: { duration: 0.85, ease: [0.16,1,0.3,1] as const } },
+        exit:   { opacity: 0, y: -20, filter: 'blur(4px)', transition: { duration: 0.4, ease: [0.4,0,1,1] as const } },
+      }
+    : {
+        enter:  { opacity: 0, y: 24 },
+        center: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.16,1,0.3,1] as const } },
+        exit:   { opacity: 0, y: -12, transition: { duration: 0.3, ease: [0.4,0,1,1] as const } },
+      };
 
   return (
     <section
@@ -340,9 +355,15 @@ export function HeroSection() {
 
       {/* Ambient blobs */}
       <div className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] rounded-full pointer-events-none animate-slow-drift"
-        style={{ background: `radial-gradient(circle, ${slide.accentColor} 0%, transparent 65%)`, filter: 'blur(100px)' }} />
+        style={{
+          background: `radial-gradient(circle, ${slide.accentColor} 0%, transparent 65%)`,
+          filter: enhancedMotion ? 'blur(100px)' : undefined,
+        }} />
       <div className="absolute bottom-[-10%] left-[-8%] w-[600px] h-[600px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(58,144,144,0.035) 0%, transparent 60%)', filter: 'blur(90px)' }} />
+        style={{
+          background: 'radial-gradient(circle, rgba(58,144,144,0.035) 0%, transparent 60%)',
+          filter: enhancedMotion ? 'blur(90px)' : undefined,
+        }} />
 
       {/* Scanline overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.025]"

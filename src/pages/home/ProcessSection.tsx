@@ -6,8 +6,7 @@ import {
 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import { shouldUseEnhancedMotion } from '../../utils/motionSafety';
 
 // Counter for step numbers
 function StepCounter({ to }: { to: string }) {
@@ -35,6 +34,10 @@ export function ProcessSection() {
   const lineRef     = useRef<SVGLineElement>(null);
 
   useEffect(() => {
+    if (!shouldUseEnhancedMotion()) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
     const ctx = gsap.context(() => {
       if (!lineRef.current) return;
       const line = lineRef.current;
@@ -51,6 +54,8 @@ export function ProcessSection() {
         },
       });
     }, sectionRef);
+    ScrollTrigger.refresh();
+
     return () => ctx.revert();
   }, []);
 
@@ -150,7 +155,11 @@ function StepCard({ step, i }: { step: typeof STEPS[0]; i: number }) {
         boxShadow: '0 24px 60px rgba(183,255,0,0.10), 0 4px 20px rgba(0,0,0,0.2)',
       }}
       className="relative rounded-2xl border border-gold/15 hover:border-gold/45 transition-colors duration-400 p-6 cursor-default"
-      style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(14px)' }}
+      style={{
+        background: 'rgba(255,255,255,0.03)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+      }}
     >
       {/* Top row: number + icon */}
       <div className="flex items-start justify-between mb-3">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { portfolioItems } from '../../data/portfolio';
+import { shouldUseEnhancedMotion } from '../../utils/motionSafety';
 
 const FEATURED_IDS = [
   'christian-leadership-movement',
@@ -110,6 +111,8 @@ function ProjectTile({
 }
 
 export function FeaturedPortfolioSection() {
+  const enhancedMotion = shouldUseEnhancedMotion();
+
   return (
     <section
       className="relative"
@@ -119,7 +122,7 @@ export function FeaturedPortfolioSection() {
         className="absolute right-0 top-1/4 w-[550px] h-[550px] rounded-full pointer-events-none"
         style={{
           background: 'radial-gradient(circle, rgba(58,144,144,0.03) 0%, transparent 60%)',
-          filter: 'blur(90px)',
+          filter: enhancedMotion ? 'blur(90px)' : undefined,
         }}
       />
 

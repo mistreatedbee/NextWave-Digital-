@@ -1,21 +1,23 @@
 import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import Lenis from 'lenis';
+import { shouldUseEnhancedMotion } from '../utils/motionSafety';
 
 interface SmoothScrollProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function SmoothScroll({ children }: SmoothScrollProps) {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    // Disable smooth scroll on touch devices — native scroll is better there
-    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    // Safari, touch devices, and reduced-motion users are more reliable with native scroll.
+    if (!shouldUseEnhancedMotion()) return;
 
     const lenis = new Lenis({
       duration:       1.1,
       easing:         (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel:    !isTouch,
+      smoothWheel:    true,
       touchMultiplier: 2,
       wheelMultiplier: 1,
     });
@@ -32,6 +34,7 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
 

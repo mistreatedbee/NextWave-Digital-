@@ -6,15 +6,16 @@ import { Markdown } from '../utils/markdown';
 import { SEO } from '../components/SEO';
 
 const contentModules = import.meta.glob('../content/blog/*.md', {
-  as: 'raw',
+  query: '?raw',
+  import: 'default',
   eager: true,
-});
+}) as Record<string, string>;
 
 const CONTENT: Record<string, string> = {
   'getting-started-with-ai-automation':
-    contentModules['../content/blog/getting-started-with-ai-automation.md'] as string,
+    contentModules['../content/blog/getting-started-with-ai-automation.md'],
   'designing-scalable-web-apps':
-    contentModules['../content/blog/designing-scalable-web-apps.md'] as string,
+    contentModules['../content/blog/designing-scalable-web-apps.md'],
 };
 
 export default function BlogPostPage() {
