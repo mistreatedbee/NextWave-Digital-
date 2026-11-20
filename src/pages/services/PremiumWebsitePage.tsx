@@ -4,13 +4,13 @@ import { ServiceDetailPage } from '../../components/ServiceDetailPage';
 export default function PremiumWebsitePage() {
   return (
     <ServiceDetailPage
-      seoTitle="Premium Website Package — R5,500 | NextWave Digital Solutions"
-      seoDesc="Unlimited pages, 12 months hosting, ecommerce ready, custom logo, advanced SEO, and ongoing support. The most powerful website package from NextWave."
+      seoTitle="Premium Website Package — R7,000 | NextWave Digital Solutions"
+      seoDesc="Unlimited pages, 12 months hosting, ecommerce ready, custom logo, advanced SEO, and ongoing support. R7,000 once-off — the most powerful website package from NextWave."
       name="Premium Website Package"
-      price="R5,500"
+      price="R7,000"
       badge="Most Powerful"
       tagline="The complete package for established businesses that demand the best."
-      description="The Premium Website Package is our flagship offering — a comprehensive, fully-featured website built for businesses that are serious about their online presence. With unlimited pages, 12 months free hosting, advanced SEO, ecommerce capability, and ongoing maintenance, this package delivers everything you need to dominate your market online."
+      description="The Premium Website Package is our flagship offering — a comprehensive, fully-featured website built for businesses that are serious about their online presence. With unlimited pages, 12 months free hosting, advanced SEO, ecommerce capability, and ongoing support & maintenance, this package delivers everything you need to dominate your market online."
       who="Perfect for established businesses, medium to large enterprises, ecommerce retailers, professional service firms, real estate agencies, and any business that needs a powerful, scalable online platform with long-term support."
       features={[
         'Unlimited custom pages',
@@ -20,7 +20,7 @@ export default function PremiumWebsitePage() {
         'Advanced SEO strategy and setup',
         'Custom premium logo design',
         'Ecommerce integration (if needed)',
-        'Monthly maintenance and updates',
+        'Ongoing support and maintenance',
         'Priority support',
         'Mobile-responsive design',
         'Social media integration',
@@ -41,11 +41,11 @@ export default function PremiumWebsitePage() {
         { q: 'Can I add an online store?', a: 'Yes — ecommerce integration is included if needed, allowing you to sell products or services directly from your website.' },
         { q: 'How long does the free hosting last?', a: 'Free hosting is included for 12 full months. After that, we offer affordable hosting renewal options.' },
       ]}
-      waMessage="Hi NextWave Digital Solutions, I would like to book the Premium Website Package for R5500."
+      waMessage="Hi NextWave Digital Solutions, I would like to book the Premium Website Package for R7000."
       relatedServices={[
-        { name: 'Professional Website', price: 'R3,500', href: '/services/professional-website' },
-        { name: 'Ecommerce Website',    price: 'R4,000', href: '/services/ecommerce' },
-        { name: 'AI Automation',        price: 'R7,499', href: '/services/ai-automation' },
+        { name: 'Professional Website', price: 'R5,000', href: '/services/professional-website' },
+        { name: 'Ecommerce Website',    price: 'R5,500', href: '/services/ecommerce' },
+        { name: 'AI Automation',        price: 'R9,000', href: '/services/ai-automation' },
       ]}
     />
   );

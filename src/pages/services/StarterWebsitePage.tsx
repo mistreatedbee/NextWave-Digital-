@@ -4,10 +4,10 @@ import { ServiceDetailPage } from '../../components/ServiceDetailPage';
 export default function StarterWebsitePage() {
   return (
     <ServiceDetailPage
-      seoTitle="Starter Website Package — R2,000 | NextWave Digital Solutions"
-      seoDesc="Get a professional 5-page website for your business starting at R2,000. Includes free domain, hosting, SEO, and mobile-friendly design."
+      seoTitle="Starter Website Package — R3,500 | NextWave Digital Solutions"
+      seoDesc="Get a professional 5-page website for your business for R3,500 once-off. Includes free domain, hosting, SEO, and mobile-friendly design."
       name="Starter Website Package"
-      price="R2,000"
+      price="R3,500"
       badge="Most Affordable"
       tagline="A clean, professional 5-page website to establish your online presence fast."
       description="The Starter Website Package is designed for startups, freelancers, and small businesses that need a polished, professional online presence without breaking the bank. You get a complete, mobile-friendly website with everything you need to start attracting clients online — built and delivered quickly."
@@ -16,7 +16,7 @@ export default function StarterWebsitePage() {
         'Up to 5 custom pages',
         'Free .co.za domain (1 year)',
         'Free 1 month web hosting',
-        'Unlimited business email accounts',
+        'Unlimited emails',
         'Basic SEO setup',
         'Mobile-responsive design',
         'Social media links integration',
@@ -37,11 +37,11 @@ export default function StarterWebsitePage() {
         { q: 'Do I own the website?', a: 'Absolutely. Once delivered and paid, the website is 100% yours.' },
         { q: 'What do I need to provide?', a: 'We just need your business name, logo (if you have one), contact details, services, and any text or images you want included.' },
       ]}
-      waMessage="Hi NextWave Digital Solutions, I would like to book the Starter Website Package for R2000."
+      waMessage="Hi NextWave Digital Solutions, I would like to book the Starter Website Package for R3500."
       relatedServices={[
-        { name: 'Professional Website', price: 'R3,500', href: '/services/professional-website' },
-        { name: 'Premium Website',      price: 'R5,500', href: '/services/premium-website' },
-        { name: 'Landing Page Special', price: 'R750',   href: '/services/landing-page' },
+        { name: 'Professional Website', price: 'R5,000', href: '/services/professional-website' },
+        { name: 'Premium Website',      price: 'R7,000', href: '/services/premium-website' },
+        { name: 'Landing Page',         price: 'R3,000', href: '/services/landing-page' },
       ]}
     />
   );

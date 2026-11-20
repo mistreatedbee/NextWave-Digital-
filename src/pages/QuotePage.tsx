@@ -122,12 +122,12 @@ export function QuotePage() {
             <div className="section-label mb-3">Service Required</div>
             <select value={form.service} onChange={set('service')} className={inputClass}>
               <option value="" className="bg-charcoal text-cream/50">Select a service…</option>
-              <option value="Starter Website (R2,000)" className="bg-charcoal text-cream">Starter Website — R2,000</option>
-              <option value="Professional Website (R3,500)" className="bg-charcoal text-cream">Professional Website — R3,500</option>
-              <option value="Premium Website (R5,500)" className="bg-charcoal text-cream">Premium Website — R5,500</option>
-              <option value="Landing Page (R750)" className="bg-charcoal text-cream">Landing Page — R750 Special</option>
-              <option value="Ecommerce Store (R4,000)" className="bg-charcoal text-cream">Ecommerce Store — R4,000</option>
-              <option value="AI Automation Suite (R7,499)" className="bg-charcoal text-cream">AI Automation Suite — R7,499</option>
+              <option value="Starter Website (R3,500)" className="bg-charcoal text-cream">Starter Website — R3,500</option>
+              <option value="Professional Website (R5,000)" className="bg-charcoal text-cream">Professional Website — R5,000</option>
+              <option value="Premium Website (R7,000)" className="bg-charcoal text-cream">Premium Website — R7,000</option>
+              <option value="Landing Page (R3,000)" className="bg-charcoal text-cream">Landing Page — R3,000</option>
+              <option value="Ecommerce Store (R5,500)" className="bg-charcoal text-cream">Ecommerce Store — R5,500</option>
+              <option value="AI Automation Suite (R9,000)" className="bg-charcoal text-cream">AI Automation Suite — R9,000</option>
               <option value="Mobile App Development" className="bg-charcoal text-cream">Mobile App Development</option>
               <option value="Custom Software" className="bg-charcoal text-cream">Custom Software</option>
               <option value="Other" className="bg-charcoal text-cream">Other</option>

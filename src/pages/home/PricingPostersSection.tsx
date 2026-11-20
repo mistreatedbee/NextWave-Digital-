@@ -6,34 +6,34 @@ const WA_NUMBER = '27731531188';
 
 const posters = [
   {
-    src: '/full website design.jpeg',
+    src: '/pricing-website-packages.png',
     label: 'Website Packages',
-    sub: 'From R2,000',
-    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in your Website Packages — From R2,000.\n\nPlease send me more details.',
+    sub: 'From R3,500',
+    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in your Website Packages — From R3,500.\n\nPlease send me more details.',
   },
   {
-    src: '/landing page website.jpeg',
+    src: '/pricing-landing-page.png',
     label: 'Landing Page',
-    sub: 'R750 Special',
-    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in the Landing Page Special — R750.\n\nPlease send me more details.',
+    sub: 'R3,000 Once-Off',
+    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in the Landing Page — R3,000.\n\nPlease send me more details.',
   },
   {
-    src: '/full e-commerce website design.jpeg',
+    src: '/pricing-ecommerce-store.png',
     label: 'Ecommerce Store',
-    sub: 'From R4,000',
-    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in an Ecommerce Store — From R4,000.\n\nPlease send me more details.',
+    sub: 'R5,500',
+    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in an Ecommerce Store — R5,500.\n\nPlease send me more details.',
   },
   {
-    src: '/custom mobile app.jpeg',
+    src: '/pricing-mobile-app.png',
     label: 'Custom Mobile App',
     sub: 'Custom Quote',
     waMsg: 'Hi NextWave Digital Solutions! I\'m interested in a Custom Mobile App.\n\nPlease contact me to discuss a quote.',
   },
   {
-    src: '/ai automation.jpeg',
+    src: '/pricing-ai-automation.png',
     label: 'AI Automation',
-    sub: 'From R7,499',
-    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in the AI Automation Package — From R7,499.\n\nPlease send me more details.',
+    sub: 'R9,000 Once-Off',
+    waMsg: 'Hi NextWave Digital Solutions! I\'m interested in the AI Automation Package — R9,000.\n\nPlease send me more details.',
   },
 ];
 

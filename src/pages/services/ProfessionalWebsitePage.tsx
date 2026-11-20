@@ -4,11 +4,11 @@ import { ServiceDetailPage } from '../../components/ServiceDetailPage';
 export default function ProfessionalWebsitePage() {
   return (
     <ServiceDetailPage
-      seoTitle="Professional Website Package — R3,500 | NextWave Digital Solutions"
-      seoDesc="A comprehensive 10-page website with enhanced SEO, custom logo, Google Business optimization, and 3 months free hosting. R3,500 once-off."
+      seoTitle="Professional Website Package — R5,000 | NextWave Digital Solutions"
+      seoDesc="A comprehensive 10-page website with enhanced SEO, custom logo, Google Business optimization, and 3 months free hosting. R5,000 once-off."
       name="Professional Website Package"
-      price="R3,500"
-      badge="Best for Growing Businesses"
+      price="R5,000"
+      badge="Most Popular"
       tagline="A comprehensive website for growing businesses that want a stronger digital presence."
       description="The Professional Website Package is built for businesses that are ready to take their online presence seriously. With up to 10 pages, a custom logo, enhanced SEO, and Google Business optimization, this package positions your business as a credible, professional brand that clients can trust."
       who="Ideal for growing businesses, established SMEs, retail stores, restaurants, healthcare providers, and service businesses that want more than just a basic website — they want a strong digital identity that generates leads."
@@ -39,11 +39,11 @@ export default function ProfessionalWebsitePage() {
         { q: 'What is Google Business optimization?', a: 'We set up and optimize your Google Business Profile so your business appears in Google Maps and local search results.' },
         { q: 'Can I update the content myself?', a: 'Yes — we can set up a simple content management system so you can update text and images without needing a developer.' },
       ]}
-      waMessage="Hi NextWave Digital Solutions, I would like to book the Professional Website Package for R3500."
+      waMessage="Hi NextWave Digital Solutions, I would like to book the Professional Website Package for R5000."
       relatedServices={[
-        { name: 'Starter Website',  price: 'R2,000', href: '/services/starter-website' },
-        { name: 'Premium Website',  price: 'R5,500', href: '/services/premium-website' },
-        { name: 'Ecommerce Website', price: 'R4,000', href: '/services/ecommerce' },
+        { name: 'Starter Website',  price: 'R3,500', href: '/services/starter-website' },
+        { name: 'Premium Website',  price: 'R7,000', href: '/services/premium-website' },
+        { name: 'Ecommerce Website', price: 'R5,500', href: '/services/ecommerce' },
       ]}
     />
   );

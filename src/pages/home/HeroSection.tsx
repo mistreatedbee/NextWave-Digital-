@@ -29,7 +29,7 @@ function Counter({ to, suffix = '' }: { to: number; suffix: string }) {
 const WA_WEBSITE  = `${WA_BASE}Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20a%20Website.`;
 const WA_ECOM     = `${WA_BASE}Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Ecommerce%20Website%20Package.`;
 const WA_AI       = `${WA_BASE}Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20AI%20Automation%20Package.`;
-const WA_LANDING  = `${WA_BASE}Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Landing%20Page%20Special%20for%20R750.`;
+const WA_LANDING  = `${WA_BASE}Hi%20NextWave%20Digital%20Solutions%2C%20I%20want%20to%20book%20the%20Landing%20Page%20for%20R3000.`;
 const WA_PROJECT  = `${WA_BASE}Hi%20NextWave%20Digital%20Solutions%2C%20I%20would%20like%20to%20start%20my%20project.`;
 
 interface SlideData {
@@ -86,11 +86,11 @@ const SLIDES: SlideData[] = [
   },
   {
     id: 5,
-    label: 'Special Offer',
+    label: 'Landing Page · R3,000',
     headingLines: ['High-Converting', 'Landing Pages Built', 'For Results.'],
     goldLineIdx: 1,
-    sub: 'Get a modern landing page with chatbot, service sections, gallery, appointment booking, contact forms, and mobile-friendly design.',
-    cta1: { text: 'View Landing Page Offer', href: '/services' },
+    sub: 'One page. Everything your business needs — chatbot, service sections, gallery, booking, appointments, terms page and mobile-friendly design. Once-off, no monthly fees.',
+    cta1: { text: 'View Landing Page',       href: '/services/landing-page' },
     cta2: { text: 'Book Landing Page',       wa: WA_LANDING },
     accentColor: 'rgba(200,164,90,0.06)',
   },

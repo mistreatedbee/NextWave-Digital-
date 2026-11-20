@@ -4,27 +4,33 @@ import { ServiceDetailPage } from '../../components/ServiceDetailPage';
 export default function AiAutomationServicePage() {
   return (
     <ServiceDetailPage
-      seoTitle="AI Automation Package — R7,499 | NextWave Digital Solutions"
-      seoDesc="Automate your customer support, emails, follow-ups, bookings, leads, and workflows with AI. R7,499 once-off. NextWave Digital Solutions."
+      seoTitle="AI Automation Package — R9,000 | NextWave Digital Solutions"
+      seoDesc="Automate your customer support, emails, follow-ups, bookings, leads, and workflows with AI. R9,000 once-off setup. NextWave Digital Solutions."
       name="AI Automation Suite"
-      price="R7,499"
+      price="R9,000"
       badge="Work Smarter"
-      tagline="Let AI handle the repetitive work while you focus on growing your business."
+      tagline="Let AI handle the work. You take the credit. Automate today, grow tomorrow."
       description="The AI Automation Suite is a comprehensive business automation setup that connects your systems, automates your repetitive tasks, and helps your business run more efficiently around the clock. From intelligent chatbots to automated email campaigns, CRM workflows, and sales funnels — we build automation systems that generate leads, support customers, and reduce admin work significantly."
       who="Ideal for businesses that receive high volumes of enquiries, appointments, or customer support requests — including real estate agencies, medical practices, retail businesses, service companies, and any SME that wants to scale operations without adding staff."
       features={[
-        'AI chatbot (website and WhatsApp)',
-        'Automated email response system',
-        'Customer follow-up automation',
-        'Lead capture automation',
-        'Online appointment scheduling automation',
-        'CRM integration and automation',
-        'Customer support automation',
-        'Business workflow automation',
-        'Reporting and analytics automation',
-        'Social media automation',
-        'Sales funnel automation',
-        'Integration with existing tools',
+        'Full AI automation setup included',
+        'AI chatbot and live chat (24/7)',
+        'AI voice agents — answer calls, FAQs and take messages',
+        'Automatic email marketing',
+        'CRM and pipeline automation',
+        'Lead capture and follow-up',
+        'Appointment scheduling',
+        'Reminders and notifications (SMS, email, WhatsApp)',
+        'Order and payment automation',
+        'Ecommerce automation (abandoned carts, recommendations)',
+        'Inventory management',
+        'Social media and AI content automation',
+        'Task, project and workflow automation',
+        'Document and data automation',
+        'Customer feedback automation',
+        'Reporting and analytics',
+        'Integration with your tools',
+        'Training and support',
       ]}
       benefits={[
         { title: 'Save Hours Every Week', desc: 'Automation handles repetitive tasks so your team focuses on high-value work that grows the business.' },
@@ -37,10 +43,10 @@ export default function AiAutomationServicePage() {
         { q: 'Do I need technical knowledge to use the automation?', a: 'No — we set everything up and train you on how to manage it. Most automations run independently once set up.' },
         { q: 'Can you integrate with my existing software?', a: 'Yes — we can integrate with most popular CRMs, email platforms, booking systems, and business tools.' },
       ]}
-      waMessage="Hi NextWave Digital Solutions, I would like to book the AI Automation Package for R7499."
+      waMessage="Hi NextWave Digital Solutions, I would like to book the AI Automation Package for R9000."
       relatedServices={[
-        { name: 'Premium Website',   price: 'R5,500', href: '/services/premium-website' },
-        { name: 'Ecommerce Website', price: 'R4,000', href: '/services/ecommerce' },
+        { name: 'Premium Website',   price: 'R7,000', href: '/services/premium-website' },
+        { name: 'Ecommerce Website', price: 'R5,500', href: '/services/ecommerce' },
         { name: 'Mobile App',        price: 'Custom', href: '/services/mobile-app' },
       ]}
     />

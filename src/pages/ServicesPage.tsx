@@ -12,19 +12,20 @@ function bookService(name: string, price: string) {
 }
 
 const POSTERS = [
-  { src: '/full website design.jpeg',            label: 'Website Packages',   sub: 'From R2,000' },
-  { src: '/landing page website.jpeg',           label: 'Landing Page',        sub: 'R750 Special' },
-  { src: '/full e-commerce website design.jpeg', label: 'Ecommerce Store',     sub: 'From R4,000' },
-  { src: '/custom mobile app.jpeg',              label: 'Custom Mobile App',   sub: 'Custom Quote' },
+  { src: '/pricing-website-packages.png', label: 'Website Packages',  sub: 'From R3,500' },
+  { src: '/pricing-landing-page.png',     label: 'Landing Page',      sub: 'R3,000' },
+  { src: '/pricing-ecommerce-store.png',  label: 'Ecommerce Store',   sub: 'R5,500' },
+  { src: '/pricing-ai-automation.png',    label: 'AI Automation',     sub: 'R9,000' },
+  { src: '/pricing-mobile-app.png',       label: 'Custom Mobile App', sub: 'Custom Quote' },
 ];
 
 const packages = [
   {
     n: '01',
     name: 'Starter Website',
-    price: 'R2,000',
+    price: 'R3,500',
     note: null,
-    desc: 'A clean, professional 5-page website to establish your online presence. Ideal for small businesses and startups that need a polished digital home base fast.',
+    desc: 'Perfect for startups and small businesses launching online. A clean, professional website of up to 5 pages to establish your digital home base fast.',
     features: [
       'Free .co.za domain',
       '1 month free hosting',
@@ -39,92 +40,93 @@ const packages = [
   {
     n: '02',
     name: 'Professional Website',
-    price: 'R3,500',
-    note: null,
-    desc: 'A comprehensive website with enhanced visibility and a custom brand identity. Built for growing businesses ready to compete online and attract more clients.',
+    price: 'R5,000',
+    note: 'Most Popular',
+    desc: 'Ideal for growing businesses ready to scale. A comprehensive website with enhanced visibility and a custom brand identity. Built for growing businesses ready to compete online and attract more clients.',
     features: [
       'Free .co.za domain',
       '3 months free hosting',
-      'Unlimited email accounts',
-      'Enhanced SEO & Google optimisation',
+      'Enhanced SEO',
       'Custom logo design',
-      'Google Business Profile setup',
+      'Google Business optimisation',
       'Mobile responsive design',
       'Social media integration',
-      'Up to 10 pages',
+      'Advanced website — up to 10 pages',
     ],
   },
   {
     n: '03',
     name: 'Premium Website',
-    price: 'R5,500',
+    price: 'R7,000',
     note: null,
-    desc: 'Our flagship website package — unlimited in scope and ambition. Full ecommerce capability, 12-month hosting, and ongoing maintenance included.',
+    desc: 'Best for established businesses needing full digital power. Our flagship package — unlimited pages, custom branding, 12-month hosting and ongoing support included.',
     features: [
       'Free .co.za domain',
       '12 months free hosting',
-      'Ecommerce integration',
-      'Monthly maintenance & updates',
-      'Premium bespoke design',
-      'Unlimited pages',
-      'Advanced SEO strategy',
+      'Custom logo design',
+      'Social media integration',
       'Mobile responsive design',
-      'Priority support',
+      'Ongoing support & maintenance',
+      'Ecommerce integration (if needed)',
+      'Premium website — unlimited pages',
     ],
   },
   {
     n: '04',
     name: 'Landing Page',
-    price: 'R750',
-    note: 'Normally R1,500',
-    desc: 'A high-converting single-page experience built to capture leads, book appointments, and communicate your offer instantly. Limited-time special offer.',
+    price: 'R3,000',
+    note: 'Once-off · No monthly fees',
+    desc: 'One page. Everything your business needs. A fast, professional and affordable modern landing page built to help your business grow and turn visitors into loyal customers.',
     features: [
-      'Modern luxury landing page',
-      'Mobile friendly',
-      'Gallery section',
+      'Modern & professional design',
+      'Chatbot integration',
       'Business services section',
-      'Contact form',
-      'AI chatbot integration',
-      'Appointment booking system',
+      'Contracts / terms page',
+      'Gallery / portfolio section',
+      'Customer booking system',
+      'Appointments management',
+      'Mobile responsive',
       'Fast loading & SEO optimised',
+      'Easy to edit & manage',
     ],
   },
   {
     n: '05',
     name: 'Ecommerce Store',
-    price: 'R4,000',
+    price: 'R5,500',
     note: null,
-    desc: 'A complete online store solution with everything you need to sell products and manage your business — from payment gateway to inventory management.',
+    desc: 'Everything you need to launch, sell and grow online — a complete ecommerce solution for clothing brands, beauty businesses, restaurants & cafés, tech stores and small businesses.',
     features: [
+      'Full ecommerce store',
       'Unlimited products',
-      'Payment gateway setup (Payfast / Peach)',
-      'Training & onboarding included',
-      'Hosting & domain included',
-      'Mobile friendly',
-      'Secure checkout',
-      'Product management dashboard',
-      'Admin dashboard',
-      'Order & inventory management',
+      'Payment gateways setup',
+      'Step-by-step training on adding & managing products',
+      '1 year hosting & domain included (renew yearly at your own cost)',
+      'Mobile friendly & modern',
+      'Secure & reliable — SSL, backups & security setup',
     ],
   },
   {
     n: '06',
     name: 'AI Automation Suite',
-    price: 'R7,499',
-    note: null,
-    desc: 'Transform your business operations with intelligent automation. From lead capture to customer support — we build the systems that work while you sleep.',
+    price: 'R9,000',
+    note: 'Once-off setup',
+    desc: 'Let AI handle the work — you take the credit. We use advanced AI automation to handle your admin, engage your customers, and free up your time so you can focus on growing your business.',
     features: [
-      'AI chatbots (website & WhatsApp)',
-      'Automated follow-ups',
-      'Email marketing automation',
-      'Lead capture systems',
-      'Appointment scheduling automation',
-      'CRM automation & integration',
-      'Customer support automation',
-      'Workflow automation',
-      'Reporting & analytics automation',
-      'Social media automation',
-      'Sales funnel automation',
+      'Full AI automation setup included',
+      'AI chatbot & live chat',
+      'AI voice agents',
+      'Automatic email marketing',
+      'CRM & pipeline automation',
+      'Lead capture & follow-up',
+      'Appointment scheduling',
+      'Reminders & notifications (SMS, email, WhatsApp)',
+      'Order & payment automation',
+      'Social media & AI content automation',
+      'Workflow, task & document automation',
+      'Reporting & analytics',
+      'Integration with your tools',
+      'Training & support',
     ],
   },
   {
@@ -134,13 +136,13 @@ const packages = [
     note: null,
     desc: 'Native and cross-platform mobile applications for iOS and Android. From MVPs to full-featured enterprise apps — built for performance, UX, and offline-first capability.',
     features: [
-      'iOS & Android (React Native / Expo)',
-      'Custom UI/UX design',
-      'API & backend integration',
-      'Push notifications',
-      'Offline-first capability',
+      'Custom app design & development',
+      'Android & iOS-ready solutions',
+      'Secure login & user management',
+      'Real-time notifications',
+      'Booking, payments & chat',
+      'UI / UX design',
       'App Store & Google Play submission',
-      'Ongoing maintenance & updates',
     ],
   },
 ];
@@ -176,7 +178,7 @@ function PackagePanel({ pkg, isOpen, onToggle }: {
             {pkg.name}
           </h3>
           {pkg.note && (
-            <span className="font-sans text-[10px] tracking-[0.18em] uppercase text-cream/40 line-through">
+            <span className="font-sans text-[10px] tracking-[0.18em] uppercase text-gold/70">
               {pkg.note}
             </span>
           )}
@@ -273,7 +275,7 @@ export function ServicesPage() {
             Our Packages
           </h1>
           <p className="font-sans text-base text-cream/50 max-w-lg leading-relaxed">
-            Six clearly defined solutions — each built to deliver maximum value for your investment.
+            Seven clearly defined solutions — each built to deliver maximum value for your investment.
           </p>
         </motion.div>
       </section>
@@ -286,18 +288,18 @@ export function ServicesPage() {
           transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           className="bg-charcoal border-l-4 border-gold p-6 lg:p-8"
         >
-          <div className="section-label text-gold mb-2">Limited Offer</div>
+          <div className="section-label text-gold mb-2">Most Popular</div>
           <div className="flex flex-wrap items-baseline gap-4">
             <h2
               className="font-serif font-light text-cream"
               style={{ fontSize: 'clamp(1.5rem, 3vw, 2.8rem)' }}
             >
-              Landing Page — R750
+              Professional Website — R5,000
             </h2>
-            <span className="font-sans text-[13px] text-cream/30 line-through">Normally R1,500</span>
+            <span className="font-sans text-[13px] text-cream/30">Once-off</span>
           </div>
           <p className="font-sans text-[13px] text-cream/50 mt-2 max-w-lg">
-            Modern luxury landing page with AI chatbot, appointment booking, and full mobile optimisation.
+            Up to 10 pages, custom logo, enhanced SEO, Google Business optimisation and 3 months free hosting.
           </p>
         </motion.div>
       </div>
@@ -331,7 +333,7 @@ export function ServicesPage() {
           >
             <div className="section-label mb-3">Packages at a Glance</div>
           </motion.div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {POSTERS.map((poster, i) => (
               <motion.div
                 key={poster.label}

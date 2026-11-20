@@ -39,9 +39,9 @@ export default function MobileAppPage() {
       ]}
       waMessage="Hi NextWave Digital Solutions, I am interested in Mobile App Development. Please contact me to discuss my project."
       relatedServices={[
-        { name: 'Premium Website',  price: 'R5,500', href: '/services/premium-website' },
-        { name: 'AI Automation',    price: 'R7,499', href: '/services/ai-automation' },
-        { name: 'Ecommerce Website', price: 'R4,000', href: '/services/ecommerce' },
+        { name: 'Premium Website',  price: 'R7,000', href: '/services/premium-website' },
+        { name: 'AI Automation',    price: 'R9,000', href: '/services/ai-automation' },
+        { name: 'Ecommerce Website', price: 'R5,500', href: '/services/ecommerce' },
       ]}
     />
   );
