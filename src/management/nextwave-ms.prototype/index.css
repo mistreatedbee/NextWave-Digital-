@@ -77,3 +77,11 @@ body { font-family: var(--font-sans); color: var(--nw-fg); background: var(--nw-
 h1, h2, h3, h4, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
 .tabular { font-variant-numeric: tabular-nums; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Lime surfaces always use black text for strong contrast. */
+.bg-lime {
+  color: #050507 !important;
+}
+.bg-lime * {
+  color: #050507;
+}
