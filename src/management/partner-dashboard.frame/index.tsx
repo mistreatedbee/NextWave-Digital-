@@ -1,14 +1,12 @@
 import { AlertTriangle } from 'lucide-react'
 import { Shell } from '../shared/nw/Shell'
-import { Badge, Btn, Card, LoadError, PageHeader } from '../shared/nw/ui'
+import { Badge, Btn, Card, LoadError, PageHeader, useToast } from '../shared/nw/ui'
 import { isOpenLead, isOverdueLead } from '../shared/nw/data'
-import { toJob, toLead, toPartner, toPayout, useTable } from '../shared/nw/api'
+import { send, toJob, toLead, toPartner, toPayout, toRecord, useTable } from '../shared/nw/api'
 import { d, monthKey, rand } from '../shared/nw/lib'
 import { useUser } from '../shared/nw/user'
 
 type Props = Partial<typeof args> & { onNavigate?: (p: string) => void; onToggleDark?: () => void }
-
-const ONBOARDING = ['Information form', 'NDA signed', 'Partnership & Commission Agreement', 'Police clearance', 'System access', 'Training: commission & POPIA']
 
 export default function PartnerDashboard(props: Props) {
   const { dark, onNavigate, onToggleDark } = { ...args, ...props }
@@ -71,9 +69,8 @@ export default function PartnerDashboard(props: Props) {
           {trialDay !== null && (
             <div className="mb-5 flex items-baseline justify-between"><h2 className="font-semibold text-fg">30-day trial</h2><span className="text-sm font-semibold text-fg tabular">{trialDay > 30 ? 'Review due' : `Day ${trialDay} of 30`}</span></div>
           )}
-          <h3 className="mb-2 text-sm font-semibold text-fg">Onboarding requirements</h3>
-          <ul className="list-disc space-y-1.5 pl-5 text-sm text-fg">{ONBOARDING.map((item) => <li key={item}>{item}</li>)}</ul>
-          <p className="mt-3 text-xs text-muted">Completion tracking isn’t connected yet.</p>
+          <h3 className="mb-2 text-sm font-semibold text-fg">Onboarding checklist</h3>
+          <Checklist />
         </Card>
 
         <Card className="p-5 lg:col-span-2">
@@ -114,4 +111,26 @@ export const args = {
 
 export const argTypes = {
   dark: { control: 'boolean' },
+}
+
+function Checklist() {
+  const toast = useToast()
+  const { rows, error, reload } = useTable('onboarding', toRecord)
+  const submit = async (id: string) => {
+    const problem = await send(`/api/onboarding/${id}`, 'PUT', { status: 'Submitted' })
+    toast(problem || 'Marked as submitted')
+    if (!problem) reload()
+  }
+  if (error) return <LoadError message={error} />
+  if (!rows.length) return <p className="text-sm text-muted">No requirements assigned yet.</p>
+  return (
+    <ul className="space-y-2">
+      {[...rows].sort((a, b) => String(a.id).localeCompare(String(b.id))).map((r) => (
+        <li key={r.id} className="flex items-center gap-2 text-sm">
+          <span className="min-w-0 flex-1 text-fg">{r.item}</span>
+          {r.status === 'Missing' ? <button onClick={() => submit(r.id)} className="text-xs font-semibold text-accent">Mark submitted</button> : <Badge>{r.status}</Badge>}
+        </li>
+      ))}
+    </ul>
+  )
 }

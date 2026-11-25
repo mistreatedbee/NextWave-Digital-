@@ -61,7 +61,7 @@ export const NAV: { group: string; items: Item[] }[] = [
     { id: 'weekly-report', label: 'Weekly partner report', icon: FileBarChart, roles: AP },
     { id: 'reports', label: 'Reports hub', icon: BarChart3, roles: AF },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'approvals', label: 'Approvals inbox', icon: Inbox, roles: A },
+    { id: 'approvals', label: 'Approvals', icon: Inbox, roles: AP },
     { id: 'settings', label: 'Settings', icon: Settings, roles: A },
     { id: 'kb', label: 'Help & knowledge base', icon: LifeBuoy },
   ] },

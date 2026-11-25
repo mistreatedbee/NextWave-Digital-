@@ -5,6 +5,7 @@ import { Role } from './lib'
 import { ToastProvider } from './ui'
 import { canAccess, NAV } from './nav'
 import { useUser } from './user'
+import { useNotifications } from './notifications'
 
 const EASE = [0.23, 1, 0.32, 1] as const
 
@@ -106,29 +107,31 @@ function TopBar({ role, dark, onToggleDark, openMenu, go }: { role: Role; dark?:
   const user = useUser()
   const label = ROLE_LABEL[role]
   const name = user?.name || label
+  const alerts = useNotifications(role)
+  const [search, setSearch] = useState('')
   const toggle = (m: 'new' | 'bell' | 'role') => setMenu((c) => (c === m ? null : m))
   return (
     <header className="relative z-30 flex h-16 shrink-0 items-center gap-2 border-b border-line bg-card px-3 sm:gap-3 sm:px-6">
       <button onClick={openMenu} aria-label="Open menu" className="rounded-lg p-2 text-fg hover:bg-soft lg:hidden"><Menu className="h-5 w-5" /></button>
-      <label className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2 md:max-w-md">
+      <form onSubmit={(e) => { e.preventDefault(); if (search.trim()) go(`search:${search.trim()}`) }} className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2 md:max-w-md">
         <Search className="h-4 w-4 shrink-0 text-muted" />
-        <input placeholder="Search leads, clients, jobs, invoices…" className="w-full min-w-0 bg-transparent text-sm text-fg outline-none placeholder:!text-black" />
-        <kbd className="hidden rounded border border-line px-1.5 text-[11px] text-muted sm:block">⌘K</kbd>
-      </label>
+        <input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" placeholder="Search, then press Enter" className="w-full min-w-0 bg-transparent text-sm text-fg outline-none placeholder:!text-black" />
+      </form>
       <div className="ml-auto flex items-center gap-1 sm:gap-2">
         {role !== 'finance' && (
           <div className="relative">
             <button onClick={() => toggle('new')} className="inline-flex items-center gap-1 whitespace-nowrap rounded-lg bg-lime px-3 py-2 text-sm font-semibold text-ink hover:bg-lime-hover"><Plus className="h-4 w-4" /><span className="hidden sm:inline">New</span></button>
             <Pop open={menu === 'new'} className="w-48">
-              {NEW_ITEMS.filter((n) => canAccess(role, NEW_ROUTES[n])).map((n) => <button key={n} onClick={() => { setMenu(null); go(NEW_ROUTES[n]) }} className="block w-full rounded-md px-3 py-2 text-left text-sm text-fg hover:bg-soft">{n}</button>)}
+              {NEW_ITEMS.filter((n) => canAccess(role, NEW_ROUTES[n])).map((n) => <button key={n} onClick={() => { setMenu(null); go(`${NEW_ROUTES[n]}:new`) }} className="block w-full rounded-md px-3 py-2 text-left text-sm text-fg hover:bg-soft">{n}</button>)}
             </Pop>
           </div>
         )}
         <button onClick={onToggleDark} aria-label="Toggle theme" className="rounded-lg p-2 text-muted hover:bg-soft hover:text-fg">{dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}</button>
         <div className="relative">
-          <button onClick={() => toggle('bell')} aria-label="Notifications" className="relative rounded-lg p-2 text-muted hover:bg-soft hover:text-fg"><Bell className="h-5 w-5" /></button>
+          <button onClick={() => toggle('bell')} aria-label="Notifications" className="relative rounded-lg p-2 text-muted hover:bg-soft hover:text-fg"><Bell className="h-5 w-5" />{alerts.length > 0 && <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-bad" />}</button>
           <Pop open={menu === 'bell'} className="w-80">
-            <p className="px-3 py-2 text-sm text-muted">No notifications.</p>
+            {alerts.length === 0 && <p className="px-3 py-2 text-sm text-muted">No notifications.</p>}
+            {alerts.slice(0, 4).map((a) => <button key={a.id} onClick={() => { setMenu(null); go(a.page) }} className="block w-full rounded-md px-3 py-2 text-left hover:bg-soft"><span className="block text-sm font-semibold text-fg">{a.title}</span><span className="block text-xs text-muted">{a.body}</span></button>)}
             <button onClick={() => { setMenu(null); go('notifications') }} className="mt-1 w-full rounded-md px-3 py-2 text-left text-sm font-semibold text-accent hover:bg-soft">View all notifications</button>
           </Pop>
         </div>

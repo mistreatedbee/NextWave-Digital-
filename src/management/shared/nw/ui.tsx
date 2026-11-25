@@ -53,7 +53,7 @@ const tone = (s: string) => {
   // Whole words only, so that e.g. "Contacted" and "On hold" are not read as "on".
   const has = (words: string) => new RegExp(`\\b(${words})\\b`).test(v)
   if (has('lost|overdue|refund|refunded|reversed|revoked|failed|missing|expired|breach|declined|off|withdrawn|open incident')) return 'bg-bad-soft text-bad'
-  if (has('pending|review|trial|scheduled|quote sent|awaiting|hold|draft|due|partial|needs|in progress|requested')) return 'bg-warn-soft text-warn'
+  if (has('pending|review|trial|scheduled|quote sent|awaiting|hold|draft|due|partial|needs|submitted|in progress|requested')) return 'bg-warn-soft text-warn'
   if (has('new|contacted|not started|invited|planned|info')) return 'bg-info-soft text-info'
   if (has('won|paid|cleared|done|active|signed|verified|approved|complete|given|clear|enabled|resolved') || v === 'on') return 'bg-ok-soft text-ok'
   return 'bg-soft text-muted'

@@ -1,4 +1,5 @@
-export type Role = 'admin' | 'partner' | 'finance'
+import type { Role } from '../../../../shared/resources'
+export type { Role }
 export type JobType = 'Standard Job' | 'Independent Work' | 'Assisted Work' | 'Major Project'
 
 export function rand(n: number) {
@@ -23,6 +24,17 @@ export const monthName = (date = new Date()) => date.toLocaleDateString('en-ZA',
 export function nextFriday(from = new Date()) {
   const date = new Date(from)
   date.setDate(date.getDate() + ((5 - date.getDay() + 7) % 7))
+  return isoDate(date)
+}
+
+/** The date a number of working days (Monday to Friday) after the given day. */
+export function addBusinessDays(iso: string, days: number) {
+  if (!iso) return ''
+  const date = new Date(`${iso}T00:00:00`)
+  for (let left = days; left > 0; ) {
+    date.setDate(date.getDate() + 1)
+    if (date.getDay() % 6 !== 0) left--
+  }
   return isoDate(date)
 }
 
@@ -56,8 +68,9 @@ export function commission(i: CommissionInput) {
 
 export function exportCsv(name: string, rows: Record<string, unknown>[]) {
   if (!rows.length) return
-  const keys = Object.keys(rows[0])
-  const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`
+  const keys = Object.keys(rows[0]).filter((k) => typeof rows[0][k] !== 'object' || rows[0][k] === null)
+  // A leading quote stops spreadsheet programs from running a cell as a formula.
+  const esc = (v: unknown) => `"${String(v ?? '').replace(/^(?=[=+\-@\t\r])/, "'").replace(/"/g, '""')}"`
   const csv = [keys.join(','), ...rows.map((r) => keys.map((k) => esc(r[k])).join(','))].join('\n')
   const a = document.createElement('a')
   a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }))

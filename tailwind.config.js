@@ -22,6 +22,23 @@ export default {
         gold:            'var(--color-gold)',
         lime:            'var(--color-gold)',
         teal:            '#3A9090',
+        // Management system (values are defined under .nw-app in src/management/shared/nw/theme.css)
+        ink: { DEFAULT: '#050507', 2: '#111116', 3: '#1c1c22' },
+        'lime-hover': '#a3be00',
+        bg: 'rgb(var(--nw-bg) / <alpha-value>)',
+        card: 'rgb(var(--nw-card) / <alpha-value>)',
+        soft: 'rgb(var(--nw-soft) / <alpha-value>)',
+        line: 'rgb(var(--nw-line) / <alpha-value>)',
+        fg: 'rgb(var(--nw-fg) / <alpha-value>)',
+        muted: 'rgb(var(--nw-muted) / <alpha-value>)',
+        ok: 'rgb(var(--nw-ok) / <alpha-value>)',
+        'ok-soft': 'rgb(var(--nw-ok-soft) / <alpha-value>)',
+        warn: 'rgb(var(--nw-warn) / <alpha-value>)',
+        'warn-soft': 'rgb(var(--nw-warn-soft) / <alpha-value>)',
+        bad: 'rgb(var(--nw-bad) / <alpha-value>)',
+        'bad-soft': 'rgb(var(--nw-bad-soft) / <alpha-value>)',
+        info: 'rgb(var(--nw-info) / <alpha-value>)',
+        'info-soft': 'rgb(var(--nw-info-soft) / <alpha-value>)',
         // Semantic aliases — keep for admin panel compatibility
         background: '#0A0A0A',
         surface:    '#161616',
@@ -34,7 +51,7 @@ export default {
           foreground: '#0A0A0A',
         },
         accent: {
-          DEFAULT: '#3A9090',
+          DEFAULT: 'rgb(var(--nw-accent, 58 144 144) / <alpha-value>)',
         },
       },
       fontFamily: {

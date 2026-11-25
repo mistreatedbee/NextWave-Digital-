@@ -7,7 +7,7 @@
     "dev": "npx vite",
     "dev:full": "concurrently -k \"npm run dev\" \"npm run dev:api\"",
     "dev:api": "tsx watch server.ts",
-    "db:migrate": "node --import tsx --input-type=module -e \"import fs from 'node:fs'; import dotenv from 'dotenv'; import pg from 'pg'; dotenv.config({path:'./.env.local'}); const c=new pg.Client({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}}); await c.connect(); await c.query(fs.readFileSync('./supabase/migrations/20261125_nextwave_core.sql','utf8')); await c.end(); console.log('Migration applied');\"",
+    "db:migrate": "tsx scripts/migrate.ts",
     "build": "npx vite build",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "preview": "npx vite preview"

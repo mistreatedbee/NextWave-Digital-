@@ -1,6 +1,9 @@
 import pg from 'pg'
 import type { Db } from './app.js'
 
+// Return SQL dates as 'YYYY-MM-DD' text so that time zones can't shift them by a day.
+pg.types.setTypeParser(1082, (value) => value)
+
 let pool: pg.Pool | undefined
 function get() {
   if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not configured')

@@ -1,8 +1,8 @@
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Check, X } from 'lucide-react'
 import { Shell } from '../shared/nw/Shell'
-import { Avatar, Badge, Btn, Card, Empty, LoadError, PageHeader } from '../shared/nw/ui'
+import { Avatar, Badge, Btn, Card, Empty, LoadError, PageHeader, useToast } from '../shared/nw/ui'
 import { isOpenLead, isOverdueLead, Lead, Payment, Payout } from '../shared/nw/data'
-import { toLead, toPartner, toPayment, toPayout, useTable } from '../shared/nw/api'
+import { send, toJob, toLead, toPartner, toPayment, toPayout, toRecord, useTable } from '../shared/nw/api'
 import { monthKey, monthName, rand } from '../shared/nw/lib'
 import { useUser } from '../shared/nw/user'
 
@@ -17,7 +17,8 @@ export default function AdminDashboard(props: Props) {
   const payments = useTable('payments', toPayment)
   const payouts = useTable('payouts', toPayout)
   const partners = useTable('partners', toPartner)
-  const error = leads.error || payments.error || payouts.error || partners.error
+  const jobs = useTable('jobs', toJob)
+  const error = leads.error || payments.error || payouts.error || partners.error || jobs.error
 
   const month = monthKey()
   const cleared = payments.rows.filter((p) => p.status === 'Cleared' && p.date.startsWith(month))
@@ -26,6 +27,13 @@ export default function AdminDashboard(props: Props) {
   const open = leads.rows.filter(isOpenLead)
   const overdue = leads.rows.filter(isOverdueLead)
   const first = user?.name.split(' ')[0]
+  // Totals are counted from the records themselves.
+  const board = partners.rows.map((p) => ({
+    ...p,
+    leadCount: leads.rows.filter((l) => l.partner === p.name).length,
+    jobCount: jobs.rows.filter((j) => j.partner === p.name).length,
+    earnings: total(payouts.rows.filter((o) => o.partner === p.name && o.status === 'Paid'), (o) => o.amount),
+  })).sort((a, b) => b.earnings - a.earnings)
 
   return (
     <Shell role="admin" page="dash-admin" dark={dark} onNavigate={onNavigate} onToggleDark={onToggleDark}>
@@ -64,8 +72,8 @@ export default function AdminDashboard(props: Props) {
         </Card>
 
         <Card className="p-5">
-          <h2 className="mb-3 font-semibold text-fg">Approvals</h2>
-          <Empty title="No approvals" body="Approval requests aren’t connected to the database yet." />
+          <div className="mb-3 flex items-center justify-between"><h2 className="font-semibold text-fg">Pending approvals</h2><button onClick={() => onNavigate?.('approvals')} className="text-sm font-semibold text-accent">All</button></div>
+          <ApprovalList />
         </Card>
 
         <Card className="p-5">
@@ -94,18 +102,18 @@ export default function AdminDashboard(props: Props) {
 
         <Card className="p-5 xl:col-span-3">
           <div className="mb-3 flex items-center justify-between"><h2 className="font-semibold text-fg">Partner leaderboard</h2><button onClick={() => onNavigate?.('partners')} className="text-sm font-semibold text-accent">Partners</button></div>
-          {partners.rows.length === 0 ? <Empty title="No partners yet" body="Partners you add will appear here." /> : (
+          {board.length === 0 ? <Empty title="No partners yet" body="Partners you add will appear here." /> : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead><tr className="text-left text-xs text-muted"><th className="py-2 pr-3">#</th><th className="pr-3">Partner</th><th className="pr-3">Status</th><th className="pr-3 text-right">Leads</th><th className="pr-3 text-right">Jobs</th><th className="text-right">Earnings to date</th></tr></thead>
+                <thead><tr className="text-left text-xs text-muted"><th className="py-2 pr-3">#</th><th className="pr-3">Partner</th><th className="pr-3">Status</th><th className="pr-3 text-right">Leads</th><th className="pr-3 text-right">Jobs</th><th className="text-right">Paid to date</th></tr></thead>
                 <tbody>
-                  {[...partners.rows].sort((a, b) => b.earnings - a.earnings).map((p, i) => (
+                  {board.map((p, i) => (
                     <tr key={p.email} className="border-t border-line">
                       <td className="py-3 pr-3 font-bold text-muted">{i + 1}</td>
                       <td className="pr-3"><span className="flex items-center gap-2"><Avatar name={p.name} size={7} /><span className="whitespace-nowrap font-semibold text-fg">{p.name}</span></span></td>
                       <td className="pr-3"><Badge>{p.status}</Badge></td>
-                      <td className="pr-3 text-right tabular">{p.leads}</td>
-                      <td className="pr-3 text-right tabular">{p.jobs}</td>
+                      <td className="pr-3 text-right tabular">{p.leadCount}</td>
+                      <td className="pr-3 text-right tabular">{p.jobCount}</td>
                       <td className="text-right font-semibold tabular">{rand(p.earnings)}</td>
                     </tr>
                   ))}
@@ -185,6 +193,33 @@ function Sources({ leads }: { leads: Lead[] }) {
           <span className="w-24 shrink-0 text-fg">{s}</span>
           <span className="h-2 flex-1 rounded-full bg-soft"><span className="block h-full rounded-full bg-ink dark:bg-lime" style={{ width: `${(n / rows[0][1]) * 100}%` }} /></span>
           <span className="w-5 text-right font-semibold tabular">{n}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function ApprovalList() {
+  const toast = useToast()
+  const { rows, error, reload } = useTable('approvals', toRecord)
+  const pending = rows.filter((a) => a.status === 'Pending')
+  const decide = async (id: string, status: string) => {
+    const problem = await send(`/api/approvals/${id}`, 'PUT', { status })
+    toast(problem || `Request ${status.toLowerCase()}`)
+    if (!problem) reload()
+  }
+  if (error) return <LoadError message={error} />
+  if (!pending.length) return <p className="text-sm text-muted">Nothing waiting for a decision.</p>
+  return (
+    <ul className="divide-y divide-line">
+      {pending.slice(0, 5).map((a) => (
+        <li key={a.id} className="flex items-start gap-3 py-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-fg">{a.kind}{a.amount ? ` · ${rand(a.amount)}` : ''}</p>
+            <p className="truncate text-xs text-muted">{a.summary}{a.partner ? ` · ${a.partner}` : ''}</p>
+          </div>
+          <button onClick={() => decide(a.id, 'Approved')} aria-label="Approve" className="rounded-md bg-lime p-1.5 text-ink hover:bg-lime-hover"><Check className="h-4 w-4" /></button>
+          <button onClick={() => decide(a.id, 'Declined')} aria-label="Decline" className="rounded-md border border-line p-1.5 text-muted hover:bg-soft"><X className="h-4 w-4" /></button>
         </li>
       ))}
     </ul>

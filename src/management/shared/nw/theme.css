@@ -1,0 +1,57 @@
+/*
+ * Colours for the management system, scoped to .nw-app so the public website is unaffected.
+ * Values are RGB channels so that Tailwind opacity modifiers (e.g. border-bad/30) work.
+ */
+.nw-app {
+  --nw-bg: 243 244 240;
+  --nw-card: 255 255 255;
+  --nw-soft: 236 238 231;
+  --nw-line: 225 227 220;
+  --nw-fg: 11 12 14;
+  --nw-muted: 92 96 88;
+  --nw-accent: 85 99 0;
+  --nw-ok: 47 107 18;
+  --nw-ok-soft: 230 243 214;
+  --nw-warn: 138 90 0;
+  --nw-warn-soft: 251 239 212;
+  --nw-bad: 180 35 24;
+  --nw-bad-soft: 253 229 226;
+  --nw-info: 29 79 145;
+  --nw-info-soft: 225 236 251;
+  --color-gold: #b5d300;
+  color: rgb(var(--nw-fg));
+  background: rgb(var(--nw-bg));
+  color-scheme: light;
+}
+
+.nw-app.dark {
+  --nw-bg: 9 9 12;
+  --nw-card: 18 18 22;
+  --nw-soft: 26 26 32;
+  --nw-line: 38 38 45;
+  --nw-fg: 241 242 237;
+  --nw-muted: 155 158 149;
+  --nw-accent: 181 211 0;
+  --nw-ok: 155 213 107;
+  --nw-ok-soft: 28 42 18;
+  --nw-warn: 242 192 99;
+  --nw-warn-soft: 46 36 16;
+  --nw-bad: 255 138 125;
+  --nw-bad-soft: 52 21 18;
+  --nw-info: 143 184 245;
+  --nw-info-soft: 19 33 58;
+  color-scheme: dark;
+}
+
+.nw-app .tabular { font-variant-numeric: tabular-nums; }
+.nw-app .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Lime surfaces always use black text for strong contrast. */
+.nw-app .bg-lime,
+.nw-app .bg-lime * { color: #050507; }
+
+/* Black placeholders on light fields; a readable grey on dark ones. */
+.nw-app input::placeholder,
+.nw-app textarea::placeholder { color: #050507; opacity: 1; }
+.nw-app.dark input:not(.bg-white)::placeholder,
+.nw-app.dark textarea::placeholder { color: rgb(var(--nw-muted)) !important; }

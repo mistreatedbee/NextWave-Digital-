@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { isTable, Table } from '../../../shared/resources'
 import { Shell } from '../shared/nw/Shell'
 import { PAGE_LABEL } from '../shared/nw/nav'
-import { Badge, Btn, Card, DataTable, Empty, LoadError, PageHeader, useToast } from '../shared/nw/ui'
-import { api, toRecord, useTable } from '../shared/nw/api'
-import { rand, Role } from '../shared/nw/lib'
+import { ResourceView } from '../shared/nw/records'
+import { Card, Empty, PageHeader } from '../shared/nw/ui'
+import type { Role } from '../shared/nw/lib'
+import { AccessControl, Profile } from './account'
+import { CalendarFeed, FinanceDashboard, FinancialReports, MarketingDashboard, Notifications, ReportsHub, Schedule, SearchResults, TutoringDashboard, WeeklyReport } from './views'
 
 export const args = { dark: false, role: 'admin', page: 'quotes' }
 export const argTypes = {
@@ -13,122 +14,83 @@ export const argTypes = {
 }
 
 type Props = Partial<typeof args> & {
+  openNew?: boolean
+  query?: string
   onNavigate?: (p: string) => void
   onToggleDark?: () => void
 }
 
-const descriptions: Record<string, string> = {
-  'dash-finance': 'Cash flow, receivables and partner commissions.',
-  'dash-marketing': 'Campaign performance, accounts and content activity.',
-  'dash-tutoring': 'Students, sessions and child-safety operations.',
-  'clients': 'Active customer and client relationships.',
-  'quotes': 'Create, review and follow up customer quotes.',
-  'invoices': 'Issued invoices, balances and settlement status.',
-  'price-list': 'Products and services with current pricing.',
-  'schedule': 'Delivery dates and project milestones.',
-  'tasks': 'Team assignments, priorities and completion.',
-  'calendar': 'Meetings, sessions and delivery deadlines.',
-  'help': 'Partner and project assistance requests.',
-  'expenses': 'Operational and approved third-party costs.',
-  'fin-reports': 'Financial reporting and business performance.',
-  'partners': 'Partner status, performance and earnings.',
-  'onboarding': 'Partner setup and compliance checklist.',
-  'access': 'Users, roles and workspace permissions.',
-  'contributors': 'Contractors and contributors on projects.',
-  'accounts': 'Social and company marketing accounts.',
-  'content': 'Upcoming and published marketing content.',
-  'campaigns': 'Marketing campaigns and paid promotions.',
-  'templates': 'Reusable email, WhatsApp and social templates.',
-  'students': 'Tutoring students and parent relationships.',
-  'sessions': 'Tutoring timetable and session outcomes.',
-  'safety': 'Child safeguarding policies and incidents.',
-  'documents': 'Contracts, records and company documents.',
-  'popia': 'Privacy requests and POPIA compliance.',
-  'audit': 'System activity and change history.',
-  'weekly-report': 'Weekly partner activity and performance summary.',
-  'reports': 'Operational and management reports.',
-  'notifications': 'Recent alerts and unread workspace notifications.',
-  'approvals': 'Discounts, spending and operational approvals.',
-  'settings': 'Workspace configuration and system preferences.',
-  'kb': 'Internal guides and frequently asked questions.',
-  'profile': 'Personal account details and preferences.',
+/** Pages whose name differs from the record type they show. */
+const TABLES: Record<string, Table> = { 'price-list': 'prices', help: 'help_requests', accounts: 'social_accounts', safety: 'safety_incidents', popia: 'popia_requests', kb: 'kb_articles', audit: 'audit_log' }
+
+const DESCRIPTIONS: Record<string, string> = {
+  'dash-finance': 'Cash flow, receivables and partner payouts.',
+  'dash-marketing': 'Campaigns, accounts and content activity.',
+  'dash-tutoring': 'Students and sessions.',
+  clients: 'Customer relationships. Partners see only the clients they own.',
+  quotes: 'Discounted quotes need administrator approval before they are sent.',
+  invoices: 'Issued invoices, balances and settlement status.',
+  'price-list': 'Services and packages with current pricing.',
+  schedule: 'Job and task due dates.',
+  tasks: 'Assignments, priorities and completion.',
+  calendar: 'Events, sessions and delivery deadlines.',
+  help: 'Partner and project assistance requests.',
+  expenses: 'Operating costs. Approved third-party costs on a job reduce its commission.',
+  'fin-reports': 'Money received and paid out, by month.',
+  partners: 'Partner profiles and status. Invite new partners from Access control.',
+  onboarding: 'Partner setup and compliance requirements.',
+  access: 'Invitations, accounts and roles.',
+  contributors: 'People sharing in Major Projects.',
+  accounts: 'Company social and marketing accounts. Never store passwords here.',
+  content: 'Planned and published marketing content.',
+  campaigns: 'Marketing campaigns and paid promotions.',
+  templates: 'Reusable email, WhatsApp and social messages.',
+  students: 'Tutoring students and parent contacts. Handle in line with POPIA.',
+  sessions: 'Tutoring timetable and attendance.',
+  safety: 'Child safeguarding incidents.',
+  documents: 'Links to contracts and records kept in your file storage.',
+  popia: 'Privacy requests and deadlines.',
+  audit: 'Who changed what. The most recent 1,000 events.',
+  'weekly-report': 'Partner activity summary.',
+  reports: 'Download your records as CSV files.',
+  notifications: 'Items that need attention.',
+  approvals: 'Discounts, spending and other requests needing a decision.',
+  settings: 'Reference values shared by administrators.',
+  kb: 'Internal guides and answers.',
+  profile: 'Your account and password.',
 }
 
 export default function Workspace(props: Props) {
-  const { dark, role, page, onNavigate, onToggleDark } = { ...args, ...props }
-  const toast = useToast()
-  const [showClientForm, setShowClientForm] = useState(false)
-  const [clientDraft, setClientDraft] = useState({ name: '', company: '', email: '', phone: '', service: '', value: '' })
+  const { dark, role: roleName, page, openNew, query = '', onNavigate, onToggleDark } = { ...args, ...props }
+  const role = roleName as Role
+  const go = (p: string) => onNavigate?.(p)
+  const title = page === 'search' ? `Search: ${query}` : page === 'profile' ? 'My profile' : PAGE_LABEL[page] ?? 'Workspace'
+  const table = TABLES[page] ?? (isTable(page) ? page : null)
 
-  const title = PAGE_LABEL[page] ?? 'Workspace'
-  const clients = useTable('clients', toRecord)
-  const createClient = async () => {
-    if (!clientDraft.name.trim() || !clientDraft.company.trim()) {
-      toast('Name and company are required')
-      return
-    }
-    const id = `C-${Date.now().toString().slice(-6)}`
-    const response = await api('/api/clients', 'POST', {
-      id,
-      name: clientDraft.name.trim(),
-      company: clientDraft.company.trim(),
-      email: clientDraft.email.trim(),
-      phone: clientDraft.phone.trim(),
-      service: clientDraft.service.trim(),
-      status: 'Active',
-      value: Math.max(0, Math.round(Number(clientDraft.value) || 0)),
-    })
-    if (!response?.ok) {
-      toast('Client could not be saved')
-      return
-    }
-    const created = await response.json()
-    clients.setRows((current) => [created, ...current])
-    setClientDraft({ name: '', company: '', email: '', phone: '', service: '', value: '' })
-    setShowClientForm(false)
-    toast('Client saved')
+  // Rendered as elements so that data hooks run inside the Shell's providers.
+  const body = () => {
+    if (page === 'access') return <AccessControl />
+    if (page === 'profile') return <Profile />
+    if (page === 'dash-finance') return <FinanceDashboard role={role} />
+    if (page === 'dash-marketing') return <MarketingDashboard role={role} />
+    if (page === 'dash-tutoring') return <TutoringDashboard role={role} />
+    if (page === 'fin-reports') return <FinancialReports role={role} />
+    if (page === 'schedule') return <Schedule role={role} go={go} />
+    // The calendar shows everything with a date, followed by the editable events.
+    if (page === 'calendar') return <><CalendarFeed role={role} go={go} /><h2 className="mb-2 mt-6 font-semibold text-fg">Events</h2><ResourceView table="events" role={role} openNew={openNew} /></>
+    if (page === 'weekly-report') return <WeeklyReport role={role} />
+    if (page === 'reports') return <ReportsHub role={role} />
+    if (page === 'notifications') return <Notifications role={role} go={go} />
+    if (page === 'search') return <SearchResults role={role} query={query} go={go} />
+    // "accounts" is the marketing page; sign-in accounts live under Access control.
+    if (table) return <ResourceView table={table} role={role} openNew={openNew} />
+    return <Card><Empty title="Page not found" body="Choose a page from the menu." /></Card>
   }
 
   return (
-    <Shell role={role as Role} page={page} dark={dark} onNavigate={onNavigate} onToggleDark={onToggleDark}>
-      <PageHeader title={title} sub={descriptions[page] ?? 'Manage this area of the NextWave workspace.'}>
-        {page === 'clients' && <Btn kind="primary" onClick={() => setShowClientForm(true)}><Plus className="h-4 w-4" />New client</Btn>}
-      </PageHeader>
-
-      {page === 'clients' ? (
-        <>
-          <LoadError message={clients.error} />
-          <DataTable
-            name="Clients"
-            rows={clients.rows}
-            cols={[
-              { key: 'id', label: 'Client ID' },
-              { key: 'company', label: 'Company', render: (row) => <div><p className="font-semibold">{row.company}</p><p className="text-xs text-muted">{row.name}</p></div> },
-              { key: 'email', label: 'Email', hideSm: true },
-              { key: 'phone', label: 'Phone', hideSm: true },
-              { key: 'service', label: 'Service', hideSm: true },
-              { key: 'status', label: 'Status', render: (row) => <Badge>{String(row.status)}</Badge> },
-              { key: 'value', label: 'Value', align: 'right', render: (row) => rand(Number(row.value || 0)) },
-            ]}
-          />
-        </>
-      ) : (
-        <Card><Empty title={`${title} isn’t connected yet`} body="This area has no data source yet, so there is nothing to show." /></Card>
-      )}
-
-      {page === 'clients' && showClientForm && (
-        <Card className="mb-5 p-5">
-          <div className="grid gap-3 md:grid-cols-2">
-            <label className="text-sm font-semibold text-fg">Contact name<input value={clientDraft.name} onChange={(e) => setClientDraft({ ...clientDraft, name: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
-            <label className="text-sm font-semibold text-fg">Company<input value={clientDraft.company} onChange={(e) => setClientDraft({ ...clientDraft, company: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
-            <label className="text-sm font-semibold text-fg">Email<input type="email" value={clientDraft.email} onChange={(e) => setClientDraft({ ...clientDraft, email: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
-            <label className="text-sm font-semibold text-fg">Phone<input value={clientDraft.phone} onChange={(e) => setClientDraft({ ...clientDraft, phone: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
-            <label className="text-sm font-semibold text-fg">Service<input value={clientDraft.service} onChange={(e) => setClientDraft({ ...clientDraft, service: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
-            <label className="text-sm font-semibold text-fg">Estimated value<input type="number" min="0" value={clientDraft.value} onChange={(e) => setClientDraft({ ...clientDraft, value: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
-          </div>
-          <div className="mt-4 flex justify-end gap-2"><Btn onClick={() => setShowClientForm(false)}>Cancel</Btn><Btn kind="primary" onClick={createClient}>Save client</Btn></div>
-        </Card>
-      )}
+    <Shell role={role} page={page} dark={dark} onNavigate={onNavigate} onToggleDark={onToggleDark}>
+      <PageHeader title={title} sub={DESCRIPTIONS[page]} />
+      {body()}
     </Shell>
   )
 }

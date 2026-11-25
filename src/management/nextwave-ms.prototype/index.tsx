@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 import SignIn from '../sign-in.frame'
 import AdminDashboard from '../admin-dashboard.frame'
@@ -11,6 +11,7 @@ import Workspace from '../workspace.frame'
 import { canAccess } from '../shared/nw/nav'
 import { Account, UserContext } from '../shared/nw/user'
 import { api, SIGNED_OUT } from '../shared/nw/api'
+import '../shared/nw/theme.css'
 
 const SIGN_IN = 'sign-in'
 const ADMIN_DASH = 'admin-dashboard'
@@ -46,10 +47,17 @@ const FRAME_PAGE: Record<string, string> = {
 export default function NextWave(props: Props) {
   const p = { ...args, ...props }
   const [role, setRole] = useState<Role>(p.role as Role)
-  const [dark, setDark] = useState(p.dark)
+  // Start in whichever theme the website is using.
+  const [dark, setDark] = useState(() => p.dark || document.documentElement.classList.contains('dark'))
   const [page, setPage] = useState(() => (p.start ? FRAME_PAGE[p.start] ?? 'login' : 'login'))
   useEffect(() => setRole(p.role as Role), [p.role])
-  useEffect(() => setDark(p.dark), [p.dark])
+  useEffect(() => { if (props.dark !== undefined) setDark(props.dark) }, [props.dark])
+  // Tailwind's dark: styles look at the page root, so keep it in step and restore it on leaving.
+  const [siteWasDark] = useState(() => document.documentElement.classList.contains('dark'))
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark)
+    return () => { document.documentElement.classList.toggle('dark', siteWasDark) }
+  }, [dark, siteWasDark])
   const [account, setAccount] = useState<Account | null>(null)
 
   const signIn = (signedIn: Account) => { setAccount(signedIn); setRole(signedIn.role); setPage(HOME[signedIn.role]) }
@@ -85,18 +93,23 @@ export default function NextWave(props: Props) {
     onNavigate: navigate,
   }
 
-  if (restoring) return <div role="status" className="grid h-screen place-items-center bg-bg text-sm text-muted">Loading…</div>
-  if (page === 'login') return <SignIn state="login" onSignedIn={signIn} />
+  const themed = (children: ReactNode) => <div className={`nw-app h-full overflow-y-auto font-sans ${dark ? 'dark' : ''}`}>{children}</div>
+  if (restoring) return themed(<div role="status" className="grid h-full place-items-center text-sm text-muted">Loading…</div>)
+  if (page === 'login') return themed(<SignIn state="login" onSignedIn={signIn} />)
 
-  const current = canAccess(role, page) ? page : HOME[role]
+  // A page id may carry an argument, e.g. "tasks:new" or "search:acme".
+  const [requested, ...rest] = page.split(':')
+  const arg = rest.join(':')
+  const current = canAccess(role, requested) ? requested : HOME[role]
+  const openNew = arg === 'new'
   const view = () => {
     if (current === 'dash-admin') return <AdminDashboard {...shell} />
     if (current === 'dash-partner') return <PartnerDashboard {...shell} />
-    if (current === 'leads') return <Leads {...shell} role={role} />
-    if (current === 'jobs') return <Jobs {...shell} role={role} />
+    if (current === 'leads') return <Leads key={page} {...shell} role={role} openNew={openNew} />
+    if (current === 'jobs') return <Jobs key={page} {...shell} role={role} openNew={openNew} />
     if (current === 'commission') return <CommissionCalculator {...shell} role={role} />
-    if (current === 'payments' || current === 'payouts') return <PaymentsPayouts {...shell} role={role} tab={current === 'payouts' ? 'Partner payouts' : 'Payments'} />
-    return <Workspace key={current} {...shell} role={role} page={current} />
+    if (current === 'payments' || current === 'payouts') return <PaymentsPayouts key={page} {...shell} role={role} openNew={openNew} tab={current === 'payouts' ? 'Partner payouts' : 'Payments'} />
+    return <Workspace key={page} {...shell} role={role} page={current} openNew={openNew} query={current === 'search' ? arg : ''} />
   }
-  return <UserContext.Provider value={account}>{view()}</UserContext.Provider>
+  return <UserContext.Provider value={account}>{themed(view())}</UserContext.Provider>
 }
