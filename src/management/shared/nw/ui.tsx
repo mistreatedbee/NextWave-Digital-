@@ -121,7 +121,7 @@ export function DataTable<R extends Record<string, any>>({ name, rows, cols, fil
       <div className="flex flex-wrap items-center gap-2 border-b border-line p-3">
         <label className="flex min-w-0 flex-1 basis-48 items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2">
           <Search className="h-4 w-4 shrink-0 text-muted" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Filter ${name.toLowerCase()}…`} className="w-full min-w-0 bg-transparent text-sm text-fg outline-none placeholder:text-muted" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Filter ${name.toLowerCase()}…`} className="w-full min-w-0 bg-transparent text-sm text-fg outline-none placeholder:!text-black" />
         </label>
         {filters?.map((fl) => (
           <select key={fl.key} value={f[fl.key] ?? ''} onChange={(e) => setF({ ...f, [fl.key]: e.target.value })} className="rounded-lg border border-line bg-card px-2 py-2 text-sm text-fg">

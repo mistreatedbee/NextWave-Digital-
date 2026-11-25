@@ -114,7 +114,7 @@ function TopBar({ role, dark, onRole, onToggleDark, openMenu, go }: { role: Role
       <button onClick={openMenu} aria-label="Open menu" className="rounded-lg p-2 text-fg hover:bg-soft lg:hidden"><Menu className="h-5 w-5" /></button>
       <label className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2 md:max-w-md">
         <Search className="h-4 w-4 shrink-0 text-muted" />
-        <input placeholder="Search leads, clients, jobs, invoices…" className="w-full min-w-0 bg-transparent text-sm text-fg outline-none placeholder:text-muted" />
+        <input placeholder="Search leads, clients, jobs, invoices…" className="w-full min-w-0 bg-transparent text-sm text-fg outline-none placeholder:!text-black" />
         <kbd className="hidden rounded border border-line px-1.5 text-[11px] text-muted sm:block">⌘K</kbd>
       </label>
       <div className="ml-auto flex items-center gap-1 sm:gap-2">

@@ -85,3 +85,10 @@ h1, h2, h3, h4, .font-display { font-family: var(--font-display); letter-spacing
 .bg-lime * {
   color: #050507;
 }
+
+/* Black placeholder text in light and dark management forms. */
+input::placeholder,
+textarea::placeholder {
+  color: #050507 !important;
+  opacity: 1;
+}

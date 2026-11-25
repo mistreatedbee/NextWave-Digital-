@@ -25,11 +25,17 @@ export default function SignIn(props: Props) {
   const login = async (event: React.FormEvent) => {
     event.preventDefault()
     setError('')
-    const response = await fetch('/api/auth/login', {
+    let response: Response
+    try {
+      response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: loginEmail, password }),
-    })
+      })
+    } catch {
+      setError('Cannot reach the login server')
+      return
+    }
     if (!response.ok) {
       setError((await response.json()).error || 'Login failed')
       return
@@ -61,7 +67,7 @@ export default function SignIn(props: Props) {
       <aside className="hidden w-[44%] flex-col justify-between bg-ink p-12 text-white lg:flex">
         <div className="font-display text-2xl font-extrabold">NextWave <span className="text-lime">Digital Solutions</span></div>
         <div><p className="font-display text-4xl font-bold leading-tight">Every lead, job and rand —<br />logged, split and paid on time.</p><p className="mt-4 max-w-md text-white/60">Websites, apps, automation, marketing and tutoring, run from one place for the team and our partners.</p></div>
-        <p class="text-xs text-white/40">NextWave Digital Solutions (Pty) Ltd · Reg No. 2026/184607/07 · Johannesburg</p>
+        <p className="text-xs text-white/40">NextWave Digital Solutions (Pty) Ltd · Reg No. 2026/184607/07 · Johannesburg</p>
       </aside>
 
       <main className="flex flex-1 items-center justify-center p-6">
