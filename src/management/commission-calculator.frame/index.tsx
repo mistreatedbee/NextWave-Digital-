@@ -1,36 +1,35 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { Shell } from '../shared/nw/Shell'
-import { Btn, Card, PageHeader, useToast } from '../shared/nw/ui'
+import { Btn, Card, PageHeader } from '../shared/nw/ui'
 import { commission, JobType, rand, Role } from '../shared/nw/lib'
 
-type Props = Partial<typeof args> & { onRole?: (r: Role) => void; onNavigate?: (p: string) => void; onToggleDark?: () => void }
+type Props = Partial<typeof args> & { onNavigate?: (p: string) => void; onToggleDark?: () => void }
 const TYPES: JobType[] = ['Standard Job', 'Independent Work', 'Assisted Work', 'Major Project']
 
 export default function CommissionCalculator(props: Props) {
-  const { dark, role, jobType, fees, onRole, onNavigate, onToggleDark } = { ...args, ...props }
-  const toast = useToast()
+  const { dark, role, jobType, fees, onNavigate, onToggleDark } = { ...args, ...props }
   const [type, setType] = useState<JobType>(jobType as JobType)
   const [amount, setAmount] = useState(fees)
   const [vatIncl, setVatIncl] = useState(true)
-  const [bank, setBank] = useState(45)
-  const [third, setThird] = useState(1850)
+  const [bank, setBank] = useState(0)
+  const [third, setThird] = useState(0)
   const [delivers, setDelivers] = useState(true)
   const [share, setShare] = useState(45)
-  const [contribs, setContribs] = useState([{ name: 'Sipho Ndlovu', pct: 15 }])
+  const [contribs, setContribs] = useState<{ name: string; pct: number }[]>([])
   const [refund, setRefund] = useState(0)
 
-  const autoType: JobType | null = amount <= 500 ? 'Standard Job' : amount > 10000 ? null : null
   const range = delivers ? [40, 50] : [20, 30]
   const shareClamped = Math.min(range[1], Math.max(range[0], share))
   const c = commission({ type, fees: amount, vatIncluded: vatIncl, bankCharges: bank, thirdParty: third, majorShare: shareClamped, contributors: contribs })
-  const refundRatio = amount ? refund / amount : 0
+  // A refund can never claw back more than was received.
+  const refundRatio = amount ? Math.min(1, refund / amount) : 0
   const warn = type === 'Standard Job' && amount > 500 ? 'Standard Jobs are R500 or less — choose another type.' : type === 'Major Project' && amount <= 10000 ? 'Major Projects are above R10 000.' : null
 
   return (
-    <Shell role={role as Role} page="commission" dark={dark} onRole={onRole} onNavigate={onNavigate} onToggleDark={onToggleDark}>
+    <Shell role={role as Role} page="commission" dark={dark} onNavigate={onNavigate} onToggleDark={onToggleDark}>
       <PageHeader title="Commission calculator" sub="Net fees = fees received − VAT − bank charges − approved third-party costs.">
-        <Btn onClick={() => toast('Breakdown exported to PDF')}>Export PDF</Btn>
+        <Btn onClick={() => window.print()}>Print / save PDF</Btn>
       </PageHeader>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_420px]">
@@ -44,7 +43,6 @@ export default function CommissionCalculator(props: Props) {
               </button>
             ))}
           </div>
-          {autoType === 'Standard Job' && type !== 'Standard Job' && <p className="mt-2 text-xs text-warn">R500 or less usually qualifies as a Standard Job.</p>}
           {warn && <p className="mt-2 text-xs font-semibold text-bad">{warn}</p>}
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -68,7 +66,7 @@ export default function CommissionCalculator(props: Props) {
               {contribs.map((x, i) => (
                 <div key={i} className="mb-2 flex gap-2">
                   <input value={x.name} onChange={(e) => setContribs(contribs.map((y, k) => (k === i ? { ...y, name: e.target.value } : y)))} className="min-w-0 flex-1 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-fg" />
-                  <input type="number" value={x.pct} onChange={(e) => setContribs(contribs.map((y, k) => (k === i ? { ...y, pct: +e.target.value } : y)))} className="w-20 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-fg" />
+                  <input type="number" value={x.pct} onChange={(e) => setContribs(contribs.map((y, k) => (k === i ? { ...y, pct: Math.max(0, +e.target.value) } : y)))} className="w-20 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-fg" />
                   <button onClick={() => setContribs(contribs.filter((_, k) => k !== i))} aria-label="Remove" className="rounded-lg p-2 text-muted hover:bg-soft"><Trash2 className="h-4 w-4" /></button>
                 </div>
               ))}
@@ -105,7 +103,7 @@ export default function CommissionCalculator(props: Props) {
             <Row label={`NextWave · ${c.companyPct}%`} value={rand(c.company)} />
             {refund > 0 && (
               <div className="mt-3 rounded-lg bg-warn-soft p-3 text-xs text-fg">
-                Refund of {rand(refund)} reduces partner by {rand(c.partner * refundRatio)} and company by {rand(c.company * refundRatio)}.
+                Refund of {rand(Math.min(refund, amount))} reduces partner by {rand(c.partner * refundRatio)}, company by {rand(c.company * refundRatio)}{c.contributors.map((x) => `, ${x.name} by ${rand(x.amount * refundRatio)}`).join('')}.
               </div>
             )}
           </div>
@@ -118,8 +116,8 @@ export default function CommissionCalculator(props: Props) {
 export const args = {
   dark: false,
   role: 'admin',
-  jobType: 'Major Project',
-  fees: 34000,
+  jobType: 'Independent Work',
+  fees: 0,
 }
 
 export const argTypes = {
@@ -132,7 +130,7 @@ export const argTypes = {
 function Num({ label, value, onChange }: { label: string; value: number; onChange: (n: number) => void }) {
   return (
     <label className="block text-sm text-muted">{label}
-      <input type="number" value={value} onChange={(e) => onChange(Number(e.target.value) || 0)} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 text-base font-semibold text-fg tabular outline-none focus:border-fg/40" />
+      <input type="number" min="0" value={value} onChange={(e) => onChange(Math.max(0, Number(e.target.value) || 0))} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 text-base font-semibold text-fg tabular outline-none focus:border-fg/40" />
     </label>
   )
 }

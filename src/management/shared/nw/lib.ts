@@ -1,8 +1,6 @@
 export type Role = 'admin' | 'partner' | 'finance'
 export type JobType = 'Standard Job' | 'Independent Work' | 'Assisted Work' | 'Major Project'
 
-export const ME_PARTNER = 'Thandi Mokoena'
-
 export function rand(n: number) {
   const neg = n < 0
   const s = Math.round(Math.abs(n)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -12,8 +10,20 @@ export function rand(n: number) {
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 /** '2026-11-25' -> '25 Nov 2026' */
 export function d(iso: string) {
+  if (!iso) return '—'
   const [y, m, day] = iso.split('-').map(Number)
   return `${day} ${MONTHS[m - 1]} ${y}`
+}
+
+const pad = (n: number) => String(n).padStart(2, '0')
+export const isoDate = (date: Date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+export const monthKey = (date = new Date()) => isoDate(date).slice(0, 7)
+export const monthName = (date = new Date()) => date.toLocaleDateString('en-ZA', { month: 'long' })
+/** The weekly payout batch runs on Friday; today counts if it is a Friday. */
+export function nextFriday(from = new Date()) {
+  const date = new Date(from)
+  date.setDate(date.getDate() + ((5 - date.getDay() + 7) % 7))
+  return isoDate(date)
 }
 
 export type CommissionInput = {
@@ -36,16 +46,12 @@ export function commission(i: CommissionInput) {
   if (i.type === 'Major Project') partnerPct = i.majorShare ?? 25
   const contribPct = i.type === 'Major Project' ? (i.contributors ?? []).reduce((s, c) => s + c.pct, 0) : 0
   const companyPct = Math.max(0, 100 - partnerPct - contribPct)
-  return {
-    vat,
-    net,
-    partnerPct,
-    companyPct,
-    partner: Math.round((net * partnerPct) / 100),
-    company: Math.round((net * companyPct) / 100),
-    contributors: (i.type === 'Major Project' ? i.contributors ?? [] : []).map((c) => ({ ...c, amount: Math.round((net * c.pct) / 100) })),
-    over100: partnerPct + contribPct > 100,
-  }
+  const over100 = partnerPct + contribPct > 100
+  const partner = Math.round((net * partnerPct) / 100)
+  const contributors = (i.type === 'Major Project' ? i.contributors ?? [] : []).map((c) => ({ ...c, amount: Math.round((net * c.pct) / 100) }))
+  // The company takes the remainder so that rounded shares always add up to net fees.
+  const company = companyPct === 0 ? 0 : net - partner - contributors.reduce((s, c) => s + c.amount, 0)
+  return { vat, net, partnerPct, companyPct, partner, company, contributors, over100 }
 }
 
 export function exportCsv(name: string, rows: Record<string, unknown>[]) {

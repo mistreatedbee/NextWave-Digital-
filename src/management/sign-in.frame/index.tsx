@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { ShieldCheck } from 'lucide-react'
+import type { Account } from '../shared/nw/user'
 
-type Props = Partial<typeof args> & { onSignedIn?: (role: 'admin' | 'partner' | 'finance') => void }
+type Props = Partial<typeof args> & { onSignedIn?: (account: Account) => void }
 
 export default function SignIn(props: Props) {
   const { state: initial, email, onSignedIn } = { ...args, ...props }
   const [state, setState] = useState(initial)
-  const [sent, setSent] = useState(false)
   const [loginEmail, setLoginEmail] = useState(email)
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -37,11 +36,11 @@ export default function SignIn(props: Props) {
       return
     }
     if (!response.ok) {
-      setError((await response.json()).error || 'Login failed')
+      setError((await response.json().catch(() => ({}))).error || 'Login failed')
       return
     }
     const account = await response.json()
-    onSignedIn?.(account.role)
+    onSignedIn?.(account)
   }
 
   const acceptInvite = async (event: React.FormEvent) => {
@@ -51,13 +50,14 @@ export default function SignIn(props: Props) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: inviteToken, name, password: invitePassword }),
-    })
-    if (!response.ok) {
-      setError((await response.json()).error || 'Invite could not be accepted')
+    }).catch(() => null)
+    if (!response?.ok) {
+      setError((await response?.json().catch(() => ({})))?.error || 'Invite could not be accepted')
       return
     }
     const account = await response.json()
     setLoginEmail(account.email)
+    window.history.replaceState(null, '', '/management')
     setState('login')
     setError('Invite accepted. Sign in with your new password.')
   }
@@ -88,14 +88,11 @@ export default function SignIn(props: Props) {
           )}
 
           {state === 'forgot' && (
-            <form onSubmit={(e) => { e.preventDefault(); setSent(true) }}>
+            <div>
               <h1 className="text-2xl font-bold">Reset your password</h1>
-              <p className="mt-1 text-sm text-muted">Use the reset process provided by the administrator.</p>
-              <Input label="Email" defaultValue={loginEmail} type="email" />
-              {sent && <p role="status" className="mt-4 rounded-lg bg-ok-soft px-3 py-2 text-sm text-ok">Password reset request recorded.</p>}
-              <Submit>Request reset</Submit>
-              <button type="button" onClick={() => setState('login')} className="mt-4 w-full text-sm font-semibold text-muted hover:text-fg">Back to sign in</button>
-            </form>
+              <p className="mt-1 text-sm text-muted">Self-service reset isn’t available yet. Contact your administrator to reset your password.</p>
+              <button type="button" onClick={() => setState('login')} className="mt-6 w-full text-sm font-semibold text-muted hover:text-fg">Back to sign in</button>
+            </div>
           )}
 
           {state === 'invite' && (
@@ -117,7 +114,7 @@ export default function SignIn(props: Props) {
   )
 }
 
-export const args = { state: 'login', email: 'workatpaaq@gmail.com' }
+export const args = { state: 'login', email: '' }
 export const argTypes = { state: { control: 'select', options: ['login', 'forgot', 'invite'] }, email: { control: 'text' } }
 
 function Input({ label, ...p }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {

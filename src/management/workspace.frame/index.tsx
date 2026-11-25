@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { Shell } from '../shared/nw/Shell'
 import { PAGE_LABEL } from '../shared/nw/nav'
-import { Badge, Btn, Card, DataTable, PageHeader, useToast } from '../shared/nw/ui'
-import type { Role } from '../shared/nw/lib'
+import { Badge, Btn, Card, DataTable, Empty, LoadError, PageHeader, useToast } from '../shared/nw/ui'
+import { api, toRecord, useTable } from '../shared/nw/api'
+import { rand, Role } from '../shared/nw/lib'
 
 export const args = { dark: false, role: 'admin', page: 'quotes' }
 export const argTypes = {
@@ -12,129 +13,94 @@ export const argTypes = {
 }
 
 type Props = Partial<typeof args> & {
-  onRole?: (r: Role) => void
   onNavigate?: (p: string) => void
   onToggleDark?: () => void
 }
 
-const summaries: Record<string, { sub: string; metrics: [string, string][] }> = {
-  'dash-finance': { sub: 'Cash flow, receivables and partner commissions.', metrics: [['Receivables', 'R184 500'], ['Cleared this month', 'R70 350'], ['Partner payouts', 'R17 850']] },
-  'dash-marketing': { sub: 'Campaign performance, accounts and content activity.', metrics: [['Active campaigns', '6'], ['Reach this month', '48.2K'], ['Leads generated', '127']] },
-  'dash-tutoring': { sub: 'Students, sessions and child-safety operations.', metrics: [['Active students', '18'], ['Sessions this week', '34'], ['Attendance', '96%']] },
-  clients: { sub: 'Active customer and client relationships.', metrics: [['Active clients', '42'], ['Retained', '89%'], ['This month', '8']] },
-  quotes: { sub: 'Create, review and follow up customer quotes.', metrics: [['Open quotes', '9'], ['Quote value', 'R268 400'], ['Won this month', 'R102 200']] },
-  invoices: { sub: 'Issued invoices, balances and settlement status.', metrics: [['Overdue', 'R18 700'], ['Issued', 'R184 500'], ['Paid', 'R142 300']] },
-  'price-list': { sub: 'Products and services with current pricing.', metrics: [['Services', '18'], ['Packages', '7'], ['Last updated', 'Today']] },
-  schedule: { sub: 'Delivery dates and project milestones.', metrics: [['Projects scheduled', '12'], ['Due this week', '4'], ['Overdue', '1']] },
-  tasks: { sub: 'Team assignments, priorities and completion.', metrics: [['Open tasks', '24'], ['Due today', '6'], ['Completed', '71']] },
-  calendar: { sub: 'Meetings, sessions and delivery deadlines.', metrics: [['Today', '5'], ['This week', '18'], ['Availability', '82%']] },
-  help: { sub: 'Partner and project assistance requests.', metrics: [['Open requests', '2'], ['Avg. response', '1.8h'], ['Resolved', '31']] },
-  expenses: { sub: 'Operational and approved third-party costs.', metrics: [['This month', 'R24 600'], ['Pending approval', 'R3 350'], ['Approved', 'R21 250']] },
-  'fin-reports': { sub: 'Financial reporting and business performance.', metrics: [['Gross revenue', 'R703 500'], ['Net fees', 'R521 300'], ['Profit margin', '34%']] },
-  partners: { sub: 'Partner status, performance and earnings.', metrics: [['Active partners', '5'], ['In trial', '2'], ['This month', 'R31 200']] },
-  onboarding: { sub: 'Partner setup and compliance checklist.', metrics: [['In onboarding', '2'], ['Complete', '68%'], ['Overdue steps', '3']] },
-  access: { sub: 'Users, roles and workspace permissions.', metrics: [['Users', '24'], ['Admins', '3'], ['Roles', '6']] },
-  contributors: { sub: 'Contractors and contributors on projects.', metrics: [['Active', '8'], ['Pending', '2'], ['This month', 'R12 400']] },
-  accounts: { sub: 'Social and company marketing accounts.', metrics: [['Accounts', '11'], ['Connected', '9'], ['Needs review', '2']] },
-  content: { sub: 'Upcoming and published marketing content.', metrics: [['This week', '14'], ['Published', '38'], ['Scheduled', '9']] },
-  campaigns: { sub: 'Marketing campaigns and paid promotions.', metrics: [['Running', '6'], ['Budget', 'R18 500'], ['Conversions', '214']] },
-  templates: { sub: 'Reusable email, WhatsApp and social templates.', metrics: [['Templates', '28'], ['Most used', 'Follow-up'], ['Shared', '12']] },
-  students: { sub: 'Tutoring students and parent relationships.', metrics: [['Students', '18'], ['Parents', '15'], ['Attendance', '96%']] },
-  sessions: { sub: 'Tutoring timetable and session outcomes.', metrics: [['Today', '5'], ['This week', '34'], ['Completed', '128']] },
-  safety: { sub: 'Child safeguarding policies and incidents.', metrics: [['Policy status', 'Compliant'], ['Open incidents', '0'], ['Checks due', '3']] },
-  documents: { sub: 'Contracts, records and company documents.', metrics: [['Documents', '86'], ['Expiring', '3'], ['Pending signature', '5']] },
-  popia: { sub: 'Privacy requests and POPIA compliance.', metrics: [['Compliance', 'Active'], ['Requests', '2'], ['Retentions due', '4']] },
-  audit: { sub: 'System activity and change history.', metrics: [['Events today', '47'], ['Logins', '12'], ['Changes', '18']] },
-  'weekly-report': { sub: 'Weekly partner activity and performance summary.', metrics: [['Partners reporting', '5'], ['Leads logged', '29'], ['Jobs updated', '16']] },
-  reports: { sub: 'Operational and management reports.', metrics: [['Available reports', '12'], ['Scheduled', '4'], ['Exports', '38']] },
-  notifications: { sub: 'Recent alerts and unread workspace notifications.', metrics: [['Unread', '7'], ['High priority', '2'], ['Today', '11']] },
-  approvals: { sub: 'Discounts, spending and operational approvals.', metrics: [['Pending', '4'], ['Value', 'R13 550'], ['Older than 24h', '2']] },
-  settings: { sub: 'Workspace configuration and system preferences.', metrics: [['Sections', '9'], ['Integrations', '4'], ['Users', '24']] },
-  kb: { sub: 'Internal guides and frequently asked questions.', metrics: [['Articles', '32'], ['Recently updated', '6'], ['Views', '1.2K']] },
-  profile: { sub: 'Personal account details and preferences.', metrics: [['Account', 'Active'], ['Role', 'Workspace member'], ['Last sign-in', 'Today']] },
-}
-
-const recordSets: Record<string, Record<string, string>[]> = {
-  quotes: [{ id: 'Q-2071', name: 'Molefe Logistics', detail: 'Fleet tracking — Phase 1', status: 'Awaiting approval', value: 'R68 000' }, { id: 'Q-2070', name: 'Zulu Fitness', detail: 'Social media starter pack', status: 'Sent', value: 'R6 500' }, { id: 'Q-2068', name: 'Essop & Co', detail: 'Website rebuild', status: 'Approved', value: 'R22 000' }],
-  invoices: [{ id: 'INV-0418', name: 'Molefe Logistics', detail: 'Phase 1 milestone', status: 'Paid', value: 'R34 000' }, { id: 'INV-0416', name: 'Venter Accounting', detail: 'Automation invoice', status: 'Partial', value: 'R18 500' }, { id: 'INV-0415', name: 'Zulu Fitness', detail: 'Starter pack deposit', status: 'Pending', value: 'R3 250' }],
-  approvals: [{ id: 'AP-88', name: 'Quote discount', detail: 'Q-2071 · 15% discount', status: 'Pending', value: 'R10 200' }, { id: 'AP-87', name: 'Ad spend', detail: 'December Meta campaign', status: 'Pending', value: 'R1 500' }, { id: 'AP-86', name: 'Third-party cost', detail: 'Apple developer licence', status: 'Pending', value: 'R1 850' }],
-  notifications: [{ id: 'NT-104', name: 'Overdue log', detail: 'Call notes for L-1037', status: 'Unread', value: '41h' }, { id: 'NT-103', name: 'Approval needed', detail: 'Quote discount for Molefe Logistics', status: 'Unread', value: '4 pending' }, { id: 'NT-102', name: 'Payment cleared', detail: 'PAY-2291 · Molefe Logistics', status: 'Read', value: 'R34 000' }],
+const descriptions: Record<string, string> = {
+  'dash-finance': 'Cash flow, receivables and partner commissions.',
+  'dash-marketing': 'Campaign performance, accounts and content activity.',
+  'dash-tutoring': 'Students, sessions and child-safety operations.',
+  'clients': 'Active customer and client relationships.',
+  'quotes': 'Create, review and follow up customer quotes.',
+  'invoices': 'Issued invoices, balances and settlement status.',
+  'price-list': 'Products and services with current pricing.',
+  'schedule': 'Delivery dates and project milestones.',
+  'tasks': 'Team assignments, priorities and completion.',
+  'calendar': 'Meetings, sessions and delivery deadlines.',
+  'help': 'Partner and project assistance requests.',
+  'expenses': 'Operational and approved third-party costs.',
+  'fin-reports': 'Financial reporting and business performance.',
+  'partners': 'Partner status, performance and earnings.',
+  'onboarding': 'Partner setup and compliance checklist.',
+  'access': 'Users, roles and workspace permissions.',
+  'contributors': 'Contractors and contributors on projects.',
+  'accounts': 'Social and company marketing accounts.',
+  'content': 'Upcoming and published marketing content.',
+  'campaigns': 'Marketing campaigns and paid promotions.',
+  'templates': 'Reusable email, WhatsApp and social templates.',
+  'students': 'Tutoring students and parent relationships.',
+  'sessions': 'Tutoring timetable and session outcomes.',
+  'safety': 'Child safeguarding policies and incidents.',
+  'documents': 'Contracts, records and company documents.',
+  'popia': 'Privacy requests and POPIA compliance.',
+  'audit': 'System activity and change history.',
+  'weekly-report': 'Weekly partner activity and performance summary.',
+  'reports': 'Operational and management reports.',
+  'notifications': 'Recent alerts and unread workspace notifications.',
+  'approvals': 'Discounts, spending and operational approvals.',
+  'settings': 'Workspace configuration and system preferences.',
+  'kb': 'Internal guides and frequently asked questions.',
+  'profile': 'Personal account details and preferences.',
 }
 
 export default function Workspace(props: Props) {
-  const { dark, role, page, onRole, onNavigate, onToggleDark } = { ...args, ...props }
+  const { dark, role, page, onNavigate, onToggleDark } = { ...args, ...props }
   const toast = useToast()
-  const [q, setQ] = useState('')
-  const [liveClients, setLiveClients] = useState<Record<string, string>[]>([])
   const [showClientForm, setShowClientForm] = useState(false)
   const [clientDraft, setClientDraft] = useState({ name: '', company: '', email: '', phone: '', service: '', value: '' })
 
   const title = PAGE_LABEL[page] ?? 'Workspace'
-  const summary = summaries[page] ?? { sub: 'Manage this area of the NextWave workspace.', metrics: [['Status', 'Active'], ['Updated', 'Today'], ['Records', 'Live']] }
-  const rows = useMemo(() => (recordSets[page] ?? []).filter((row) => JSON.stringify(row).toLowerCase().includes(q.toLowerCase())), [page, q])
-
-  useEffect(() => {
-    if (page !== 'clients') return
-    fetch('/api/clients')
-      .then((r) => r.json())
-      .then((rows) => setLiveClients(Array.isArray(rows) ? rows : []))
-      .catch(() => setLiveClients([]))
-  }, [page])
-
+  const clients = useTable('clients', toRecord)
   const createClient = async () => {
     if (!clientDraft.name.trim() || !clientDraft.company.trim()) {
       toast('Name and company are required')
       return
     }
     const id = `C-${Date.now().toString().slice(-6)}`
-    const response = await fetch('/api/clients', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id,
-        name: clientDraft.name.trim(),
-        company: clientDraft.company.trim(),
-        email: clientDraft.email.trim(),
-        phone: clientDraft.phone.trim(),
-        service: clientDraft.service.trim(),
-        status: 'Active',
-        value: Number(clientDraft.value) || 0,
-      }),
+    const response = await api('/api/clients', 'POST', {
+      id,
+      name: clientDraft.name.trim(),
+      company: clientDraft.company.trim(),
+      email: clientDraft.email.trim(),
+      phone: clientDraft.phone.trim(),
+      service: clientDraft.service.trim(),
+      status: 'Active',
+      value: Math.max(0, Math.round(Number(clientDraft.value) || 0)),
     })
-    if (!response.ok) {
+    if (!response?.ok) {
       toast('Client could not be saved')
       return
     }
     const created = await response.json()
-    setLiveClients((current) => [created, ...current])
+    clients.setRows((current) => [created, ...current])
     setClientDraft({ name: '', company: '', email: '', phone: '', service: '', value: '' })
     setShowClientForm(false)
     toast('Client saved')
   }
 
   return (
-    <Shell role={role as Role} page={page} dark={dark} onRole={onRole} onNavigate={onNavigate} onToggleDark={onToggleDark}>
-      <PageHeader title={title} sub={summary.sub}>
-        <Btn kind="primary" onClick={() => page === 'clients' ? setShowClientForm(true) : toast(`Use the existing ${title.toLowerCase()} controls to add a record`)}><Plus className="h-4 w-4" />New</Btn>
+    <Shell role={role as Role} page={page} dark={dark} onNavigate={onNavigate} onToggleDark={onToggleDark}>
+      <PageHeader title={title} sub={descriptions[page] ?? 'Manage this area of the NextWave workspace.'}>
+        {page === 'clients' && <Btn kind="primary" onClick={() => setShowClientForm(true)}><Plus className="h-4 w-4" />New client</Btn>}
       </PageHeader>
-
-      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {summary.metrics.map(([label, value]) => (
-          <Card key={label} className="p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">{label}</p>
-            <p className="mt-1 font-display text-xl font-bold text-fg">{value}</p>
-          </Card>
-        ))}
-      </div>
 
       {page === 'clients' ? (
         <>
-          <Card className="mb-3 p-3">
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search clients…" className="w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm text-fg outline-none" />
-          </Card>
+          <LoadError message={clients.error} />
           <DataTable
             name="Clients"
-            rows={liveClients.filter((row) => JSON.stringify(row).toLowerCase().includes(q.toLowerCase()))}
+            rows={clients.rows}
             cols={[
               { key: 'id', label: 'Client ID' },
               { key: 'company', label: 'Company', render: (row) => <div><p className="font-semibold">{row.company}</p><p className="text-xs text-muted">{row.name}</p></div> },
@@ -142,43 +108,12 @@ export default function Workspace(props: Props) {
               { key: 'phone', label: 'Phone', hideSm: true },
               { key: 'service', label: 'Service', hideSm: true },
               { key: 'status', label: 'Status', render: (row) => <Badge>{String(row.status)}</Badge> },
-              { key: 'value', label: 'Value', align: 'right', render: (row) => `R${Number(row.value || 0).toLocaleString('en-ZA')}` },
-            ]}
-          />
-        </>
-      ) : recordSets[page] ? (
-        <>
-          <Card className="mb-3 p-3">
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search ${title.toLowerCase()}…`} className="w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm text-fg outline-none" />
-          </Card>
-          <DataTable
-            name={title}
-            rows={rows}
-            cols={[
-              { key: 'id', label: 'Reference' },
-              { key: 'name', label: 'Name', render: (row) => <div><p className="font-semibold">{row.name}</p><p className="text-xs text-muted">{row.detail}</p></div> },
-              { key: 'status', label: 'Status', render: (row) => <Badge>{row.status}</Badge> },
-              { key: 'value', label: 'Value', align: 'right' },
+              { key: 'value', label: 'Value', align: 'right', render: (row) => rand(Number(row.value || 0)) },
             ]}
           />
         </>
       ) : (
-        <Card className="p-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl bg-soft p-5">
-              <p className="font-display font-bold text-fg">{title} overview</p>
-              <p className="mt-2 text-sm text-muted">Current records, responsibilities and performance for {title.toLowerCase()}.</p>
-            </div>
-            <div className="rounded-xl border border-line p-5">
-              <p className="text-sm font-semibold text-fg">Recent activity</p>
-              <ul className="mt-3 space-y-3 text-sm text-muted">
-                <li>Workspace records updated today</li>
-                <li>New activity is visible to {role} users</li>
-                <li>Use the New button to add a record</li>
-              </ul>
-            </div>
-          </div>
-        </Card>
+        <Card><Empty title={`${title} isn’t connected yet`} body="This area has no data source yet, so there is nothing to show." /></Card>
       )}
 
       {page === 'clients' && showClientForm && (

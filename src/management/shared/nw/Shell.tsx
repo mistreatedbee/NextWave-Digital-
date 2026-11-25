@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Bell, ChevronDown, Menu, Moon, Plus, Search, Sun, X, LogOut } from 'lucide-react'
 import { Role } from './lib'
-import { ToastProvider, useToast } from './ui'
-import { NAV } from './nav'
+import { ToastProvider } from './ui'
+import { canAccess, NAV } from './nav'
+import { useUser } from './user'
 
 const EASE = [0.23, 1, 0.32, 1] as const
 
@@ -11,7 +12,6 @@ type Props = {
   role: Role
   page: string
   dark?: boolean
-  onRole?: (r: Role) => void
   onNavigate?: (page: string) => void
   onToggleDark?: () => void
   children: React.ReactNode
@@ -27,7 +27,7 @@ export function Shell(p: Props) {
   )
 }
 
-function Inner({ role, page, dark, onRole, onNavigate, onToggleDark, children }: Props) {
+function Inner({ role, page, dark, onNavigate, onToggleDark, children }: Props) {
   const [mobile, setMobile] = useState(false)
   const go = (id: string) => { onNavigate?.(id); setMobile(false) }
   return (
@@ -42,7 +42,7 @@ function Inner({ role, page, dark, onRole, onNavigate, onToggleDark, children }:
         )}
       </AnimatePresence>
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar role={role} dark={dark} onRole={onRole} onToggleDark={onToggleDark} openMenu={() => setMobile(true)} go={go} />
+        <TopBar role={role} dark={dark} onToggleDark={onToggleDark} openMenu={() => setMobile(true)} go={go} />
         <main className="min-w-0 flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[1400px] p-4 sm:p-6">{children}</div>
         </main>
@@ -98,16 +98,14 @@ function Sidebar({ role, page, go, onClose }: { role: Role; page: string; go: (i
 }
 
 const NEW_ITEMS = ['Lead', 'Client', 'Quote', 'Invoice', 'Job', 'Task', 'Payment', 'Expense']
-const ROLES: { id: Role; label: string; who: string }[] = [
-  { id: 'admin', label: 'Admin', who: 'Kabelo Sithole · Owner' },
-  { id: 'partner', label: 'Partner', who: 'Thandi Mokoena' },
-  { id: 'finance', label: 'Finance', who: 'Marelize du Toit' },
-]
+const ROLE_LABEL: Record<Role, string> = { admin: 'Admin', partner: 'Partner', finance: 'Finance' }
+const NEW_ROUTES: Record<string, string> = { Lead: 'leads', Client: 'clients', Quote: 'quotes', Invoice: 'invoices', Job: 'jobs', Task: 'tasks', Payment: 'payments', Expense: 'expenses' }
 
-function TopBar({ role, dark, onRole, onToggleDark, openMenu, go }: { role: Role; dark?: boolean; onRole?: (r: Role) => void; onToggleDark?: () => void; openMenu: () => void; go: (id: string) => void }) {
+function TopBar({ role, dark, onToggleDark, openMenu, go }: { role: Role; dark?: boolean; onToggleDark?: () => void; openMenu: () => void; go: (id: string) => void }) {
   const [menu, setMenu] = useState<null | 'new' | 'bell' | 'role'>(null)
-  const toast = useToast()
-  const me = ROLES.find((r) => r.id === role)!
+  const user = useUser()
+  const label = ROLE_LABEL[role]
+  const name = user?.name || label
   const toggle = (m: 'new' | 'bell' | 'role') => setMenu((c) => (c === m ? null : m))
   return (
     <header className="relative z-30 flex h-16 shrink-0 items-center gap-2 border-b border-line bg-card px-3 sm:gap-3 sm:px-6">
@@ -122,35 +120,26 @@ function TopBar({ role, dark, onRole, onToggleDark, openMenu, go }: { role: Role
           <div className="relative">
             <button onClick={() => toggle('new')} className="inline-flex items-center gap-1 whitespace-nowrap rounded-lg bg-lime px-3 py-2 text-sm font-semibold text-ink hover:bg-lime-hover"><Plus className="h-4 w-4" /><span className="hidden sm:inline">New</span></button>
             <Pop open={menu === 'new'} className="w-48">
-              {NEW_ITEMS.map((n) => <button key={n} onClick={() => { setMenu(null); const routes: Record<string,string> = { Lead:'leads', Client:'clients', Quote:'quotes', Invoice:'invoices', Job:'jobs', Task:'tasks', Payment:'payments', Expense:'expenses' }; go(routes[n]) }} className="block w-full rounded-md px-3 py-2 text-left text-sm text-fg hover:bg-soft">{n}</button>)}
+              {NEW_ITEMS.filter((n) => canAccess(role, NEW_ROUTES[n])).map((n) => <button key={n} onClick={() => { setMenu(null); go(NEW_ROUTES[n]) }} className="block w-full rounded-md px-3 py-2 text-left text-sm text-fg hover:bg-soft">{n}</button>)}
             </Pop>
           </div>
         )}
         <button onClick={onToggleDark} aria-label="Toggle theme" className="rounded-lg p-2 text-muted hover:bg-soft hover:text-fg">{dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}</button>
         <div className="relative">
-          <button onClick={() => toggle('bell')} aria-label="Notifications" className="relative rounded-lg p-2 text-muted hover:bg-soft hover:text-fg"><Bell className="h-5 w-5" /><span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-bad" /></button>
+          <button onClick={() => toggle('bell')} aria-label="Notifications" className="relative rounded-lg p-2 text-muted hover:bg-soft hover:text-fg"><Bell className="h-5 w-5" /></button>
           <Pop open={menu === 'bell'} className="w-80">
-            {[
-              ['Overdue log', 'Call notes for L-1037 are 41h old — log within 24h'],
-              ['Approval needed', '15% discount on Q-2071 for Molefe Logistics'],
-              ['Payment cleared', 'R34 000 from Molefe Logistics (PAY-2291)'],
-            ].map(([t, b]) => <div key={t} className="rounded-md px-3 py-2 hover:bg-soft"><p className="text-sm font-semibold text-fg">{t}</p><p className="text-xs text-muted">{b}</p></div>)}
+            <p className="px-3 py-2 text-sm text-muted">No notifications.</p>
             <button onClick={() => { setMenu(null); go('notifications') }} className="mt-1 w-full rounded-md px-3 py-2 text-left text-sm font-semibold text-accent hover:bg-soft">View all notifications</button>
           </Pop>
         </div>
         <div className="relative">
           <button onClick={() => toggle('role')} className="flex items-center gap-2 rounded-lg border border-line px-2 py-1.5 hover:bg-soft">
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-xs font-bold text-lime">{me.who[0]}</span>
-            <span className="hidden text-left sm:block"><span className="block text-xs text-muted">Viewing as</span><span className="block text-sm font-semibold leading-tight text-fg">{me.label}</span></span>
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-xs font-bold text-lime">{name[0]}</span>
+            <span className="hidden text-left sm:block"><span className="block text-xs text-muted">{name}</span><span className="block text-sm font-semibold leading-tight text-fg">{label}</span></span>
             <ChevronDown className="h-4 w-4 text-muted" />
           </button>
           <Pop open={menu === 'role'} className="w-64">
-            <p className="px-3 py-1.5 text-xs text-muted">Switch role</p>
-            {ROLES.map((r) => (
-              <button key={r.id} onClick={() => { onRole?.(r.id); setMenu(null); toast(`Now viewing as ${r.label}`) }} className={`block w-full rounded-md px-3 py-2 text-left hover:bg-soft ${r.id === role ? 'bg-soft' : ''}`}>
-                <span className="block text-sm font-semibold text-fg">{r.label}</span><span className="block text-xs text-muted">{r.who}</span>
-              </button>
-            ))}
+            <div className="px-3 py-1.5"><p className="text-sm font-semibold text-fg">{name}</p>{user && <p className="truncate text-xs text-muted">{user.email}</p>}</div>
             <button onClick={() => { setMenu(null); go('profile') }} className="mt-1 block w-full border-t border-line px-3 pt-2.5 pb-1.5 text-left text-sm text-fg hover:bg-soft">My profile</button>
           </Pop>
         </div>

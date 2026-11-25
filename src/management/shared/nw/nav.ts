@@ -10,7 +10,7 @@ export const NAV: { group: string; items: Item[] }[] = [
   { group: 'Dashboards', items: [
     { id: 'dash-admin', label: 'Admin overview', icon: LayoutDashboard, roles: A },
     { id: 'dash-partner', label: 'My dashboard', icon: LayoutDashboard, roles: ['partner'] },
-    { id: 'dash-finance', label: 'Finance', icon: PieChart, roles: AF },
+    { id: 'dash-finance', label: 'Finance', icon: PieChart, roles: ['finance'] },
     { id: 'dash-marketing', label: 'Marketing', icon: Megaphone, roles: A },
     { id: 'dash-tutoring', label: 'Tutoring', icon: GraduationCap, roles: AP },
   ] },
@@ -66,6 +66,11 @@ export const NAV: { group: string; items: Item[] }[] = [
     { id: 'kb', label: 'Help & knowledge base', icon: LifeBuoy },
   ] },
 ]
+
+export function canAccess(role: Role, page: string) {
+  const item = NAV.flatMap((g) => g.items).find((i) => i.id === page)
+  return !item?.roles || item.roles.includes(role)
+}
 
 export const PAGE_LABEL: Record<string, string> = Object.fromEntries(NAV.flatMap((g) => g.items.map((i) => [i.id, i.label])))
 export const MONEY_PAGES = ['commission', 'payments', 'payouts', 'expenses', 'fin-reports', 'invoices', 'quotes', 'dash-finance']

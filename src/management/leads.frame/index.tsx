@@ -1,39 +1,41 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { AlertTriangle, Plus } from 'lucide-react'
 import { Shell } from '../shared/nw/Shell'
-import { Badge, Btn, Card, DataTable, Drawer, Field, PageHeader, Tabs, useToast } from '../shared/nw/ui'
-import type { Lead } from '../shared/nw/data'
-import { d, ME_PARTNER, rand, Role } from '../shared/nw/lib'
+import { Badge, Btn, DataTable, Drawer, Field, LoadError, PageHeader, Tabs, useToast } from '../shared/nw/ui'
+import { isOverdueLead, Lead } from '../shared/nw/data'
+import { api, toLead, useTable } from '../shared/nw/api'
+import { d, rand, Role } from '../shared/nw/lib'
+import { useUser } from '../shared/nw/user'
 
-type Props = Partial<typeof args> & { onRole?: (r: Role) => void; onNavigate?: (p: string) => void; onToggleDark?: () => void }
+type Props = Partial<typeof args> & { onNavigate?: (p: string) => void; onToggleDark?: () => void }
 const STAGES: Lead['stage'][] = ['New', 'Contacted', 'Quote sent', 'Won', 'Lost']
 
 export default function Leads(props: Props) {
-  const { dark, role, view, state, onRole, onNavigate, onToggleDark } = { ...args, ...props }
+  const { dark, role, view, onNavigate, onToggleDark } = { ...args, ...props }
   const toast = useToast()
   const [mode, setMode] = useState(view as 'Table' | 'Kanban')
-  const [rows, setRows] = useState<Lead[]>([])
-  useEffect(() => {
-    fetch('/api/leads').then((r) => r.json()).then((data) => {
-      const real = Array.isArray(data) ? data.map((l: any) => ({ ...l, loggedHrs: l.logged_hours, created: l.created_at?.slice(0, 10) })) : []
-      setRows(role === 'partner' ? real.filter((l: Lead) => l.partner === ME_PARTNER) : real)
-    }).catch(() => setRows([]))
-  }, [role])
+  const me = useUser()?.name
+  const { rows: all, setRows, error } = useTable('leads', toLead)
+  const rows = role === 'partner' ? all.filter((l) => l.partner === me) : all
   const [open, setOpen] = useState<Lead | null>(null)
   const [drag, setDrag] = useState<string | null>(null)
   const move = async (id: string, stage: Lead['stage']) => {
-    const response = await fetch(`/api/leads/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stage }) })
-    if (!response.ok) { toast('Lead could not be updated'); return }
-    setRows((r) => r.map((l) => (l.id === id ? { ...l, stage } : l))); toast(`${id} moved to ${stage}`)
+    const response = await api(`/api/leads/${id}`, 'PUT', { stage })
+    if (!response?.ok) { toast('Lead could not be updated'); return }
+    setRows((r) => r.map((l) => (l.id === id ? { ...l, stage } : l)))
+    setOpen((o) => (o?.id === id ? { ...o, stage } : o))
+    toast(`${id} moved to ${stage}`)
   }
-  const overdue = rows.filter((l) => l.loggedHrs > 24 && !['Won', 'Lost'].includes(l.stage))
+  const overdue = rows.filter(isOverdueLead)
 
   return (
-    <Shell role={role as Role} page="leads" dark={dark} onRole={onRole} onNavigate={onNavigate} onToggleDark={onToggleDark}>
-      <PageHeader title="Leads" sub={role === 'partner' ? 'Your leads only' : `${rows.length} leads · ${rand(rows.reduce((s, l) => s + l.value, 0))} pipeline`}>
+    <Shell role={role as Role} page="leads" dark={dark} onNavigate={onNavigate} onToggleDark={onToggleDark}>
+      <PageHeader title="Leads" sub={role === 'partner' ? 'Your leads only' : `${rows.length} leads · ${rand(rows.filter((l) => !['Won', 'Lost'].includes(l.stage)).reduce((s, l) => s + l.value, 0))} open pipeline`}>
         <Tabs value={mode} options={['Table', 'Kanban']} onChange={setMode} />
-        <Btn kind="primary" onClick={() => toast('New lead draft created')}><Plus className="h-4 w-4" />New lead</Btn>
+        <Btn kind="primary" onClick={() => toast('Creating leads isn’t available yet')}><Plus className="h-4 w-4" />New lead</Btn>
       </PageHeader>
+
+      <LoadError message={error} />
 
       {overdue.length > 0 && (
         <div className="mb-4 flex items-center gap-2 rounded-xl bg-bad-soft px-4 py-3 text-sm text-fg">
@@ -48,7 +50,7 @@ export default function Leads(props: Props) {
           rows={rows}
           onRow={setOpen}
           filters={[{ key: 'stage', label: 'Stages' }, { key: 'source', label: 'Sources' }, ...(role === 'partner' ? [] : [{ key: 'partner' as const, label: 'Partners' }])]}
-          emptyAction={<Btn kind="primary" onClick={() => toast('New lead draft created')}><Plus className="h-4 w-4" />Add your first lead</Btn>}
+          emptyAction={<Btn kind="primary" onClick={() => toast('Creating leads isn’t available yet')}><Plus className="h-4 w-4" />Add your first lead</Btn>}
           cols={[
             { key: 'id', label: 'Lead', render: (l) => <span className="font-semibold">{l.id}</span> },
             { key: 'company', label: 'Company', render: (l) => <div><p className="font-semibold">{l.company}</p><p className="text-xs text-muted">{l.name}</p></div> },
@@ -93,8 +95,8 @@ export default function Leads(props: Props) {
             <Field label="Estimated value" value={rand(open.value)} />
             <Field label="Created" value={d(open.created)} />
             <p className="mt-5 mb-2 text-sm font-semibold text-fg">Move to</p>
-            <div className="flex flex-wrap gap-2">{STAGES.map((s) => <Btn key={s} kind={s === open.stage ? 'primary' : 'ghost'} onClick={() => { move(open.id, s); setOpen({ ...open, stage: s }) }}>{s}</Btn>)}</div>
-            <Btn kind="dark" className="mt-4 w-full" onClick={() => toast(`Quote drafted for ${open.company}`)}>Create quote</Btn>
+            <div className="flex flex-wrap gap-2">{STAGES.map((s) => <Btn key={s} kind={s === open.stage ? 'primary' : 'ghost'} disabled={s === open.stage} onClick={() => move(open.id, s)}>{s}</Btn>)}</div>
+            <Btn kind="dark" className="mt-4 w-full" onClick={() => toast('Creating quotes isn’t available yet')}>Create quote</Btn>
           </div>
         )}
       </Drawer>

@@ -1,33 +1,38 @@
-import React, { useEffect, useState } from 'react'
-import { Check, HandHelping, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { HandHelping, Plus } from 'lucide-react'
 import { Shell } from '../shared/nw/Shell'
-import { Badge, Btn, Card, DataTable, Drawer, Field, PageHeader, Progress, useToast } from '../shared/nw/ui'
+import { Badge, Btn, DataTable, Drawer, Field, LoadError, PageHeader, useToast } from '../shared/nw/ui'
 import type { Job } from '../shared/nw/data'
-import { commission, d, ME_PARTNER, rand, Role } from '../shared/nw/lib'
+import { api, toJob, useTable } from '../shared/nw/api'
+import { commission, d, rand, Role } from '../shared/nw/lib'
+import { useUser } from '../shared/nw/user'
 
-type Props = Partial<typeof args> & { onRole?: (r: Role) => void; onNavigate?: (p: string) => void; onToggleDark?: () => void }
+type Props = Partial<typeof args> & { onNavigate?: (p: string) => void; onToggleDark?: () => void }
 
 export default function Jobs(props: Props) {
-  const { dark, role, onRole, onNavigate, onToggleDark } = { ...args, ...props }
+  const { dark, role, onNavigate, onToggleDark } = { ...args, ...props }
   const toast = useToast()
-  const [rows, setRows] = useState<Job[]>([])
-  useEffect(() => {
-    fetch('/api/jobs').then((r) => r.json()).then((data) => {
-      const real = Array.isArray(data) ? data.map((j: any) => ({ ...j, type: j.job_type, due: j.due?.slice(0, 10) ?? '', deposit: j.received > 0, milestones: [] })) : []
-      setRows(role === 'partner' ? real.filter((j: Job) => j.partner === ME_PARTNER) : real)
-    }).catch(() => setRows([]))
-  }, [role])
+  const me = useUser()?.name
+  const { rows: all, setRows, error } = useTable('jobs', toJob)
+  const rows = role === 'partner' ? all.filter((j) => j.partner === me) : all
   const [openId, setOpenId] = useState<string | null>(null)
   const open = rows.find((j) => j.id === openId) ?? null
-  const update = (j: Job) => setRows((r) => r.map((x) => (x.id === j.id ? j : x)))
+  const requestHelp = async (j: Job) => {
+    const response = await api(`/api/jobs/${j.id}`, 'PUT', { job_type: 'Assisted Work' })
+    if (!response?.ok) { toast('Job could not be updated'); return }
+    setRows((r) => r.map((x) => (x.id === j.id ? { ...x, type: 'Assisted Work' } : x)))
+    toast(`${j.id} is now Assisted Work · 50/50`)
+  }
   const byType = (t: Job['type']) => rows.filter((j) => j.type === t).length
 
   return (
-    <Shell role={role as Role} page="jobs" dark={dark} onRole={onRole} onNavigate={onNavigate} onToggleDark={onToggleDark}>
+    <Shell role={role as Role} page="jobs" dark={dark} onNavigate={onNavigate} onToggleDark={onToggleDark}>
       <PageHeader title="Jobs & projects" sub="Commission is set by job type and recalculated as payments clear.">
         <Btn onClick={() => onNavigate?.('schedule')}>Project schedule</Btn>
-        <Btn kind="primary" onClick={() => toast('New job draft created')}><Plus className="h-4 w-4" />New job</Btn>
+        <Btn kind="primary" onClick={() => toast('Creating jobs isn’t available yet')}><Plus className="h-4 w-4" />New job</Btn>
       </PageHeader>
+
+      <LoadError message={error} />
 
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {([
@@ -51,17 +56,17 @@ export default function Jobs(props: Props) {
         filters={[{ key: 'type', label: 'Types' }, { key: 'status', label: 'Statuses' }]}
         cols={[
           { key: 'id', label: 'Job', render: (j) => <div><p className="font-semibold">{j.title}</p><p className="text-xs text-muted">{j.id} · {j.client}</p></div> },
-          { key: 'type', label: 'Type', render: (j) => <span className="whitespace-nowrap">{j.type}{j.helpRequested ? ' ·' : ''}{j.helpRequested && <HandHelping className="ml-1 inline h-3.5 w-3.5 text-warn" />}</span> },
+          { key: 'type', label: 'Type', render: (j) => <span className="whitespace-nowrap">{j.type}</span> },
           ...(role === 'partner' ? [] : [{ key: 'partner' as const, label: 'Partner', hideSm: true }]),
           { key: 'status', label: 'Status', render: (j) => <Badge>{j.status}</Badge> },
           { key: 'due', label: 'Due', hideSm: true, render: (j) => d(j.due) },
           { key: 'received', label: 'Received', align: 'right', hideSm: true, render: (j) => `${rand(j.received)} / ${rand(j.value)}` },
-          { key: 'value', label: 'Partner share', align: 'right', render: (j) => rand(calc(j).partner) },
+          { key: 'value', label: 'Partner share', align: 'right', render: (j) => (shareUnknown(j) ? 'Not set' : rand(calc(j).partner)) },
         ]}
       />
 
       <Drawer open={!!open} title={open?.title ?? ''} sub={open ? `${open.id} · ${open.client}` : ''} onClose={() => setOpenId(null)}>
-        {open && <JobDetail job={open} role={role as Role} onChange={update} />}
+        {open && <JobDetail job={open} role={role as Role} onRequestHelp={requestHelp} />}
       </Drawer>
     </Shell>
   )
@@ -77,50 +82,38 @@ export const argTypes = {
   role: { control: 'radio', options: ['admin', 'partner', 'finance'] },
 }
 
-const calc = (j: Job) => commission({ type: j.type, fees: j.received, vatIncluded: true, bankCharges: 0, thirdParty: j.id === 'J-315' ? 1850 : 0, majorShare: j.majorShare, contributors: j.contributors })
+// Bank charges and third-party costs aren't stored per job yet, so only VAT is deducted here.
+const calc = (j: Job) => commission({ type: j.type, fees: j.received, vatIncluded: true, bankCharges: 0, thirdParty: 0, majorShare: j.majorShare, contributors: j.contributors })
+/** A Major Project share is negotiated (20–50%), so never assume one. */
+const shareUnknown = (j: Job) => j.type === 'Major Project' && j.majorShare === undefined
 
-function JobDetail({ job, role, onChange }: { job: Job; role: Role; onChange: (j: Job) => void }) {
-  const toast = useToast()
+function JobDetail({ job, role, onRequestHelp }: { job: Job; role: Role; onRequestHelp: (j: Job) => void }) {
   const c = calc(job)
-  const done = job.milestones.filter((m) => m.done).length
   return (
     <div className="space-y-6">
       <div>
         <Field label="Type" value={job.type} />
         <Field label="Status" value={<Badge>{job.status}</Badge>} />
-        <Field label="Partner" value={job.partner} />
+        <Field label="Partner" value={job.partner || 'Unassigned'} />
         <Field label="Due" value={d(job.due)} />
-        <Field label="Deposit" value={job.deposit ? <Badge>Paid</Badge> : <Badge>Awaiting deposit</Badge>} />
-        <Field label="Balance outstanding" value={rand(job.value - job.received)} />
-      </div>
-
-      <div>
-        <div className="mb-2 flex justify-between text-sm"><span className="font-semibold text-fg">Milestones</span><span className="text-muted">{done}/{job.milestones.length}</span></div>
-        <Progress value={(done / job.milestones.length) * 100} />
-        <ul className="mt-3 space-y-1.5">
-          {job.milestones.map((m, i) => (
-            <li key={m.name}>
-              <button disabled={role === 'finance'} onClick={() => { const ms = job.milestones.map((x, k) => (k === i ? { ...x, done: !x.done } : x)); onChange({ ...job, milestones: ms }); toast(`Milestone "${m.name}" updated`) }} className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-soft">
-                <span className={`grid h-5 w-5 place-items-center rounded-md ${m.done ? 'bg-lime text-ink' : 'border border-line'}`}>{m.done && <Check className="h-3.5 w-3.5" />}</span>
-                <span className={m.done ? 'text-muted' : 'text-fg'}>{m.name}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <Field label="Balance outstanding" value={rand(Math.max(0, job.value - job.received))} />
       </div>
 
       <div className="rounded-xl bg-soft p-4">
-        <p className="mb-2 text-sm font-semibold text-fg">Commission on {rand(job.received)} received</p>
+        <p className="mb-2 text-sm font-semibold text-fg">Estimated commission on {rand(job.received)} received</p>
         <Field label="Less VAT (15%)" value={`− ${rand(c.vat)}`} />
-        {job.id === 'J-315' && <Field label="Less approved 3rd-party cost" value={`− ${rand(1850)}`} />}
         <Field label="Net fees" value={rand(c.net)} />
-        <Field label={`${job.partner} · ${c.partnerPct}%`} value={rand(c.partner)} />
-        {c.contributors.map((x) => <Field key={x.name} label={`${x.name} · ${x.pct}%`} value={rand(x.amount)} />)}
-        <Field label={`NextWave · ${c.companyPct}%`} value={rand(c.company)} />
+        {shareUnknown(job) ? <p className="pt-2 text-xs text-muted">The partner share for this Major Project hasn’t been recorded.</p> : (
+          <>
+            <Field label={`${job.partner || 'Partner'} · ${c.partnerPct}%`} value={rand(c.partner)} />
+            <Field label={`NextWave · ${c.companyPct}%`} value={rand(c.company)} />
+          </>
+        )}
+        <p className="pt-2 text-xs text-muted">Excludes bank charges and third-party costs.</p>
       </div>
 
-      {role !== 'finance' && job.type !== 'Assisted Work' && job.type !== 'Major Project' && (
-        <Btn kind="dark" className="w-full" onClick={() => { onChange({ ...job, type: 'Assisted Work', helpRequested: true }); toast(`${job.id} is now Assisted Work · 50/50`) }}>
+      {role !== 'finance' && job.status !== 'Done' && (job.type === 'Standard Job' || job.type === 'Independent Work') && (
+        <Btn kind="dark" className="w-full" onClick={() => onRequestHelp(job)}>
           <HandHelping className="h-4 w-4" />Request help (converts to Assisted Work)
         </Btn>
       )}

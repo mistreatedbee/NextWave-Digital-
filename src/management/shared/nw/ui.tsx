@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowDown, ArrowUp, ArrowUpDown, Download, FileText, Inbox, MessageSquare, Paperclip, Search, X, History, Upload, CheckCircle2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, ArrowUpDown, Download, Inbox, Search, X, CheckCircle2 } from 'lucide-react'
 import { exportCsv } from './lib'
-import { activity } from './data'
 
 const EASE = [0.23, 1, 0.32, 1] as const
 
@@ -51,10 +50,12 @@ export function Btn({ kind = 'ghost', className = '', ...p }: React.ButtonHTMLAt
 
 const tone = (s: string) => {
   const v = s.toLowerCase()
-  if (/(won|paid|cleared|done|active|signed|verified|approved|on|complete|given|clear|enabled|sent ✓|resolved)/.test(v)) return 'bg-ok-soft text-ok'
-  if (/(lost|overdue|refund|reversed|revoked|failed|missing|expired|breach|declined|off|withdrawn|open incident)/.test(v)) return 'bg-bad-soft text-bad'
-  if (/(pending|review|trial|scheduled|quote sent|awaiting|hold|draft|due|partial|needs|in progress|requested)/.test(v)) return 'bg-warn-soft text-warn'
-  if (/(new|contacted|not started|invited|planned|info)/.test(v)) return 'bg-info-soft text-info'
+  // Whole words only, so that e.g. "Contacted" and "On hold" are not read as "on".
+  const has = (words: string) => new RegExp(`\\b(${words})\\b`).test(v)
+  if (has('lost|overdue|refund|refunded|reversed|revoked|failed|missing|expired|breach|declined|off|withdrawn|open incident')) return 'bg-bad-soft text-bad'
+  if (has('pending|review|trial|scheduled|quote sent|awaiting|hold|draft|due|partial|needs|in progress|requested')) return 'bg-warn-soft text-warn'
+  if (has('new|contacted|not started|invited|planned|info')) return 'bg-info-soft text-info'
+  if (has('won|paid|cleared|done|active|signed|verified|approved|complete|given|clear|enabled|resolved') || v === 'on') return 'bg-ok-soft text-ok'
   return 'bg-soft text-muted'
 }
 export function Badge({ children }: { children: string }) {
@@ -130,8 +131,7 @@ export function DataTable<R extends Record<string, any>>({ name, rows, cols, fil
           </select>
         ))}
         {toolbar}
-        <Btn onClick={() => { exportCsv(name, shown); toast(`${name} exported to CSV`) }}><Download className="h-4 w-4" />CSV</Btn>
-        <Btn onClick={() => toast(`${name} PDF is being prepared`)}><FileText className="h-4 w-4" />PDF</Btn>
+        <Btn disabled={!shown.length} onClick={() => { exportCsv(name, shown); toast(`${name} exported to CSV`) }}><Download className="h-4 w-4" />CSV</Btn>
       </div>
       {shown.length === 0 ? (
         <Empty title={rows.length ? 'No matches' : `No ${name.toLowerCase()} yet`} body={rows.length ? 'Try a different search or clear the filters.' : 'Records you add will appear here.'} action={emptyAction} />
@@ -167,12 +167,8 @@ export function DataTable<R extends Record<string, any>>({ name, rows, cols, fil
   )
 }
 
-/* ---------- Record drawer: details, comments, files, activity ---------- */
+/* ---------- Record drawer ---------- */
 export function Drawer({ open, title, sub, onClose, children }: { open: boolean; title: string; sub?: string; onClose: () => void; children?: React.ReactNode }) {
-  const [tab, setTab] = useState<'Details' | 'Comments' | 'Files' | 'Activity'>('Details')
-  const [comments, setComments] = useState([{ who: 'Lerato Khumalo', text: 'Client confirmed via WhatsApp, deposit coming Friday.', when: '24 Nov 2026' }])
-  const [draft, setDraft] = useState('')
-  const toast = useToast()
   return (
     <AnimatePresence>
       {open && (
@@ -183,28 +179,7 @@ export function Drawer({ open, title, sub, onClose, children }: { open: boolean;
               <div className="min-w-0"><h2 className="text-lg font-bold text-fg">{title}</h2>{sub && <p className="text-sm text-muted">{sub}</p>}</div>
               <button onClick={onClose} aria-label="Close" className="rounded-lg p-1.5 text-muted hover:bg-soft"><X className="h-5 w-5" /></button>
             </div>
-            <div className="px-5 pt-4"><Tabs value={tab} options={['Details', 'Comments', 'Files', 'Activity']} onChange={setTab} /></div>
-            <div className="flex-1 overflow-y-auto p-5">
-              {tab === 'Details' && (children ?? <p className="text-sm text-muted">No additional details.</p>)}
-              {tab === 'Comments' && (
-                <div className="space-y-4">
-                  {comments.map((c, i) => (
-                    <div key={i} className="flex gap-3"><Avatar name={c.who} /><div><p className="text-sm"><b className="text-fg">{c.who}</b> <span className="text-muted">· {c.when}</span></p><p className="text-sm text-fg">{c.text}</p></div></div>
-                  ))}
-                  <div className="flex gap-2">
-                    <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Add a comment… use @ to mention" className="min-w-0 flex-1 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-fg outline-none" />
-                    <Btn kind="primary" onClick={() => { if (!draft) return; setComments([...comments, { who: 'You', text: draft, when: '25 Nov 2026' }]); setDraft(''); toast('Comment added') }}><MessageSquare className="h-4 w-4" />Post</Btn>
-                  </div>
-                </div>
-              )}
-              {tab === 'Files' && (
-                <div className="space-y-2">
-                  {['Signed-quote.pdf · 212 KB', 'Proof-of-payment.png · 88 KB'].map((f) => <div key={f} className="flex items-center gap-2 rounded-lg bg-soft px-3 py-2.5 text-sm text-fg"><Paperclip className="h-4 w-4 text-muted" />{f}</div>)}
-                  <button onClick={() => toast('File attached')} className="flex w-full flex-col items-center gap-1 rounded-lg border border-dashed border-line py-6 text-sm text-muted hover:bg-soft"><Upload className="h-5 w-5" />Drop files or click to attach</button>
-                </div>
-              )}
-              {tab === 'Activity' && <Timeline />}
-            </div>
+            <div className="flex-1 overflow-y-auto p-5">{children ?? <p className="text-sm text-muted">No additional details.</p>}</div>
           </motion.aside>
         </>
       )}
@@ -212,18 +187,8 @@ export function Drawer({ open, title, sub, onClose, children }: { open: boolean;
   )
 }
 
-export function Timeline({ items = activity }: { items?: { who: string; what: string; when: string }[] }) {
-  return (
-    <ol className="relative space-y-4 border-l border-line pl-5">
-      {items.map((a, i) => (
-        <li key={i} className="relative">
-          <span className="absolute -left-[25px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-card bg-lime" />
-          <p className="text-sm text-fg"><b>{a.who}</b> {a.what}</p>
-          <p className="flex items-center gap-1 text-xs text-muted"><History className="h-3 w-3" />{a.when}</p>
-        </li>
-      ))}
-    </ol>
-  )
+export function LoadError({ message }: { message: string }) {
+  return message ? <p role="alert" className="mb-4 rounded-xl bg-bad-soft px-4 py-3 text-sm text-fg">{message}</p> : null
 }
 
 export function Avatar({ name, size = 8 }: { name: string; size?: number }) {
