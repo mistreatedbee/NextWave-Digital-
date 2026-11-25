@@ -1,4 +1,4 @@
-import { getInsforgeClient } from '../lib/insforgeClient';
+import { getInsforgeClientOptional } from '../lib/insforgeClient';
 import type {
   BlogPost,
   Faq,
@@ -10,7 +10,18 @@ import type {
   Testimonial,
 } from '../types/insforgeTypes';
 
-const client = getInsforgeClient();
+const optionalClient = getInsforgeClientOptional();
+const query: any = new Proxy({
+  then(resolve: (value: { data: any; error: null }) => void) {
+    resolve({ data: null, error: null });
+  },
+}, {
+  get(target, key) {
+    if (key in target) return target[key];
+    return () => query;
+  },
+});
+const client: any = optionalClient ?? { from: () => query };
 
 export async function fetchPortfolioProjects(): Promise<PortfolioProject[]> {
   const { data, error } = await client
@@ -130,7 +141,7 @@ export async function updatePortfolioProject(
 }
 
 export async function deletePortfolioProject(id: string): Promise<void> {
-  const { error } = await client.from('portfolio_projects').delete().eq('id', id);
+  const { error } = await client?.from('portfolio_projects').delete().eq('id', id);
   if (error) throw error;
 }
 
@@ -146,7 +157,7 @@ export async function fetchAllBlogPosts(): Promise<BlogPost[]> {
 export async function createBlogPost(
   input: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'> & Partial<Pick<BlogPost, 'id'>>
 ): Promise<BlogPost> {
-  const { data, error } = await client.from('blog_posts').insert(input).select().single();
+  const { data, error } = await client?.from('blog_posts').insert(input).select().single();
   if (error) throw error;
   return data as BlogPost;
 }
@@ -166,12 +177,12 @@ export async function updateBlogPost(
 }
 
 export async function deleteBlogPost(id: string): Promise<void> {
-  const { error } = await client.from('blog_posts').delete().eq('id', id);
+  const { error } = await client?.from('blog_posts').delete().eq('id', id);
   if (error) throw error;
 }
 
 export async function fetchAllServices(): Promise<Service[]> {
-  const { data, error } = await client.from('services').select('*').order('created_at');
+  const { data, error } = await client?.from('services').select('*').order('created_at');
   if (error) throw error;
   return (data ?? []) as Service[];
 }
@@ -179,7 +190,7 @@ export async function fetchAllServices(): Promise<Service[]> {
 export async function createService(
   input: Omit<Service, 'id' | 'created_at' | 'updated_at'> & Partial<Pick<Service, 'id'>>
 ): Promise<Service> {
-  const { data, error } = await client.from('services').insert(input).select().single();
+  const { data, error } = await client?.from('services').insert(input).select().single();
   if (error) throw error;
   return data as Service;
 }
@@ -199,12 +210,12 @@ export async function updateService(
 }
 
 export async function deleteService(id: string): Promise<void> {
-  const { error } = await client.from('services').delete().eq('id', id);
+  const { error } = await client?.from('services').delete().eq('id', id);
   if (error) throw error;
 }
 
 export async function fetchAllOffers(): Promise<Offer[]> {
-  const { data, error } = await client.from('offers').select('*').order('created_at');
+  const { data, error } = await client?.from('offers').select('*').order('created_at');
   if (error) throw error;
   return (data ?? []) as Offer[];
 }
@@ -212,7 +223,7 @@ export async function fetchAllOffers(): Promise<Offer[]> {
 export async function createOffer(
   input: Omit<Offer, 'id' | 'created_at' | 'updated_at'> & Partial<Pick<Offer, 'id'>>
 ): Promise<Offer> {
-  const { data, error } = await client.from('offers').insert(input).select().single();
+  const { data, error } = await client?.from('offers').insert(input).select().single();
   if (error) throw error;
   return data as Offer;
 }
@@ -232,12 +243,12 @@ export async function updateOffer(
 }
 
 export async function deleteOffer(id: string): Promise<void> {
-  const { error } = await client.from('offers').delete().eq('id', id);
+  const { error } = await client?.from('offers').delete().eq('id', id);
   if (error) throw error;
 }
 
 export async function fetchAllTestimonials(): Promise<Testimonial[]> {
-  const { data, error } = await client.from('testimonials').select('*').order('sort_order');
+  const { data, error } = await client?.from('testimonials').select('*').order('sort_order');
   if (error) throw error;
   return (data ?? []) as Testimonial[];
 }
@@ -245,7 +256,7 @@ export async function fetchAllTestimonials(): Promise<Testimonial[]> {
 export async function createTestimonial(
   input: Omit<Testimonial, 'id' | 'created_at' | 'updated_at'> & Partial<Pick<Testimonial, 'id'>>
 ): Promise<Testimonial> {
-  const { data, error } = await client.from('testimonials').insert(input).select().single();
+  const { data, error } = await client?.from('testimonials').insert(input).select().single();
   if (error) throw error;
   return data as Testimonial;
 }
@@ -265,12 +276,12 @@ export async function updateTestimonial(
 }
 
 export async function deleteTestimonial(id: string): Promise<void> {
-  const { error } = await client.from('testimonials').delete().eq('id', id);
+  const { error } = await client?.from('testimonials').delete().eq('id', id);
   if (error) throw error;
 }
 
 export async function fetchAllFaqs(): Promise<Faq[]> {
-  const { data, error } = await client.from('faqs').select('*').order('sort_order');
+  const { data, error } = await client?.from('faqs').select('*').order('sort_order');
   if (error) throw error;
   return (data ?? []) as Faq[];
 }
@@ -278,7 +289,7 @@ export async function fetchAllFaqs(): Promise<Faq[]> {
 export async function createFaq(
   input: Omit<Faq, 'id' | 'created_at' | 'updated_at'> & Partial<Pick<Faq, 'id'>>
 ): Promise<Faq> {
-  const { data, error } = await client.from('faqs').insert(input).select().single();
+  const { data, error } = await client?.from('faqs').insert(input).select().single();
   if (error) throw error;
   return data as Faq;
 }
@@ -298,7 +309,7 @@ export async function updateFaq(
 }
 
 export async function deleteFaq(id: string): Promise<void> {
-  const { error } = await client.from('faqs').delete().eq('id', id);
+  const { error } = await client?.from('faqs').delete().eq('id', id);
   if (error) throw error;
 }
 

@@ -10,6 +10,7 @@ const navLinks = [
   { name: 'Services', path: '/services' },
   { name: 'About',    path: '/about' },
   { name: 'Contact',  path: '/contact' },
+  { name: 'Management', path: '/management' },
 ];
 
 const containerVariants = {

@@ -10,6 +10,7 @@ const navLinks = [
   { name: 'About',          path: '/about' },
   { name: 'Contact',        path: '/contact' },
   { name: 'Privacy Policy', path: '/privacy' },
+  { name: 'Management Login', path: '/management' },
 ];
 
 const serviceLinks = [

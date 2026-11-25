@@ -1,0 +1,79 @@
+/* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORT — DO NOT DELETE THIS COMMENT */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap');
+
+/* CRITICAL: THE FOLLOWING TAILWIND IMPORT MUST NEVER BE DELETED — DO NOT DELETE THIS COMMENT */
+@import 'tailwindcss';
+/* END TAILWIND IMPORTS — ALL OTHER CSS MUST GO BELOW THIS LINE */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Lato', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --color-lime: #b5d300;
+  --color-lime-hover: #a3be00;
+  --color-ink: #050507;
+  --color-ink-2: #111116;
+  --color-ink-3: #1c1c22;
+
+  /* surfaces — switch under .dark */
+  --color-bg: var(--nw-bg);
+  --color-card: var(--nw-card);
+  --color-soft: var(--nw-soft);
+  --color-line: var(--nw-line);
+  --color-fg: var(--nw-fg);
+  --color-muted: var(--nw-muted);
+  --color-accent: var(--nw-accent);
+
+  --color-ok: var(--nw-ok);
+  --color-ok-soft: var(--nw-ok-soft);
+  --color-warn: var(--nw-warn);
+  --color-warn-soft: var(--nw-warn-soft);
+  --color-bad: var(--nw-bad);
+  --color-bad-soft: var(--nw-bad-soft);
+  --color-info: var(--nw-info);
+  --color-info-soft: var(--nw-info-soft);
+}
+
+:root {
+  --nw-bg: #f3f4f0;
+  --nw-card: #ffffff;
+  --nw-soft: #eceee7;
+  --nw-line: #e1e3dc;
+  --nw-fg: #0b0c0e;
+  --nw-muted: #5c6058;
+  --nw-accent: #556300;
+  --nw-ok: #2f6b12;
+  --nw-ok-soft: #e6f3d6;
+  --nw-warn: #8a5a00;
+  --nw-warn-soft: #fbefd4;
+  --nw-bad: #b42318;
+  --nw-bad-soft: #fde5e2;
+  --nw-info: #1d4f91;
+  --nw-info-soft: #e1ecfb;
+}
+
+.dark {
+  --nw-bg: #09090c;
+  --nw-card: #121216;
+  --nw-soft: #1a1a20;
+  --nw-line: #26262d;
+  --nw-fg: #f1f2ed;
+  --nw-muted: #9b9e95;
+  --nw-accent: #b5d300;
+  --nw-ok: #9bd56b;
+  --nw-ok-soft: #1c2a12;
+  --nw-warn: #f2c063;
+  --nw-warn-soft: #2e2410;
+  --nw-bad: #ff8a7d;
+  --nw-bad-soft: #341512;
+  --nw-info: #8fb8f5;
+  --nw-info-soft: #13213a;
+}
+
+html, body, #root { height: 100%; }
+body { font-family: var(--font-sans); color: var(--nw-fg); background: var(--nw-bg); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
+.tabular { font-variant-numeric: tabular-nums; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

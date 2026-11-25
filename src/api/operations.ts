@@ -1,7 +1,18 @@
-import { getInsforgeClient } from '../lib/insforgeClient';
+import { getInsforgeClientOptional } from '../lib/insforgeClient';
 import type { Client, Lead, Project, Task } from '../types/insforgeTypes';
 
-const client = getInsforgeClient();
+const optionalClient = getInsforgeClientOptional();
+const query: any = new Proxy({
+  then(resolve: (value: { data: any; error: null }) => void) {
+    resolve({ data: null, error: null });
+  },
+}, {
+  get(target, key) {
+    if (key in target) return target[key];
+    return () => query;
+  },
+});
+const client: any = optionalClient ?? { from: () => query };
 
 export async function fetchLeads(): Promise<Lead[]> {
   const { data, error } = await client

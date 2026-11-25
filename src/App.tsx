@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -53,6 +53,7 @@ import { AdminProjectsPage } from './admin/pages/operations/AdminProjectsPage';
 import { AdminTasksPage } from './admin/pages/operations/AdminTasksPage';
 import { AdminSettingsPage } from './admin/pages/AdminSettingsPage';
 import { RequireAuth } from './admin/routes/RequireAuth';
+import NextWave from './management/nextwave-ms.prototype';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -62,16 +63,17 @@ function ScrollToTop() {
   return null;
 }
 
-export function App() {
+function AppShell() {
+  const { pathname } = useLocation();
+  const isManagement = pathname.startsWith('/management');
+
   return (
-    <Router>
-      <ThemeProvider>
-      <AuthProvider>
-        <ScrollToTop />
-        <SmoothScroll>
-        <div className="min-h-screen bg-ivory text-obsidian dark:bg-obsidian dark:text-cream font-sans selection:bg-gold/20 selection:text-cream">
-          <Navigation />
-          <main className="flex-grow">
+    <>
+      <ScrollToTop />
+      <SmoothScroll>
+        <div className={isManagement ? 'h-screen w-full overflow-hidden' : 'min-h-screen bg-ivory text-obsidian dark:bg-obsidian dark:text-cream font-sans selection:bg-gold/20 selection:text-cream'}>
+          {!isManagement && <Navigation />}
+          <main className={isManagement ? 'h-screen w-full' : 'flex-grow'}>
             <AnimatePresence mode="wait">
               <Routes>
                 {/* Public pages */}
@@ -125,15 +127,24 @@ export function App() {
                   <Route path="operations/tasks" element={<AdminTasksPage />} />
                   <Route path="settings" element={<AdminSettingsPage />} />
                 </Route>
+                <Route path="/management" element={<NextWave />} />
               </Routes>
             </AnimatePresence>
           </main>
-          <Footer />
-          <FloatingActions />
-          <CookieBanner />
+          {!isManagement && <><Footer /><FloatingActions /><CookieBanner /></>}
         </div>
-        </SmoothScroll>
-      </AuthProvider>
+      </SmoothScroll>
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <Router>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppShell />
+        </AuthProvider>
       </ThemeProvider>
     </Router>
   );

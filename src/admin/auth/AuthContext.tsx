@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getInsforgeClient } from '../../lib/insforgeClient';
+import { getInsforgeClientOptional } from '../../lib/insforgeClient';
 import type { RoleCode, User } from '../../types/insforgeTypes';
 
 interface AuthState {
@@ -23,91 +23,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
-    const client = getInsforgeClient();
-    const {
-      data: { subscription },
-    } = client.auth.onAuthStateChange(async (event, session) => {
-      if (!session?.user) {
-        setState({ user: null, role: null, loading: false });
-        return;
-      }
+    const client = getInsforgeClientOptional();
+    if (!client) {
+      setState({ user: null, role: null, loading: false });
+      return;
+    }
 
-      const { data, error } = await client
-        .from('users')
-        .select('*')
-        .eq('id', session.user.id)
-        .maybeSingle();
-
-      if (error || !data) {
-        setState({ user: null, role: null, loading: false });
-        return;
-      }
-
-      setState({
-        user: data,
-        role: data.role,
+    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
+      setState((prev) => ({
+        ...prev,
+        user: null,
+        role: null,
         loading: false,
-      });
+      }));
     });
 
-    client.auth
-      .getSession()
-      .then(async ({ data }) => {
-        if (!data.session?.user) {
-          setState((prev) => ({ ...prev, loading: false }));
-          return;
-        }
-        const { data: userRow } = await client
-          .from('users')
-          .select('*')
-          .eq('id', data.session.user.id)
-          .maybeSingle();
-        if (userRow) {
-          setState({
-            user: userRow,
-            role: userRow.role,
-            loading: false,
-          });
-        } else {
-          setState({ user: null, role: null, loading: false });
-        }
-      })
-      .catch(() => {
-        setState({ user: null, role: null, loading: false });
-      });
+    client.auth.getSession().catch(() => {
+      setState({ user: null, role: null, loading: false });
+    });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const client = getInsforgeClient();
-    const { data, error } = await client.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const client = getInsforgeClientOptional();
+    if (!client) throw new Error('Website admin authentication is not configured.');
+    const { error } = await client.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    if (!data.session?.user) return;
-
-    const { data: userRow } = await client
-      .from('users')
-      .select('*')
-      .eq('id', data.session.user.id)
-      .maybeSingle();
-
-    if (userRow) {
-      setState({
-        user: userRow,
-        role: userRow.role,
-        loading: false,
-      });
-    }
   };
 
   const signOut = async () => {
-    const client = getInsforgeClient();
-    await client.auth.signOut();
+    const client = getInsforgeClientOptional();
+    if (client) await client.auth.signOut();
     setState({ user: null, role: null, loading: false });
   };
 
