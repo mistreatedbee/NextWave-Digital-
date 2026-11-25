@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Check, HandHelping, Plus } from 'lucide-react'
 import { Shell } from '../shared/nw/Shell'
 import { Badge, Btn, Card, DataTable, Drawer, Field, PageHeader, Progress, useToast } from '../shared/nw/ui'
-import { Job, jobs as seed } from '../shared/nw/data'
+import type { Job } from '../shared/nw/data'
 import { commission, d, ME_PARTNER, rand, Role } from '../shared/nw/lib'
 
 type Props = Partial<typeof args> & { onRole?: (r: Role) => void; onNavigate?: (p: string) => void; onToggleDark?: () => void }
@@ -10,7 +10,13 @@ type Props = Partial<typeof args> & { onRole?: (r: Role) => void; onNavigate?: (
 export default function Jobs(props: Props) {
   const { dark, role, onRole, onNavigate, onToggleDark } = { ...args, ...props }
   const toast = useToast()
-  const [rows, setRows] = useState(() => seed.filter((j) => role !== 'partner' || j.partner === ME_PARTNER))
+  const [rows, setRows] = useState<Job[]>([])
+  useEffect(() => {
+    fetch('/api/jobs').then((r) => r.json()).then((data) => {
+      const real = Array.isArray(data) ? data.map((j: any) => ({ ...j, type: j.job_type, due: j.due?.slice(0, 10) ?? '', deposit: j.received > 0, milestones: [] })) : []
+      setRows(role === 'partner' ? real.filter((j: Job) => j.partner === ME_PARTNER) : real)
+    }).catch(() => setRows([]))
+  }, [role])
   const [openId, setOpenId] = useState<string | null>(null)
   const open = rows.find((j) => j.id === openId) ?? null
   const update = (j: Job) => setRows((r) => r.map((x) => (x.id === j.id ? j : x)))

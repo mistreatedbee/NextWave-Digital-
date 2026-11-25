@@ -122,7 +122,7 @@ function TopBar({ role, dark, onRole, onToggleDark, openMenu, go }: { role: Role
           <div className="relative">
             <button onClick={() => toggle('new')} className="inline-flex items-center gap-1 whitespace-nowrap rounded-lg bg-lime px-3 py-2 text-sm font-semibold text-ink hover:bg-lime-hover"><Plus className="h-4 w-4" /><span className="hidden sm:inline">New</span></button>
             <Pop open={menu === 'new'} className="w-48">
-              {NEW_ITEMS.map((n) => <button key={n} onClick={() => { setMenu(null); toast(`New ${n.toLowerCase()} draft created`) }} className="block w-full rounded-md px-3 py-2 text-left text-sm text-fg hover:bg-soft">{n}</button>)}
+              {NEW_ITEMS.map((n) => <button key={n} onClick={() => { setMenu(null); const routes: Record<string,string> = { Lead:'leads', Client:'clients', Quote:'quotes', Invoice:'invoices', Job:'jobs', Task:'tasks', Payment:'payments', Expense:'expenses' }; go(routes[n]) }} className="block w-full rounded-md px-3 py-2 text-left text-sm text-fg hover:bg-soft">{n}</button>)}
             </Pop>
           </div>
         )}

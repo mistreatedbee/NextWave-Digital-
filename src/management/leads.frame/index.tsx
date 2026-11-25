@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AlertTriangle, Plus } from 'lucide-react'
 import { Shell } from '../shared/nw/Shell'
 import { Badge, Btn, Card, DataTable, Drawer, Field, PageHeader, Tabs, useToast } from '../shared/nw/ui'
-import { Lead, leads as seed } from '../shared/nw/data'
+import type { Lead } from '../shared/nw/data'
 import { d, ME_PARTNER, rand, Role } from '../shared/nw/lib'
 
 type Props = Partial<typeof args> & { onRole?: (r: Role) => void; onNavigate?: (p: string) => void; onToggleDark?: () => void }
@@ -12,10 +12,20 @@ export default function Leads(props: Props) {
   const { dark, role, view, state, onRole, onNavigate, onToggleDark } = { ...args, ...props }
   const toast = useToast()
   const [mode, setMode] = useState(view as 'Table' | 'Kanban')
-  const [rows, setRows] = useState(() => (state === 'empty' ? [] : seed.filter((l) => role !== 'partner' || l.partner === ME_PARTNER)))
+  const [rows, setRows] = useState<Lead[]>([])
+  useEffect(() => {
+    fetch('/api/leads').then((r) => r.json()).then((data) => {
+      const real = Array.isArray(data) ? data.map((l: any) => ({ ...l, loggedHrs: l.logged_hours, created: l.created_at?.slice(0, 10) })) : []
+      setRows(role === 'partner' ? real.filter((l: Lead) => l.partner === ME_PARTNER) : real)
+    }).catch(() => setRows([]))
+  }, [role])
   const [open, setOpen] = useState<Lead | null>(null)
   const [drag, setDrag] = useState<string | null>(null)
-  const move = (id: string, stage: Lead['stage']) => { setRows((r) => r.map((l) => (l.id === id ? { ...l, stage } : l))); toast(`${id} moved to ${stage}`) }
+  const move = async (id: string, stage: Lead['stage']) => {
+    const response = await fetch(`/api/leads/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stage }) })
+    if (!response.ok) { toast('Lead could not be updated'); return }
+    setRows((r) => r.map((l) => (l.id === id ? { ...l, stage } : l))); toast(`${id} moved to ${stage}`)
+  }
   const overdue = rows.filter((l) => l.loggedHrs > 24 && !['Won', 'Lost'].includes(l.stage))
 
   return (

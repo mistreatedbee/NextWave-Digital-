@@ -127,7 +127,7 @@ function AppShell() {
                   <Route path="operations/tasks" element={<AdminTasksPage />} />
                   <Route path="settings" element={<AdminSettingsPage />} />
                 </Route>
-                <Route path="/management" element={<NextWave />} />
+                <Route path="/management/*" element={<NextWave />} />
               </Routes>
             </AnimatePresence>
           </main>

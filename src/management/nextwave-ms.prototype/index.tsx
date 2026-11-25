@@ -55,7 +55,7 @@ export default function NextWave(props: Props) {
     onRole: (r: Role) => { setRole(r); setPage(HOME[r]) },
   }
 
-  if (page === 'login') return <SignIn state="login" onSignedIn={() => setPage(HOME[role])} />
+  if (page === 'login') return <SignIn state="login" onSignedIn={(signedRole) => { setRole(signedRole); setPage(HOME[signedRole]) }} />
   if (page === 'dash-admin') return <AdminDashboard {...shell} />
   if (page === 'dash-partner') return <PartnerDashboard {...shell} />
   if (page === 'leads') return <Leads {...shell} role={role} />

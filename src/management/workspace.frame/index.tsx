@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { Shell } from '../shared/nw/Shell'
 import { PAGE_LABEL } from '../shared/nw/nav'
@@ -65,14 +65,57 @@ export default function Workspace(props: Props) {
   const { dark, role, page, onRole, onNavigate, onToggleDark } = { ...args, ...props }
   const toast = useToast()
   const [q, setQ] = useState('')
+  const [liveClients, setLiveClients] = useState<Record<string, string>[]>([])
+  const [showClientForm, setShowClientForm] = useState(false)
+  const [clientDraft, setClientDraft] = useState({ name: '', company: '', email: '', phone: '', service: '', value: '' })
+
   const title = PAGE_LABEL[page] ?? 'Workspace'
   const summary = summaries[page] ?? { sub: 'Manage this area of the NextWave workspace.', metrics: [['Status', 'Active'], ['Updated', 'Today'], ['Records', 'Live']] }
   const rows = useMemo(() => (recordSets[page] ?? []).filter((row) => JSON.stringify(row).toLowerCase().includes(q.toLowerCase())), [page, q])
 
+  useEffect(() => {
+    if (page !== 'clients') return
+    fetch('/api/clients')
+      .then((r) => r.json())
+      .then((rows) => setLiveClients(Array.isArray(rows) ? rows : []))
+      .catch(() => setLiveClients([]))
+  }, [page])
+
+  const createClient = async () => {
+    if (!clientDraft.name.trim() || !clientDraft.company.trim()) {
+      toast('Name and company are required')
+      return
+    }
+    const id = `C-${Date.now().toString().slice(-6)}`
+    const response = await fetch('/api/clients', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id,
+        name: clientDraft.name.trim(),
+        company: clientDraft.company.trim(),
+        email: clientDraft.email.trim(),
+        phone: clientDraft.phone.trim(),
+        service: clientDraft.service.trim(),
+        status: 'Active',
+        value: Number(clientDraft.value) || 0,
+      }),
+    })
+    if (!response.ok) {
+      toast('Client could not be saved')
+      return
+    }
+    const created = await response.json()
+    setLiveClients((current) => [created, ...current])
+    setClientDraft({ name: '', company: '', email: '', phone: '', service: '', value: '' })
+    setShowClientForm(false)
+    toast('Client saved')
+  }
+
   return (
     <Shell role={role as Role} page={page} dark={dark} onRole={onRole} onNavigate={onNavigate} onToggleDark={onToggleDark}>
       <PageHeader title={title} sub={summary.sub}>
-        <Btn kind="primary" onClick={() => toast(`New ${title.toLowerCase()} item created`)}><Plus className="h-4 w-4" />New</Btn>
+        <Btn kind="primary" onClick={() => page === 'clients' ? setShowClientForm(true) : toast(`Use the existing ${title.toLowerCase()} controls to add a record`)}><Plus className="h-4 w-4" />New</Btn>
       </PageHeader>
 
       <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -84,7 +127,26 @@ export default function Workspace(props: Props) {
         ))}
       </div>
 
-      {recordSets[page] ? (
+      {page === 'clients' ? (
+        <>
+          <Card className="mb-3 p-3">
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search clients…" className="w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm text-fg outline-none" />
+          </Card>
+          <DataTable
+            name="Clients"
+            rows={liveClients.filter((row) => JSON.stringify(row).toLowerCase().includes(q.toLowerCase()))}
+            cols={[
+              { key: 'id', label: 'Client ID' },
+              { key: 'company', label: 'Company', render: (row) => <div><p className="font-semibold">{row.company}</p><p className="text-xs text-muted">{row.name}</p></div> },
+              { key: 'email', label: 'Email', hideSm: true },
+              { key: 'phone', label: 'Phone', hideSm: true },
+              { key: 'service', label: 'Service', hideSm: true },
+              { key: 'status', label: 'Status', render: (row) => <Badge>{String(row.status)}</Badge> },
+              { key: 'value', label: 'Value', align: 'right', render: (row) => `R${Number(row.value || 0).toLocaleString('en-ZA')}` },
+            ]}
+          />
+        </>
+      ) : recordSets[page] ? (
         <>
           <Card className="mb-3 p-3">
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search ${title.toLowerCase()}…`} className="w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm text-fg outline-none" />
@@ -116,6 +178,20 @@ export default function Workspace(props: Props) {
               </ul>
             </div>
           </div>
+        </Card>
+      )}
+
+      {page === 'clients' && showClientForm && (
+        <Card className="mb-5 p-5">
+          <div className="grid gap-3 md:grid-cols-2">
+            <label className="text-sm font-semibold text-fg">Contact name<input value={clientDraft.name} onChange={(e) => setClientDraft({ ...clientDraft, name: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
+            <label className="text-sm font-semibold text-fg">Company<input value={clientDraft.company} onChange={(e) => setClientDraft({ ...clientDraft, company: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
+            <label className="text-sm font-semibold text-fg">Email<input type="email" value={clientDraft.email} onChange={(e) => setClientDraft({ ...clientDraft, email: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
+            <label className="text-sm font-semibold text-fg">Phone<input value={clientDraft.phone} onChange={(e) => setClientDraft({ ...clientDraft, phone: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
+            <label className="text-sm font-semibold text-fg">Service<input value={clientDraft.service} onChange={(e) => setClientDraft({ ...clientDraft, service: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
+            <label className="text-sm font-semibold text-fg">Estimated value<input type="number" min="0" value={clientDraft.value} onChange={(e) => setClientDraft({ ...clientDraft, value: e.target.value })} className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 font-normal outline-none" /></label>
+          </div>
+          <div className="mt-4 flex justify-end gap-2"><Btn onClick={() => setShowClientForm(false)}>Cancel</Btn><Btn kind="primary" onClick={createClient}>Save client</Btn></div>
         </Card>
       )}
     </Shell>
