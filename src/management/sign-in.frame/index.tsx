@@ -121,6 +121,6 @@ export const args = { state: 'login', email: 'workatpaaq@gmail.com' }
 export const argTypes = { state: { control: 'select', options: ['login', 'forgot', 'invite'] }, email: { control: 'text' } }
 
 function Input({ label, ...p }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
-  return <label className="mt-4 block text-sm font-semibold text-fg">{label}<input {...p} className="mt-1 w-full rounded-lg border border-line bg-card px-3 py-2.5 text-base font-normal text-fg outline-none focus:border-fg/40" /></label>
+  return <label className="mt-4 block text-sm font-semibold text-fg">{label}<input {...p} style={{ color: "#050507", opacity: 1, WebkitTextFillColor: "#050507" }} className="mt-1 w-full rounded-lg border border-line bg-white px-3 py-2.5 text-base font-normal text-black outline-none placeholder:!text-black placeholder:!opacity-100 focus:border-fg/40" /></label>
 }
 function Submit({ children }: { children: React.ReactNode }) { return <button type="submit" className="mt-6 w-full rounded-lg bg-lime py-2.5 text-sm !text-black font-bold transition-colors hover:bg-lime-hover">{children}</button> }
