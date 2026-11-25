@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react'
 
 import SignIn from '../sign-in.frame'
 import AdminDashboard from '../admin-dashboard.frame'
@@ -12,6 +12,9 @@ import { canAccess } from '../shared/nw/nav'
 import { Account, UserContext } from '../shared/nw/user'
 import { api, SIGNED_OUT } from '../shared/nw/api'
 import '../shared/nw/theme.css'
+
+// The document renderer embeds fonts, so it is only downloaded when needed.
+const PublicSign = lazy(() => import('../documents/PublicSign'))
 
 const SIGN_IN = 'sign-in'
 const ADMIN_DASH = 'admin-dashboard'
@@ -45,6 +48,20 @@ const FRAME_PAGE: Record<string, string> = {
 }
 
 export default function NextWave(props: Props) {
+  // A client's signing link needs no account.
+  const [publicLink] = useState(() => window.location.pathname.replace(/\/$/, '') === '/management/sign')
+  useEffect(() => {
+    if (!publicLink) return
+    // This page is always light, whatever theme the website is set to.
+    const wasDark = document.documentElement.classList.contains('dark')
+    document.documentElement.classList.remove('dark')
+    return () => { document.documentElement.classList.toggle('dark', wasDark) }
+  }, [publicLink])
+  if (publicLink) return <div className="nw-app h-full overflow-y-auto font-sans"><Suspense fallback={<p className="p-6">Opening…</p>}><PublicSign /></Suspense></div>
+  return <Management {...props} />
+}
+
+function Management(props: Props) {
   const p = { ...args, ...props }
   const [role, setRole] = useState<Role>(p.role as Role)
   // Start in whichever theme the website is using.
@@ -109,7 +126,7 @@ export default function NextWave(props: Props) {
     if (current === 'jobs') return <Jobs key={page} {...shell} role={role} openNew={openNew} />
     if (current === 'commission') return <CommissionCalculator {...shell} role={role} />
     if (current === 'payments' || current === 'payouts') return <PaymentsPayouts key={page} {...shell} role={role} openNew={openNew} tab={current === 'payouts' ? 'Partner payouts' : 'Payments'} />
-    return <Workspace key={page} {...shell} role={role} page={current} openNew={openNew} query={current === 'search' ? arg : ''} />
+    return <Workspace key={page} {...shell} role={role} page={current} openNew={openNew} query={current === 'search' ? arg : ''} arg={arg} />
   }
   return <UserContext.Provider value={account}>{themed(view())}</UserContext.Provider>
 }

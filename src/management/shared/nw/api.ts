@@ -34,18 +34,31 @@ export async function send(path: string, method: string, body?: unknown) {
   return String(data?.error ?? 'Could not reach the server')
 }
 
+// Several parts of a screen often want the same list at once; they share one request.
+const pending = new Map<string, Promise<{ ok: boolean; data: unknown }>>()
+function getList(path: string) {
+  let request = pending.get(path)
+  if (!request) {
+    request = api(path).then(async (r) => ({ ok: !!r?.ok, data: await r?.json().catch(() => null) }))
+    pending.set(path, request)
+    void request.finally(() => pending.delete(path))
+  }
+  return request
+}
+
 /** Loads a list from the API. `map` must be a stable (module-level) function. */
-export function useTable<T>(table: Table | 'auth/accounts' | 'auth/invites' | 'auth/partner-names', map: (r: any) => T, enabled = true) {
+export function useTable<T>(table: Table | 'docs' | 'auth/accounts' | 'auth/invites' | 'auth/partner-names', map: (r: any) => T, enabled = true) {
   const [rows, setRows] = useState<T[]>([])
   const [error, setError] = useState('')
   const [version, setVersion] = useState(0)
   useEffect(() => {
     if (!enabled) { setRows([]); setError(''); return }
     let active = true
-    api(`/api/${table}`)
-      .then(async (r) => {
-        const data = await r?.json()
-        if (!r?.ok || !Array.isArray(data)) throw new Error()
+    // After a change, don't reuse a request that started before it.
+    if (version) pending.delete(`/api/${table}`)
+    getList(`/api/${table}`)
+      .then(({ ok, data }) => {
+        if (!ok || !Array.isArray(data)) throw new Error()
         if (active) { setRows(data.map(map)); setError('') }
       })
       .catch(() => { if (active) { setRows([]); setError(`Could not load ${table.replace(/[_/-]/g, ' ')}. Try again, or check that the API and database are available.`) } })

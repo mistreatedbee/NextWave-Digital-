@@ -2,12 +2,13 @@
 import fs from 'node:fs'
 import dotenv from 'dotenv'
 import pg from 'pg'
+import { connectionString } from '../server/db.js'
 
-const FILES = ['20261125_auth_invites.sql', '20261125_nextwave_core.sql', '20261126_management_features.sql']
+const FILES = ['20261125_auth_invites.sql', '20261125_nextwave_core.sql', '20261126_management_features.sql', '20261127_documents.sql', '20261128_work_hub.sql']
 
 dotenv.config({ path: '.env.local' })
 if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not configured')
-const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+const client = new pg.Client({ connectionString: connectionString(), ssl: { rejectUnauthorized: false } })
 await client.connect()
 try {
   await client.query('begin')

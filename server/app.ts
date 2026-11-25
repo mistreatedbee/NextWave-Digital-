@@ -4,6 +4,9 @@ import crypto from 'node:crypto'
 import { isTable, ONBOARDING_ITEMS, resource, rights } from '../shared/resources.js'
 import { Account, Body, prepare, readAccess, Role, rule, Table } from './permissions.js'
 import { loginAttempt, WINDOW_MINUTES } from './rate-limit.js'
+import { reminderRoutes } from './reminders.js'
+import { documentRoutes, PdfMaker } from './documents/routes.js'
+import { htmlToPdf } from './documents/pdf.js'
 import { COOKIE, cookieValue, createToken, readToken, secret, sessionCookie } from './session.js'
 
 type Query = (text: string, values?: unknown[]) => Promise<{ rows: any[] }>
@@ -17,7 +20,7 @@ const route = (handler: Handler) => (req: Request, res: Response, next: NextFunc
 const text = (v: unknown) => (typeof v === 'string' ? v.trim() : '')
 const publicAccount = (a: Account): Account => ({ id: a.id, email: a.email, name: a.name, role: a.role })
 
-export function createApp(db: Db) {
+export function createApp(db: Db, makePdf: PdfMaker = htmlToPdf, sendReminder?: Parameters<typeof reminderRoutes>[3]) {
   const app = express()
   const newId = (prefix: string) => `${prefix}-${crypto.randomBytes(5).toString('hex').toUpperCase()}`
 
@@ -46,7 +49,53 @@ export function createApp(db: Db) {
     await db.query('update public.jobs set received = $1, bank_charges = $2, third_party = $3, contributor_pct = $4 where id = $5', [received, bank, thirdParty, contributors, id])
   }
 
-  /** Checks that referenced partners and jobs exist and are visible to this user. */
+  /** A client named on any record is added to the client list, so everything stays linked. */
+  async function ensureClient(name: unknown, details: { contact?: unknown; partner?: unknown; service?: unknown; value?: unknown } = {}) {
+    const label = String(name ?? '').trim()
+    if (!label) return
+    const found = await db.query('select id from public.clients where lower(company) = $1 or lower(name) = $1 limit 1', [label.toLowerCase()])
+    if (found.rows.length) return
+    await db.query('insert into public.clients (id, name, company, partner, service, value, status) values ($1, $2, $3, $4, $5, $6, $7)',
+      [newId('C'), String(details.contact || label), label, String(details.partner ?? ''), String(details.service ?? ''), Number(details.value) || 0, 'Active'])
+  }
+
+  /** An invoice's paid amount and status follow the cleared payments made against it. */
+  async function recalculateInvoice(id: unknown) {
+    if (!id) return
+    const invoice = (await db.query('select amount, status from public.invoices where id = $1', [id])).rows[0]
+    if (!invoice || String(id).startsWith('DOC-')) return
+    const paid = Number((await db.query("select coalesce(sum(amount), 0)::int as n from public.payments where invoice = $1 and status = 'Cleared'", [id])).rows[0].n)
+    const status = invoice.status === 'Cancelled' ? 'Cancelled' : paid >= Number(invoice.amount) && paid > 0 ? 'Paid' : paid > 0 ? 'Partial' : 'Issued'
+    await db.query('update public.invoices set paid = $1, status = $2 where id = $3', [paid, status, id])
+  }
+
+  /** Runs everything that depends on a record that was just written or removed. */
+  async function followUp(table: Table, rows: Body[]) {
+    for (const row of rows) {
+      if (['payments', 'expenses', 'contributors'].includes(table)) await recalculateJob(row.job)
+      if (table === 'payments') await recalculateInvoice(row.invoice)
+      if (table === 'invoices') await recalculateInvoice(row.id)
+    }
+    const latest = rows[rows.length - 1]
+    if (latest && resource(table).fields.some((x) => x.type === 'client')) await ensureClient(latest.client, { partner: latest.partner })
+    if (table === 'leads' && latest?.stage === 'Won') await ensureClient(latest.company, { contact: latest.name, partner: latest.partner, service: latest.service, value: latest.value })
+  }
+
+  /** A log entry can create its follow-up tasks and move the job along, in one step. */
+  async function applyLog(user: Account, entry: Body) {
+    const steps = String(entry.next_steps ?? '').split('\n').map((l) => l.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim()).filter(Boolean).slice(0, 30)
+    for (const step of steps) {
+      await db.query('insert into public.tasks (id, title, client, job, partner, priority, due, status) values ($1, $2, $3, $4, $5, $6, $7, $8)',
+        [newId('T'), step.slice(0, 500), entry.client ?? '', entry.job ?? '', entry.partner ?? '', 'Normal', entry.follow_up || null, 'To do'])
+    }
+    if (user.role === 'admin' && entry.job && entry.job_status) await db.query('update public.jobs set status = $1 where id = $2', [entry.job_status, entry.job])
+  }
+
+  /** Records created by the Document centre are changed there, so the two can't disagree. */
+  const fromDocument = (table: Table, id: string) => ['quotes', 'invoices', 'payments'].includes(table) && id.startsWith('DOC-')
+  const MANAGED = 'This record comes from the Document centre. Change it there.'
+
+  /** Checks that referenced partners, jobs and invoices exist and are visible to this user. */
   async function checkReferences(user: Account, table: Table, values: Body, existing: Body | null) {
     for (const field of resource(table).fields) {
       const value = values[field.key]
@@ -54,6 +103,11 @@ export function createApp(db: Db) {
       if (field.type === 'partner') {
         const found = await db.query("select id from public.accounts where role = 'partner' and name = $1", [value])
         if (!found.rows.length) return `${value} is not a partner account`
+      }
+      if (field.type === 'invoice') {
+        const found = await db.query('select id from public.invoices where id = $1', [value])
+        if (!found.rows.length) return 'That invoice was not found'
+        if (String(value).startsWith('DOC-')) return 'Record this payment on the invoice in the Document centre'
       }
       if (field.type === 'job') {
         const found = await db.query('select partner from public.jobs where id = $1', [value])
@@ -82,6 +136,8 @@ export function createApp(db: Db) {
     }
     next()
   })
+  // Documents and drawn signatures are larger than ordinary records.
+  app.use(['/api/docs', '/api/docs-templates', '/api/sign'], express.json({ limit: '1mb' }))
   app.use(express.json({ limit: '100kb' }))
 
   /** Loads the signed-in account on every request, so deactivation and role changes apply immediately. */
@@ -244,6 +300,9 @@ export function createApp(db: Db) {
     }
   }))
 
+  documentRoutes(app, db, signedIn, makePdf, { recalculateJob, ensureClient })
+  reminderRoutes(app, db, signedIn, sendReminder)
+
   // Table and column names below only ever come from the fixed definitions in shared/resources.ts.
   const forbidden = (res: Response) => res.status(403).json({ error: 'You do not have access to this' })
   const withTable = (handler: (user: Account, table: Table, req: Request, res: Response) => Promise<unknown>) =>
@@ -252,7 +311,6 @@ export function createApp(db: Db) {
       if (!isTable(table)) return res.status(404).json({ error: 'Not found' })
       return handler(user, table, req, res)
     })
-  const touchesJobs = (table: Table) => ['payments', 'expenses', 'contributors'].includes(table)
 
   /** Names of partner accounts, for assigning records. */
   app.get('/api/auth/partner-names', signedIn(async (_user, _req, res) => {
@@ -283,7 +341,8 @@ export function createApp(db: Db) {
     const keys = Object.keys(values)
     const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ')
     const result = await db.query(`insert into public.${table} (${keys.join(', ')}) values (${placeholders}) returning *`, Object.values(values))
-    if (touchesJobs(table)) await recalculateJob(values.job)
+    await followUp(table, [result.rows[0]])
+    if (table === 'work_log') await applyLog(user, result.rows[0])
     await audit(user, 'Created', table, String(values.id))
     res.status(201).json(result.rows[0])
   }))
@@ -305,6 +364,7 @@ export function createApp(db: Db) {
     const id = String(req.params.id)
     const existing = validId(table, id) ? await findOwn(user, table, id) : null
     if (!existing) return res.status(404).json({ error: 'Record not found' })
+    if (fromDocument(table, id)) return res.status(409).json({ error: MANAGED })
     const values = prepared.values
     const refused = rule(user, table, values, existing)
     if (refused) return res.status(refused.status).json({ error: refused.error })
@@ -315,10 +375,8 @@ export function createApp(db: Db) {
     if (table === 'leads') values.last_activity_at = new Date().toISOString()
     const set = Object.keys(values).map((key, i) => `${key} = $${i + 1}`).join(', ')
     const result = await db.query(`update public.${table} set ${set} where id = $${Object.keys(values).length + 1} returning *`, [...Object.values(values), id])
-    if (touchesJobs(table)) {
-      await recalculateJob(existing.job)
-      if (result.rows[0].job !== existing.job) await recalculateJob(result.rows[0].job)
-    }
+    // The old row is included so totals it used to count towards are corrected too.
+    await followUp(table, [existing, result.rows[0]])
     await audit(user, 'Updated', table, id, changed.join(', '))
     res.json(result.rows[0])
   }))
@@ -328,12 +386,18 @@ export function createApp(db: Db) {
     const id = String(req.params.id)
     const existing = await findOwn(user, table, id)
     if (!existing) return res.status(404).json({ error: 'Record not found' })
+    if (fromDocument(table, id)) return res.status(409).json({ error: MANAGED })
+    if (table === 'invoices') {
+      const linked = await db.query('select id from public.payments where invoice = $1', [id])
+      if (linked.rows.length) return res.status(409).json({ error: 'This invoice has payments. Mark it cancelled instead of deleting it.' })
+    }
     if (table === 'jobs') {
       const linked = await db.query('select id from public.payments where job = $1 union all select id from public.payouts where job = $1', [id])
       if (linked.rows.length) return res.status(409).json({ error: 'This job has payments or payouts. Put it on hold instead of deleting it.' })
     }
     await db.query(`delete from public.${table} where id = $1`, [id])
-    if (touchesJobs(table)) await recalculateJob(existing.job)
+    if (['payments', 'expenses', 'contributors'].includes(table)) await recalculateJob(existing.job)
+    if (table === 'payments') await recalculateInvoice(existing.invoice)
     await audit(user, 'Deleted', table, id)
     res.status(204).end()
   }))

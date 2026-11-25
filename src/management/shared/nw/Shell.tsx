@@ -98,9 +98,9 @@ function Sidebar({ role, page, go, onClose }: { role: Role; page: string; go: (i
   )
 }
 
-const NEW_ITEMS = ['Lead', 'Client', 'Quote', 'Invoice', 'Job', 'Task', 'Payment', 'Expense']
+const NEW_ITEMS = ['Work log', 'Lead', 'Client', 'Quote', 'Invoice', 'Job', 'Task', 'Payment', 'Expense']
 const ROLE_LABEL: Record<Role, string> = { admin: 'Admin', partner: 'Partner', finance: 'Finance' }
-const NEW_ROUTES: Record<string, string> = { Lead: 'leads', Client: 'clients', Quote: 'quotes', Invoice: 'invoices', Job: 'jobs', Task: 'tasks', Payment: 'payments', Expense: 'expenses' }
+const NEW_ROUTES: Record<string, string> = { 'Work log': 'work-log', Lead: 'leads', Client: 'clients', Quote: 'quotes', Invoice: 'invoices', Job: 'jobs', Task: 'tasks', Payment: 'payments', Expense: 'expenses' }
 
 function TopBar({ role, dark, onToggleDark, openMenu, go }: { role: Role; dark?: boolean; onToggleDark?: () => void; openMenu: () => void; go: (id: string) => void }) {
   const [menu, setMenu] = useState<null | 'new' | 'bell' | 'role'>(null)

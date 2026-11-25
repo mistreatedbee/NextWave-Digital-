@@ -11,7 +11,7 @@ const asName = (v: unknown) => String(v)
 const initialValue = (field: FieldDef, row: Row | undefined) => {
   if (row) return field.type === 'date' ? day(row[field.key]) : String(row[field.key] ?? '')
   if (field.type === 'date') return field.required ? isoDate(new Date()) : ''
-  return field.type === 'select' ? field.options![0] : ''
+  return field.type === 'select' && field.required ? field.options![0] : ''
 }
 
 /** Create or edit form generated from a record definition. */
@@ -23,7 +23,23 @@ export function RecordForm({ table, role, row, defaults, onSaved, onCancel }: { 
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const partners = useTable('auth/partner-names', asName, role === 'admin' && fields.some((x) => x.type === 'partner'))
-  const jobs = useTable('jobs', toRecord, !!rights(role, 'jobs') && fields.some((x) => x.type === 'job'))
+  const uses = (type: string) => fields.some((x) => x.type === type)
+  const jobs = useTable('jobs', toRecord, !!rights(role, 'jobs') && uses('job'))
+  const clients = useTable('clients', toRecord, !!rights(role, 'clients') && uses('client'))
+  const invoices = useTable('invoices', toRecord, !!rights(role, 'invoices') && uses('invoice'))
+  const students = useTable('students', toRecord, !!rights(role, 'students') && uses('student'))
+  const [newClient, setNewClient] = useState(false)
+
+  /** Choosing a linked record fills in what is already known about it, without overwriting entries. */
+  const choose = (field: FieldDef, value: string) => setValues((current) => {
+    const next = { ...current, [field.key]: value }
+    const fill = (key: string, known: unknown) => { if (fields.some((x) => x.key === key) && known !== undefined && known !== null && known !== '' && !current[key]) next[key] = String(known) }
+    if (field.type === 'job') { const j = jobs.rows.find((x) => x.id === value); fill('client', j?.client); fill('partner', j?.partner) }
+    if (field.type === 'client') fill('partner', clients.rows.find((x) => (x.company || x.name) === value)?.partner)
+    if (field.type === 'student') { const s = students.rows.find((x) => x.student_name === value); fill('subject', s?.subject); fill('partner', s?.partner) }
+    if (field.type === 'invoice') { const i = invoices.rows.find((x) => x.id === value); if (i) { fill('client', i.client); fill('job', i.job); fill('amount', Math.max(0, i.amount - i.paid) || '') } }
+    return next
+  })
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -42,15 +58,23 @@ export function RecordForm({ table, role, row, defaults, onSaved, onCancel }: { 
   }
 
   const control = (field: FieldDef) => {
-    const props = { value: values[field.key] ?? '', required: field.required, className: INPUT, onChange: (e: { target: { value: string } }) => setValues((v) => ({ ...v, [field.key]: e.target.value })) }
+    const props = { value: values[field.key] ?? '', required: field.required, className: INPUT, onChange: (e: { target: { value: string } }) => choose(field, e.target.value) }
+    if (field.type === 'client') {
+      if (newClient) return <><input {...props} autoFocus placeholder="New client or company name" /><button type="button" onClick={() => { setNewClient(false); choose(field, '') }} className="mt-1 text-xs font-semibold text-accent">Choose an existing client</button></>
+      const names = [...new Set(clients.rows.map((c) => String(c.company || c.name)))].sort()
+      if (props.value && !names.includes(props.value)) names.unshift(props.value)
+      return <select {...props} onChange={(e) => { if (e.target.value === '__new') { setNewClient(true); choose(field, '') } else choose(field, e.target.value) }}><option value="">Choose a client…</option>{names.map((n) => <option key={n} value={n}>{n}</option>)}<option value="__new">+ Add a new client…</option></select>
+    }
     if (field.type === 'textarea') return <textarea {...props} rows={5} />
-    if (field.type === 'select' || field.type === 'partner' || field.type === 'job') {
+    if (['select', 'partner', 'job', 'invoice', 'student'].includes(field.type)) {
       const options: [string, string][] = field.type === 'select' ? field.options!.map((o) => [o, o])
         : field.type === 'partner' ? partners.rows.map((n) => [n, n])
+        : field.type === 'invoice' ? invoices.rows.filter((i) => !String(i.id).startsWith('DOC-') && i.status !== 'Cancelled').map((i) => [i.id, `${i.id} · ${i.client} · ${rand(i.amount - i.paid)} owing`])
+        : field.type === 'student' ? students.rows.map((s) => [s.student_name, s.student_name])
         : jobs.rows.map((j) => [j.id, `${j.id} · ${j.title}`])
       // Keep the current value selectable even if it is no longer in the list.
       if (props.value && !options.some(([v]) => v === props.value)) options.unshift([props.value, props.value])
-      return <select {...props}>{field.type !== 'select' && <option value="">None</option>}{options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
+      return <select {...props}>{(field.type !== 'select' || !field.required) && <option value="">None</option>}{options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
     }
     const type = field.type === 'number' ? 'number' : field.type
     return <input {...props} type={type} min={field.type === 'number' ? field.min ?? 0 : undefined} max={field.max} step={field.type === 'number' ? 1 : undefined} />
@@ -58,7 +82,7 @@ export function RecordForm({ table, role, row, defaults, onSaved, onCancel }: { 
 
   return (
     <form onSubmit={submit} className="space-y-3">
-      <LoadError message={error || partners.error || jobs.error} />
+      <LoadError message={error || partners.error || jobs.error || clients.error || invoices.error || students.error} />
       {fields.map((field) => <label key={field.key} className="block text-sm font-semibold text-fg">{field.label}{field.money ? ' (R)' : ''}{control(field)}</label>)}
       <div className="flex justify-end gap-2 pt-2"><Btn type="button" onClick={onCancel}>Cancel</Btn><Btn type="submit" kind="primary" disabled={busy}>{busy ? 'Saving…' : 'Save'}</Btn></div>
     </form>
@@ -134,8 +158,9 @@ export function ResourceView({ table, role, openNew }: { table: Table; role: Rol
             {def.fields.map((x) => <Field key={x.key} label={x.label} value={show(x, open)} />)}
             <div className="mt-5 flex flex-wrap gap-2">
               {quickActions(table, role, open).map((a) => <Btn key={a.status} kind="primary" onClick={() => change(open, a.status)}>{a.label}</Btn>)}
-              {editableFields(role, table, 'update').length > 0 && !(role === 'partner' && ['onboarding'].includes(table)) && <Btn onClick={() => setPanel({ id: panel!.id, edit: true })}>Edit</Btn>}
-              {access?.remove && <Btn kind="danger" onClick={() => remove(open)}>Delete</Btn>}
+              {['quotes', 'invoices'].includes(table) && String(open.id).startsWith('DOC-') && <p className="w-full text-sm text-muted">Created in the Document centre. Change it there.</p>}
+              {editableFields(role, table, 'update').length > 0 && !String(open.id).startsWith('DOC-') && !(role === 'partner' && ['onboarding'].includes(table)) && <Btn onClick={() => setPanel({ id: panel!.id, edit: true })}>Edit</Btn>}
+              {access?.remove && !String(open.id).startsWith('DOC-') && <Btn kind="danger" onClick={() => remove(open)}>Delete</Btn>}
             </div>
           </>
         )}

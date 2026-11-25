@@ -27,3 +27,6 @@ dist-ssr
 .env
 .vercel
 .env*
+
+# Sample documents contain banking details
+samples/

@@ -5,6 +5,13 @@ import { ResourceView } from '../shared/nw/records'
 import { Card, Empty, PageHeader } from '../shared/nw/ui'
 import type { Role } from '../shared/nw/lib'
 import { AccessControl, Profile } from './account'
+import { ClaudeUpdates, ClientHub } from './hub'
+import { lazy, Suspense } from 'react'
+
+const Centre = lazy(() => import('../documents/Centre'))
+const Editor = lazy(() => import('../documents/Editor'))
+const DocumentSettings = lazy(() => import('../documents/Config').then((m) => ({ default: m.DocumentSettings })))
+const TemplateManager = lazy(() => import('../documents/Config').then((m) => ({ default: m.TemplateManager })))
 import { CalendarFeed, FinanceDashboard, FinancialReports, MarketingDashboard, Notifications, ReportsHub, Schedule, SearchResults, TutoringDashboard, WeeklyReport } from './views'
 
 export const args = { dark: false, role: 'admin', page: 'quotes' }
@@ -16,12 +23,13 @@ export const argTypes = {
 type Props = Partial<typeof args> & {
   openNew?: boolean
   query?: string
+  arg?: string
   onNavigate?: (p: string) => void
   onToggleDark?: () => void
 }
 
 /** Pages whose name differs from the record type they show. */
-const TABLES: Record<string, Table> = { 'price-list': 'prices', help: 'help_requests', accounts: 'social_accounts', safety: 'safety_incidents', popia: 'popia_requests', kb: 'kb_articles', audit: 'audit_log' }
+const TABLES: Record<string, Table> = { 'work-log': 'work_log', 'price-list': 'prices', help: 'help_requests', accounts: 'social_accounts', safety: 'safety_incidents', popia: 'popia_requests', kb: 'kb_articles', audit: 'audit_log' }
 
 const DESCRIPTIONS: Record<string, string> = {
   'dash-finance': 'Cash flow, receivables and partner payouts.',
@@ -49,6 +57,13 @@ const DESCRIPTIONS: Record<string, string> = {
   sessions: 'Tutoring timetable and attendance.',
   safety: 'Child safeguarding incidents.',
   documents: 'Links to contracts and records kept in your file storage.',
+  'doc-center': 'Create, send and track quotations, invoices and agreements.',
+  'doc-templates': 'Default wording for new documents.',
+  'client-hub': 'What each client owes and when, their history, tasks, projects and domains.',
+  'work-log': 'Record work, client calls and requests. Next steps become tasks.',
+  domains: 'Domains and hosting, with renewal reminders.',
+  assistant: 'Update the system from a reply written by Claude. Nothing changes until you apply it.',
+  'doc-settings': 'Company, banking, signatory and VAT details used on every document.',
   popia: 'Privacy requests and deadlines.',
   audit: 'Who changed what. The most recent 1,000 events.',
   'weekly-report': 'Partner activity summary.',
@@ -61,7 +76,7 @@ const DESCRIPTIONS: Record<string, string> = {
 }
 
 export default function Workspace(props: Props) {
-  const { dark, role: roleName, page, openNew, query = '', onNavigate, onToggleDark } = { ...args, ...props }
+  const { dark, role: roleName, page, openNew, query = '', arg = '', onNavigate, onToggleDark } = { ...args, ...props }
   const role = roleName as Role
   const go = (p: string) => onNavigate?.(p)
   const title = page === 'search' ? `Search: ${query}` : page === 'profile' ? 'My profile' : PAGE_LABEL[page] ?? 'Workspace'
@@ -69,6 +84,11 @@ export default function Workspace(props: Props) {
 
   // Rendered as elements so that data hooks run inside the Shell's providers.
   const body = () => {
+    if (page === 'doc-center') return arg && arg !== 'new' ? <Editor id={arg} go={go} /> : <Centre go={go} />
+    if (page === 'client-hub') return <ClientHub go={go} />
+    if (page === 'assistant') return <ClaudeUpdates />
+    if (page === 'doc-templates') return <TemplateManager />
+    if (page === 'doc-settings') return <DocumentSettings go={go} />
     if (page === 'access') return <AccessControl />
     if (page === 'profile') return <Profile />
     if (page === 'dash-finance') return <FinanceDashboard role={role} />
@@ -90,7 +110,7 @@ export default function Workspace(props: Props) {
   return (
     <Shell role={role} page={page} dark={dark} onNavigate={onNavigate} onToggleDark={onToggleDark}>
       <PageHeader title={title} sub={DESCRIPTIONS[page]} />
-      {body()}
+      <Suspense fallback={<p className="text-sm text-muted">Loading…</p>}>{body()}</Suspense>
     </Shell>
   )
 }

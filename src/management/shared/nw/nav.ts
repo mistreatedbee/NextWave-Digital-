@@ -14,6 +14,17 @@ export const NAV: { group: string; items: Item[] }[] = [
     { id: 'dash-marketing', label: 'Marketing', icon: Megaphone, roles: A },
     { id: 'dash-tutoring', label: 'Tutoring', icon: GraduationCap, roles: AP },
   ] },
+  { group: 'Client work', items: [
+    { id: 'client-hub', label: 'Client hub', icon: UserCheck, roles: A },
+    { id: 'work-log', label: 'Work log', icon: ClipboardCheck, roles: AP },
+    { id: 'domains', label: 'Domains & hosting', icon: KeyRound, roles: A },
+    { id: 'assistant', label: 'Update with Claude', icon: MessageSquareText, roles: A },
+  ] },
+  { group: 'Business documents', items: [
+    { id: 'doc-center', label: 'Document centre', icon: FileText, roles: A },
+    { id: 'doc-templates', label: 'Template manager', icon: ScrollText, roles: A },
+    { id: 'doc-settings', label: 'Document settings', icon: Settings, roles: A },
+  ] },
   { group: 'Sales', items: [
     { id: 'leads', label: 'Leads', icon: Target, roles: AP },
     { id: 'clients', label: 'Clients', icon: Contact, roles: AP },
@@ -53,7 +64,7 @@ export const NAV: { group: string; items: Item[] }[] = [
     { id: 'safety', label: 'Child safety', icon: ShieldAlert, roles: A },
   ] },
   { group: 'Compliance', items: [
-    { id: 'documents', label: 'Documents', icon: FileCheck2, roles: AP },
+    { id: 'documents', label: 'Compliance files', icon: FileCheck2, roles: AP },
     { id: 'popia', label: 'POPIA centre', icon: ShieldCheck, roles: A },
     { id: 'audit', label: 'Audit log', icon: ScrollText, roles: AF },
   ] },

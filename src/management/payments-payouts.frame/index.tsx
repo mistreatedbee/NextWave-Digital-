@@ -55,7 +55,7 @@ function Money({ role, tab, openNew, onNavigate }: { role: Role; tab: Tab; openN
     toast(problem || 'Deleted')
     if (!problem) saved()
   }
-  const actions = (row: { id: string; raw: Record<string, any> }) => admin && <div className="mt-4 flex gap-2"><Btn onClick={() => { setPay(null); setPo(null); setForm({ row: row.raw }) }}>Edit</Btn><Btn kind="danger" onClick={() => remove(row.id)}>Delete</Btn></div>
+  const actions = (row: { id: string; raw: Record<string, any> }) => row.id.startsWith('DOC-') ? <Btn className="mt-4 w-full" onClick={() => onNavigate?.(`doc-center:${row.id.replace(/-\d+$/, '')}`)}>Open the invoice in the Document centre</Btn> : admin && <div className="mt-4 flex gap-2"><Btn onClick={() => { setPay(null); setPo(null); setForm({ row: row.raw }) }}>Edit</Btn><Btn kind="danger" onClick={() => remove(row.id)}>Delete</Btn></div>
 
   return (
     <>

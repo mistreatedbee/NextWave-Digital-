@@ -7,7 +7,7 @@ const LIMITS = { pair: 5, email: 20, ip: 30 }
 
 const hash = (value: string) => crypto.createHash('sha256').update(value).digest('hex')
 // Proxy headers are only trustworthy on Vercel, which overwrites them.
-const clientIp = (req: Request) => (process.env.VERCEL && String(req.headers['x-real-ip'] ?? '')) || req.socket.remoteAddress || 'unknown'
+export const clientIp = (req: Request) => (process.env.VERCEL && String(req.headers['x-real-ip'] ?? '')) || req.socket.remoteAddress || 'unknown'
 
 /**
  * Counts sign-in attempts in the database, so the limit holds across serverless instances.

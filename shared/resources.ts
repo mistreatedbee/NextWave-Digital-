@@ -2,7 +2,7 @@
 // The API enforces it and the screens are generated from it.
 
 export type Role = 'admin' | 'partner' | 'finance'
-export type FieldType = 'text' | 'textarea' | 'number' | 'date' | 'select' | 'partner' | 'job' | 'email' | 'url'
+export type FieldType = 'text' | 'textarea' | 'number' | 'date' | 'select' | 'partner' | 'job' | 'client' | 'invoice' | 'student' | 'email' | 'url'
 export type Field = {
   key: string
   label: string
@@ -36,7 +36,7 @@ export type Resource = {
 
 type Extra = Partial<Field>
 const f = (type: FieldType) => (key: string, label: string, extra: Extra = {}): Field => ({ key, label, type, ...extra })
-const text = f('text'), area = f('textarea'), num = f('number'), date = f('date'), email = f('email'), url = f('url'), job = f('job'), partner = f('partner')
+const text = f('text'), area = f('textarea'), num = f('number'), date = f('date'), email = f('email'), url = f('url'), job = f('job'), partner = f('partner'), client = f('client'), invoiceRef = f('invoice'), student = f('student')
 const select = (key: string, label: string, options: string[], extra: Extra = {}) => f('select')(key, label, { options, required: true, ...extra })
 const money = (key: string, label: string, extra: Extra = {}) => num(key, label, { money: true, min: 0, ...extra })
 const req: Extra = { required: true }
@@ -51,7 +51,12 @@ function define(title: string, singular: string, prefix: string, fields: Field[]
   return { title, singular, prefix, fields, access: access(keys(fields)), partnerDefaults }
 }
 
-export const SERVICES = ['Website', 'App', 'Automation', 'Marketing', 'Tutoring', 'Other']
+// The services NextWave sells, matching the website and the quote presets.
+export const SERVICES = [
+  'Starter Website', 'Professional Website', 'Premium Website', 'Landing Page', 'E-Commerce Store', 'AI Automation Suite',
+  'Online Booking & Payments', 'Domain & Email', 'Hosting', 'Mobile App', 'Custom Software', 'Marketing', 'Tutoring', 'Other',
+]
+export const LOG_KINDS = ['Work done', 'Client call', 'Change request', 'New feature', 'Domain & hosting', 'Document', 'Meeting', 'Note']
 export const LEAD_STAGES = ['New', 'Contacted', 'Quote sent', 'Won', 'Lost']
 export const JOB_TYPES = ['Standard Job', 'Independent Work', 'Assisted Work', 'Major Project']
 export const JOB_STATUSES = ['Not started', 'In progress', 'Review', 'Done', 'On hold']
@@ -63,20 +68,21 @@ export const RESOURCES = {
   ], (e) => ({ admin: full, partner: mine(e) })),
 
   clients: define('Clients', 'client', 'C', [
-    text('company', 'Company', req), text('name', 'Contact name', req), email('email', 'Email'), text('phone', 'Phone'), text('service', 'Service'),
+    text('company', 'Company', req), text('name', 'Contact name', req), email('email', 'Email'), text('phone', 'Phone'), select('service', 'Service', SERVICES, { required: false }),
     partner('partner', 'Owner'), select('status', 'Status', ['Active', 'Inactive']), money('value', 'Value'),
+    area('address', 'Address', { detail: true }), text('id_number', 'ID / registration number', { detail: true }), text('vat_number', 'VAT number', { detail: true }),
   ], (e) => ({ admin: full, partner: mine(e) })),
 
   jobs: define('Jobs', 'job', 'J', [
-    text('title', 'Title', req), text('client', 'Client', req), select('job_type', 'Job type', JOB_TYPES), partner('partner', 'Partner'),
-    money('value', 'Job value'), select('status', 'Status', JOB_STATUSES), date('due', 'Due date'),
+    text('title', 'Title', req), client('client', 'Client', req), select('job_type', 'Job type', JOB_TYPES), partner('partner', 'Partner'),
+    money('value', 'Job value'), select('status', 'Status', JOB_STATUSES), date('due', 'Due date'), date('payment_due', 'Balance payment due', { detail: true }),
     num('major_share', 'Partner share % (Major Project, 20–50)', { min: 20, max: 50, detail: true }),
     money('received', 'Received', { computed: true }), money('bank_charges', 'Bank charges', { computed: true, detail: true }),
     money('third_party', 'Third-party costs', { computed: true, detail: true }), num('contributor_pct', 'Contributor share %', { computed: true, detail: true }),
   ], () => ({ admin: full, partner: { read: 'own', update: ['job_type'] } })),
 
   payments: define('Payments', 'payment', 'PAY', [
-    date('payment_date', 'Date', req), text('client', 'Client', req), text('invoice', 'Invoice number'), job('job', 'Job'),
+    date('payment_date', 'Date', req), invoiceRef('invoice', 'Invoice'), client('client', 'Client', req), job('job', 'Job'),
     money('amount', 'Amount', req), select('method', 'Method', ['EFT', 'Card (Yoco)', 'SnapScan', 'Cash', 'Other']), money('bank_charges', 'Bank charges'),
     select('status', 'Status', ['Pending', 'Cleared', 'Refunded']), partner('partner', 'Partner'),
   ], () => ({ admin: full, finance: view })),
@@ -87,13 +93,14 @@ export const RESOURCES = {
   ], () => ({ admin: full, finance: view, partner: { read: 'own' } })),
 
   quotes: define('Quotes', 'quote', 'Q', [
-    text('client', 'Client', req), text('title', 'Description', req), money('amount', 'Amount', req), num('discount_pct', 'Discount %', { min: 0, max: 100 }),
+    client('client', 'Client', req), text('title', 'Description', req), money('amount', 'Amount', req), num('discount_pct', 'Discount %', { min: 0, max: 100 }),
     partner('partner', 'Partner'), select('status', 'Status', ['Draft', 'Awaiting approval', 'Approved', 'Sent', 'Accepted', 'Declined']), date('valid_until', 'Valid until'),
   ], (e) => ({ admin: full, partner: mine(e) })),
 
   invoices: define('Invoices', 'invoice', 'INV', [
-    text('client', 'Client', req), job('job', 'Job'), money('amount', 'Amount', req), money('paid', 'Paid'),
+    client('client', 'Client', req), job('job', 'Job'), money('amount', 'Amount', req), money('paid', 'Paid', { computed: true }),
     date('issued', 'Issued', req), date('due', 'Due'), select('status', 'Status', ['Issued', 'Partial', 'Paid', 'Cancelled']),
+    date('last_reminder', 'Last reminder', { computed: true, detail: true }),
   ], () => ({ admin: full, finance: view })),
 
   prices: define('Price list', 'price', 'PR', [
@@ -101,9 +108,22 @@ export const RESOURCES = {
   ], () => ({ admin: full, partner: view })),
 
   tasks: define('Tasks', 'task', 'T', [
-    text('title', 'Task', req), job('job', 'Job'), partner('partner', 'Assigned to'), select('priority', 'Priority', ['Low', 'Normal', 'High']),
+    text('title', 'Task', req), client('client', 'Client'), job('job', 'Job'), partner('partner', 'Assigned to'), select('priority', 'Priority', ['Low', 'Normal', 'High']),
     date('due', 'Due date'), select('status', 'Status', ['To do', 'In progress', 'Done']),
   ], (e) => ({ admin: full, partner: mine(e, true) })),
+
+  work_log: define('Work log', 'log entry', 'WL', [
+    date('log_date', 'Date', req), select('kind', 'Type', LOG_KINDS), client('client', 'Client', req), job('job', 'Job'),
+    text('summary', 'Summary', req), area('details', 'What was done or requested', { detail: true }),
+    area('next_steps', 'What needs to be done (each line becomes a task)', { detail: true }), date('follow_up', 'Follow up by'),
+    url('link', 'Link (document, domain or site)', { detail: true }), select('job_status', 'Change the job status to', JOB_STATUSES, { required: false, detail: true }),
+    partner('partner', 'Partner'), select('status', 'Status', ['Open', 'Done']),
+  ], (e) => ({ admin: full, partner: mine(e.filter((k) => k !== 'job_status')) })),
+
+  domains: define('Domains & hosting', 'domain', 'DM', [
+    text('domain', 'Domain or service', req), client('client', 'Client', req), job('job', 'Job'), text('provider', 'Registrar or host'),
+    date('expires', 'Renews on'), money('cost', 'Renewal cost'), select('status', 'Status', ['Active', 'To register', 'Expired', 'Cancelled']), area('notes', 'Notes (never store passwords here)', { detail: true }),
+  ], () => ({ admin: full })),
 
   events: define('Calendar events', 'event', 'EV', [
     text('title', 'Event', req), date('event_date', 'Date', req), text('event_time', 'Time'), select('kind', 'Type', ['Meeting', 'Deadline', 'Reminder', 'Other']),
@@ -154,7 +174,7 @@ export const RESOURCES = {
   ], (e) => ({ admin: full, partner: mine(e) })),
 
   sessions: define('Sessions', 'session', 'SE', [
-    text('student', 'Student', req), text('subject', 'Subject'), date('session_date', 'Date', req), text('session_time', 'Time'), partner('partner', 'Tutor'),
+    student('student', 'Student', req), text('subject', 'Subject'), date('session_date', 'Date', req), text('session_time', 'Time'), partner('partner', 'Tutor'),
     select('status', 'Status', ['Scheduled', 'Attended', 'Missed', 'Cancelled']), area('notes', 'Notes', { detail: true }),
   ], (e) => ({ admin: full, partner: mine(e) })),
 
@@ -163,7 +183,7 @@ export const RESOURCES = {
     select('status', 'Status', ['Open incident', 'Under review', 'Resolved']), area('action_taken', 'Action taken', { detail: true }),
   ], () => ({ admin: full })),
 
-  documents: define('Documents', 'document', 'D', [
+  documents: define('Compliance files', 'file', 'D', [
     text('title', 'Title', req), select('kind', 'Type', ['Contract', 'NDA', 'Agreement', 'Police clearance', 'Policy', 'Other']), url('link', 'Link to file', req),
     partner('partner', 'Partner'), date('expires', 'Expires'), select('status', 'Status', ['Pending review', 'Verified', 'Expired']),
   ], () => ({ admin: full, partner: { read: 'own', create: ['title', 'kind', 'link', 'expires'] } }), { status: 'Pending review' }),
